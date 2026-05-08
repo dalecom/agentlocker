@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Downloader</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <script>
+        function toggleQualityOptions() {
+            var format = document.querySelector('input[name="format"]:checked').value;
+            var qualityOptions = document.getElementById('quality-options');
+            qualityOptions.style.display = (format === 'mp4') ? 'block' : 'none';
+        }
+
+        window.onload = toggleQualityOptions;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.querySelector('form');
+            const progressText = document.getElementById('progress-text');
+            const spinner = document.getElementById('spinner');
+            const errorMessage = document.getElementById('error-message');
+            const downloadBtn = document.getElementById('downloadBtn');
+
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                spinner.style.display = 'inline-block';  // Show spinner
+                progressText.style.display = 'block'; // Show progress text
+                progressText.textContent = 'Download started, please wait...'; // Set message
+                errorMessage.textContent = '';
+                downloadBtn.style.display = 'none';
+
+                const formData = new FormData(form);
+
+                try {
+                    const response = await fetch('/', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok.');
+                    }
+
+                    const data = await response.json();
+                    if (data.error) {
+                        throw new Error(data.error);
+                    }
+
+                    downloadBtn.href = data.download_url;
+                    downloadBtn.style.display = 'inline-block';
+                    progressText.textContent = 'Download ready!';
+                } catch (error) {
+                    console.error('Error:', error);
+                    errorMessage.textContent = 'Error occurred during download. Please try again.';
+                    progressText.textContent = '';
+                } finally {
+                    spinner.style.display = 'none';  // Hide spinner
+                }
+            });
+        });
+    </script>
+</head>
+
+<body>
+    {% include 'elements/header.html' %}
+    
+    <main class="container">
+        <h1 class="centered-title">YouTube Downloader</h1>
+        <form method="post">
+            <label for="url">YouTube URL:</label><br>
+            <input type="text" id="url" name="url" required><br>
+            <input type="radio" id="mp3" name="format" value="mp3" checked onclick="toggleQualityOptions()">
+            <label for="mp3">MP3 (Audio Only)</label><br>
+            <input type="radio" id="mp4" name="format" value="mp4" onclick="toggleQualityOptions()">
+            <label for="mp4">MP4 (Video with Audio)</label><br><br>
+            <div id="quality-options" class="quality-options">
+                <label for="quality">Video Quality:</label><br>
+                <select name="quality" id="quality">
+                    <option value="best">Best</option>
+                    <option value="720p">720p</option>
+                    <option value="1080p">1080p</option>
+                    <option value="4k">4K</option>
+                </select>
+            </div>
+            <br>
+            <input type="submit" value="Download">
+        </form>
+        <div id="progress-container">
+            <p id="progress-text" style="display: none;">Download started, please wait...</p>
+            <span id="spinner" style="display: none;"><i class="fas fa-spinner fa-spin"></i></span>
+        </div>
+        <div id="error-message"></div>
+        <a id="downloadBtn" download>Download File</a>
+    </main>
+
+    <div class="card">
+        <h2 class="centered-title h2">How to use the YouTube MP3 & MP4 Downloader</h2>
+        <ol>
+            <li><strong>Enter the YouTube URL:</strong> Paste the URL of the YouTube video you want to download into the input field labeled "YouTube URL."</li>
+            <li><strong>Select the Format:</strong> Choose between MP3 (audio only) or MP4 (video with audio). MP4 options will display additional quality settings.</li>
+            <li><strong>Choose Video Quality (for MP4):</strong> If you selected MP4, pick the desired video quality from the dropdown menu. Options include Best, 720p, 1080p, and 4K.</li>
+            <li><strong>Click Download:</strong> Press the "Download" button to start the download process. A spinner will indicate that the download is in progress.</li>
+            <li><strong>Download Your File:</strong> Once the download is ready, the button will become active. Click the "Download File" link to save the file to your device.</li>
+        </ol>
+    </div>
+    
+    </div>
+    
+ 
+       
+
+
+    {% include 'elements/footer.html' %}
+</body>
+</html>

@@ -1,0 +1,130 @@
+.primary-header {
+    width: 100%;
+    background-color: #FFFFFF; /* Change background to white */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin: 0;
+    padding: 0;
+}
+
+.primary-header-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0.5rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.primary-header-title {
+    font-size: 1.8rem;
+    color: #333333; /* Change title color to dark for contrast */
+    font-weight: bold;
+    margin-right: 1rem;
+}
+
+.home-link {
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+}
+
+.primary-header-nav {
+    flex-grow: 1;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.primary-header-nav-menu {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+}
+
+.primary-header-nav-menu li {
+    margin-left: 1rem;
+}
+
+.primary-header-nav-link {
+    text-decoration: none;
+    color: #333333; /* Change text color to dark for contrast */
+    padding: 0.5rem 1rem;
+    transition: background-color var(--transition), color var(--transition);
+    border-radius: var(--border-radius);
+    display: inline-block;
+}
+
+.primary-header-nav-link:hover,
+.primary-header-nav-link:focus,
+.primary-header-nav-link.active {
+    background-color: #FFA500; /* Orange background on hover */
+    color: #FFFFFF; /* White text on hover */
+}
+
+.header-logo {
+    height: 40px;
+    width: auto;
+    max-width: 281px;
+}
+
+/* Mobile menu button */
+.mobile-menu-button {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #333333; /* Dark color to match the theme */
+    padding: 0.5rem;
+}
+
+/* Media query for mobile devices */
+@media (max-width: 768px) {
+    .primary-header-container {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .primary-header-nav {
+        display: none;
+        width: 100%;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .primary-header-nav.active {
+        display: flex;
+    }
+    .primary-header-nav-menu {
+        flex-direction: column;
+        width: 100%;
+    }
+    .primary-header-nav-menu li {
+        margin-left: 0;
+        margin-top: 0.5rem;
+    }
+    .primary-header-nav-link {
+        display: block;
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid #ddd; /* Light border for mobile view */
+    }
+    .primary-header-nav-link:last-child {
+        border-bottom: none;
+    }
+    .mobile-menu-button {
+        display: block;
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+    }
+    .header-logo {
+        height: 30px;
+    }
+}
+
+/* Accessibility improvements */
+.primary-header-nav-link:focus,
+.mobile-menu-button:focus {
+    outline: 2px solid #FFA500; /* Orange outline for focus */
+    outline-offset: 2px;
+}

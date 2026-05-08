@@ -1,0 +1,139 @@
+body {
+    font-family: Arial, sans-serif;
+    width: 100%; /* Full width */
+    margin: 0;
+    padding: 0;
+}
+
+
+.centered-title {
+    text-align: center;
+    color: #f5a65b;
+    margin: 20px 0; /* Adjust margin as needed */
+}
+
+.centered-title.h1 {
+    font-size: 2em; /* Adjust font size for h1 as needed */
+}
+
+.centered-title.h2 {
+    font-size: 1.5em; /* Adjust font size for h2 as needed */
+}
+
+
+.container {
+    max-width: 800px; /* Adjust the width as needed */
+    margin: 0 auto;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+
+.card {
+    max-width: 800px; /* Adjust the width as needed */
+    margin: 0 auto;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    background-color: #f9f9f9;
+    margin-top: 0px;
+    margin-bottom: 40px; /* Add space at the bottom */
+}
+
+
+.card ol {
+    margin: 0;
+    padding: 0;
+    list-style: decimal inside; /* Better control of list style and alignment */
+}
+
+.card li {
+    margin-bottom: 15px; /* Space between list items */
+    line-height: 1.6; /* Line height for better readability */
+    padding: 5px 0; /* Padding for visual separation */
+}
+
+.card ol li::marker {
+    color: #f5a65b; /* Change the color of the numbers */
+    font-weight: bold; /* Make numbers bold */
+    font-size: 1.1em; /* Adjust the font size of numbers */
+}
+
+
+form {
+    background: #f0f0f0;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+input[type="text"] {
+    width: calc(100% - 22px); /* Adjust width to account for padding and border */
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 4px; /* Rounded corners */
+    box-sizing: border-box; /* Ensure padding and border are included in the element's total width and height */
+}
+
+input[type="submit"], #downloadBtn {
+    background: #4CAF50;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px; /* Rounded corners */
+}
+
+input[type="submit"]:hover, #downloadBtn:hover {
+    background: #45a049;
+}
+
+.quality-options {
+    margin-top: 10px;
+}
+
+#error-message {
+    color: red;
+    margin-top: 10px;
+}
+
+#downloadBtn {
+    display: none;
+    margin-top: 10px;
+}
+
+/* Centering text and spinner */
+#progress-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+#progress-text {
+    margin: 0;
+    text-align: center;
+    display: none; /* Hide by default */
+}
+
+#spinner {
+    display: none; /* Hidden by default */
+    width: 24px;
+    height: 24px;
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    border-top-color: #f5a65b;
+    animation: spin 1s ease-in-out infinite;
+    margin-top: 10px; /* Space between text and spinner */
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.centered-title {
+    text-align: center;
+    color: #f5a65b;
+    font-size: 2em; /* Adjust the font size as needed */
+    margin: 20px 0; /* Adjust margin as needed */
+}

@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-92GZ5H8QQT"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-92GZ5H8QQT');
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <!-- Dynamic SEO Meta Tags -->
+    <title>{% block title %}AI Agent Directory{% endblock %} | AgentLocker</title>
+    <meta name="description"
+        content="{% block meta_description %}Discover and compare AI agents, tools, and integrations. Find the perfect AI solution for your needs at AgentLocker.{% endblock %}">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="{% block og_type %}website{% endblock %}">
+    <meta property="og:url" content="{{ request.url }}">
+    <meta property="og:site_name" content="AgentLocker">
+    <meta property="og:title" content="{% block og_title %}{{ self.title() }}{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}{{ self.meta_description() }}{% endblock %}">
+    <meta property="og:image" content="{% block og_image %}{{ url_for('static', filename='img/agent locker logo.png', _external=True) }}{% endblock %}">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@AgentLocker">
+    <meta name="twitter:creator" content="@AgentLocker">
+    <meta name="twitter:title" content="{{ self.og_title() }}">
+    <meta name="twitter:description" content="{{ self.og_description() }}">
+    <meta name="twitter:image" content="{{ self.og_image() }}">
+    <meta name="twitter:image:alt" content="Agent Locker Logo">
+
+    <!-- Additional SEO Tags -->
+    <meta name="keywords"
+        content="{% block meta_keywords %}AI agents, artificial intelligence, AI tools, AI directory, machine learning, AI integrations{% endblock %}">
+    <meta name="robots" content="{% block meta_robots %}index, follow{% endblock %}">
+    <link rel="canonical" href="{{ request.url }}">
+    <meta name="author" content="AgentLocker">
+
+    <!-- Mobile/Apple Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="AgentLocker">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='img/apple-touch-icon.png') }}">
+
+     <!-- Favicon -->
+     <link rel="apple-touch-icon" sizes="180x180"
+     href="{{ url_for('static', filename='img/favicon/apple-touch-icon.png') }}">
+ <link rel="icon" type="image/png" sizes="192x192"
+     href="{{ url_for('static', filename='img/favicon/android-chrome-192x192.png') }}">
+ <link rel="icon" type="image/png" sizes="512x512"
+     href="{{ url_for('static', filename='img/favicon/android-chrome-512x512.png') }}">
+ <link rel="icon" type="image/png" sizes="32x32"
+     href="{{ url_for('static', filename='img/favicon/favicon-32x32.png') }}">
+ <link rel="icon" type="image/png" sizes="16x16"
+     href="{{ url_for('static', filename='img/favicon/favicon-16x16.png') }}">
+ <link rel="manifest" href="{{ url_for('static', filename='img/favicon/site.webmanifest') }}">
+ <link rel="mask-icon" href="{{ url_for('static', filename='img/favicon/safari-pinned-tab.svg') }}" color="#5bbad5">
+ <meta name="msapplication-TileColor" content="#da532c">
+ <meta name="theme-color" content="#ffffff">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <!-- Animation Styles -->
+    <style>
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+            will-change: transform;
+        }
+    </style>
+
+    <!-- HTMX -->
+    <script src="https://unpkg.com/htmx.org@1.9.0"></script>
+
+    <!-- Additional CSS per template -->
+    {% block extra_css %}{% endblock %}
+    <style>
+        [x-cloak] {
+            display: none !important;
+        }
+    </style>
+
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <!-- Template-specific head content -->
+    {% block head %}{% endblock %}
+
+    <style>
+        @media (max-width: 640px) {
+            main.container {
+                padding-top: 5rem !important; /* 80px for non-homepage */
+            }
+
+            /* Specific override for homepage */
+            main.container[data-page="index"] {
+                padding-top: 1rem !important; /* 16px for homepage */
+            }
+
+            /* Reduce spacing after the mobile type selector */
+            .lg\:hidden.space-y-6 {
+                margin-bottom: 0.75rem;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-md fixed w-full z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between h-16">
+                <!-- Logo Section -->
+                <div class="flex items-center">
+                    <a href="{{ url_for('main.index') }}" class="flex items-center space-x-2">
+                        {% if request.endpoint not in [] %}
+                        <img src="{{ url_for('static', filename='img/agent locker logo.webp') }}"
+                             alt="Agent Locker Logo"
+                             width="32"
+                             height="32"
+                             class="h-8 w-8">
+                        {% endif %}
+                        <span class="text-xl font-bold text-gray-900">Agent Locker</span>
+                    </a>
+                </div>
+
+                <!-- Mobile menu button -->
+                <div class="flex items-center sm:hidden">
+                    <!-- Agent Count (Only show on index and list pages) -->
+                    {% if request.endpoint in ['main.index', 'agent.list_all'] %}
+                    <span class="text-sm font-medium text-blue-600 bg-blue-50 px-3 py-1 rounded-full mr-3">
+                        {{ total_agents }} {% if request.args.get('type') == 'tool' %}Tools
+                        {% elif request.args.get('type') == 'platform' %}Platforms
+                        {% else %}Agents{% endif %}
+                    </span>
+                    {% endif %}
+
+                    <!-- Mobile menu button -->
+                    <button type="button"
+                        class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100"
+                        id="mobile-menu-button" aria-expanded="false">
+                        <span class="sr-only">Open main menu</span>
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+
+                <!-- Desktop Navigation -->
+                <div class="hidden sm:flex sm:items-center sm:space-x-8">
+
+
+                    <a href="{{ url_for('main.categories') }}"
+                        class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-500 hover:text-gray-900 {% if request.endpoint == 'main.categories' %}border-b-2 border-blue-500 text-gray-900{% endif %}">
+                        Categories
+                    </a>
+                    <a href="{{ url_for('main.use_cases') }}"
+                        class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-500 hover:text-gray-900 {% if request.endpoint == 'main.use_cases' %}border-b-2 border-blue-500 text-gray-900{% endif %}">
+                        Use Cases
+                    </a>
+                    <a href="{{ url_for('main.integrations') }}"
+                        class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-500 hover:text-gray-900 {% if request.endpoint == 'main.integrations' %}border-b-2 border-blue-500 text-gray-900{% endif %}">
+                        Integrations
+                    </a>
+
+                    <a href="{{ url_for('main.stats') }}"
+                        class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-500 hover:text-gray-900 {% if request.endpoint == 'main.stats' %}border-b-2 border-blue-500 text-gray-900{% endif %}">
+                        Stats
+                    </a>
+
+                    <a href="{{ url_for('agent.submit') }}"
+                        class="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-blue-600 to-blue-500 text-white font-medium text-sm hover:from-blue-700 hover:to-blue-600 transform hover:scale-105 transition-all duration-150 ease-in-out shadow-md hover:shadow-lg">
+                        <i class="fas fa-plus-circle mr-2"></i>
+                        Submit Agent
+                    </a>
+
+                     <!-- Desktop Search -->
+                     <div class="hidden lg:flex-1 lg:flex lg:items-center lg:justify-end">
+                        <div class="relative" x-data="{ isExpanded: false }">
+                            <form action="{{ url_for('agent.list_all') }}" method="get" class="flex items-center"
+                                @click.outside="isExpanded = false">
+                                <div class="relative w-12 transition-all duration-300 ease-in-out"
+                                    :class="{ 'w-96': isExpanded }">
+                                    <input type="search" name="search" placeholder="Search AI agents..."
+                                        value="{{ request.args.get('search', '') }}"
+                                        class="w-full bg-gray-100 rounded-full py-2 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all duration-300"
+                                        :class="{ 'opacity-0 pointer-events-none': !isExpanded, 'opacity-100': isExpanded }">
+                                    <button type="button" class="absolute inset-y-0 left-0 pl-3 flex items-center"
+                                        @click="isExpanded = !isExpanded">
+                                        <i class="fas fa-search text-gray-400 hover:text-gray-600"></i>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Desktop Auth Menu -->
+                    {% if current_user.is_authenticated %}
+                    <div class="relative ml-3">
+                        <a href="{{ url_for('auth.profile') }}"
+                            class="flex items-center space-x-2 text-gray-700 hover:text-gray-900">
+                            <img src="{{ current_user.avatar_url or url_for('static', filename='img/default-avatar.png') }}"
+                                class="h-8 w-8 rounded-full">
+                            <span>{{ current_user.username }}</span>
+                        </a>
+                        <div class="hidden origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5"
+                            id="user-menu-dropdown">
+                            <a href="{{ url_for('auth.profile') }}" class="menu-item">Profile</a>
+                            <a href="{{ url_for('auth.logout') }}" class="menu-item">Logout</a>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="relative ml-3">
+                        <button type="button"
+                            class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                            id="auth-menu-button" aria-expanded="false">
+                            <i class="fas fa-user text-gray-600"></i>
+                        </button>
+                        <div class="hidden origin-top-right absolute right-0 mt-2 w-48 rounded-lg shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 transform transition-all duration-200"
+                            id="auth-menu-dropdown">
+                            <div class="px-4 py-3 border-b border-gray-100">
+                                <h3 class="text-sm font-medium text-gray-900">Welcome to Agent Locker</h3>
+                                <p class="text-xs text-gray-500 mt-1">Join our AI agent community</p>
+                            </div>
+                            <a href="{{ url_for('auth.login') }}"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                                <i class="fas fa-sign-in-alt mr-2 text-blue-500"></i> Login
+                            </a>
+                            <a href="{{ url_for('auth.register') }}"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                                <i class="fas fa-user-plus mr-2 text-green-500"></i> Register
+                            </a>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Mobile Navigation Menu -->
+            <div class="sm:hidden hidden" id="mobile-menu">
+                <div class="pt-2 pb-3 space-y-1">
+                    <!-- Mobile Search -->
+                    <div class="px-4 pb-4">
+                        <form action="{{ url_for('agent.list_all') }}" method="GET">
+                            <div class="relative">
+                                <input type="search" name="search" placeholder="Search agents..."
+                                    class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <button type="submit"
+                                    class="absolute right-2 top-2.5 text-gray-400 hover:text-gray-600">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Mobile Navigation Links -->
+
+
+                    <a href="{{ url_for('main.categories') }}"
+                        class="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-900 hover:bg-gray-50 {% if request.endpoint == 'main.categories' %}bg-blue-50 text-blue-600{% endif %}">
+                        Categories
+                    </a>
+                    <a href="{{ url_for('main.use_cases') }}"
+                        class="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-900 hover:bg-gray-50 {% if request.endpoint == 'main.use_cases' %}bg-blue-50 text-blue-600{% endif %}">
+                        Use Cases
+                    </a>
+                    <a href="{{ url_for('main.integrations') }}"
+                        class="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-900 hover:bg-gray-50 {% if request.endpoint == 'main.integrations' %}bg-blue-50 text-blue-600{% endif %}">
+                        Integrations
+                    </a>
+                    <a href="{{ url_for('main.partners') }}"
+                        class="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-900 hover:bg-gray-50 {% if request.endpoint == 'main.partners' %}bg-blue-50 text-blue-600{% endif %}">
+                        Partners
+                    </a>
+
+                    <a href="{{ url_for('landscape.landscape') }}"
+                        class="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-900 hover:bg-gray-50 {% if request.endpoint == 'landscape.landscape' %}bg-blue-50 text-blue-600{% endif %}">
+                        Ecosystem
+                    </a>
+
+                    <a href="{{ url_for('main.stats') }}"
+                        class="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-900 hover:bg-gray-50 {% if request.endpoint == 'main.stats' %}bg-blue-50 text-blue-600{% endif %}">
+                        Stats
+                    </a>
+
+                    <a href="{{ url_for('agent.submit') }}"
+                        class="block px-4 py-2 text-base font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 my-4 border-t border-gray-100 py-4">
+                        <i class="fas fa-plus-circle mr-2"></i>
+                        Submit Agent
+                        <span class="ml-1 bg-blue-100 text-blue-600 px-2 py-0.5 rounded-full text-xs">Free</span>
+                    </a>
+
+                    <!-- Mobile Auth Section -->
+                    <div class="pt-4 pb-3 border-t border-gray-200">
+                        {% if current_user.is_authenticated %}
+                        <div class="px-4">
+                            <a href="{{ url_for('auth.profile') }}"
+                                class="flex items-center justify-center w-full p-3 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 group">
+                                <div class="flex-shrink-0">
+                                    <img src="{{ current_user.avatar_url or url_for('static', filename='img/default-avatar.png') }}"
+                                        class="h-10 w-10 rounded-full ring-2 ring-white shadow-sm group-hover:ring-blue-200 transition-all duration-200">
+                                </div>
+                                <div class="ml-3 flex flex-col">
+                                    <span
+                                        class="text-base font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">{{
+                                        current_user.username }}</span>
+                                    <span class="text-sm text-gray-500">View Profile</span>
+                                </div>
+                                <div class="ml-auto">
+                                    <i
+                                        class="fas fa-chevron-right text-gray-400 group-hover:text-blue-500 transition-colors"></i>
+                                </div>
+                            </a>
+                            <a href="{{ url_for('auth.logout') }}"
+                                class="mt-3 flex items-center justify-center w-full p-3 bg-white border border-gray-200 rounded-xl text-gray-700 hover:bg-gray-50 hover:text-red-600 transition-all duration-200">
+                                <i class="fas fa-sign-out-alt mr-2"></i>
+                                Logout
+                            </a>
+                        </div>
+                        {% else %}
+                        <div class="px-4 grid grid-cols-2 gap-4">
+                            <a href="{{ url_for('auth.login') }}"
+                                class="text-center py-2 px-4 border border-blue-500 text-blue-600 rounded-lg hover:bg-blue-50">
+                                Login
+                            </a>
+                            <a href="{{ url_for('auth.register') }}"
+                                class="text-center py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                                Register
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="fixed top-20 right-4 z-50">
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }} mb-2">
+            {{ message }}
+            <button type="button" class="close-alert">&times;</button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 {% if request.endpoint == 'main.index' %}pt-8 sm:pt-20{% else %}pt-20{% endif %} pb-12"
+          {% if request.endpoint == 'main.index' %}data-page="index"{% endif %}>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t">
+        <div class="container mx-auto py-12 px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-400 tracking-wider uppercase">AgentLocker.ai</h3>
+                    <ul class="mt-4 space-y-4">
+                        <li>
+                            <a href="{{ url_for('main.about') }}" class="text-base text-gray-500 hover:text-gray-900">
+                                About
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('main.blog') }}" class="text-base text-gray-500 hover:text-gray-900">
+                                Blog
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('main.partners') }}" class="text-base text-gray-500 hover:text-gray-900">
+                                Partners
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('landscape.landscape') }}" class="text-base text-gray-500 hover:text-gray-900">
+                                Ecosystem
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('main.contact') }}" class="text-base text-gray-500 hover:text-gray-900">
+                                Contact
+                            </a>
+                        </li>
+
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-400 tracking-wider uppercase">Advertise</h3>
+                    <ul class="mt-4 space-y-4">
+                        <li>
+                            <a href="{{ url_for('main.advertise') }}"
+                                class="text-base text-gray-500 hover:text-gray-900">Feature Your Listing</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-400 tracking-wider uppercase">AI AGENTS</h3>
+                    <ul class="mt-4 space-y-4">
+                        <li>
+                            <a href="{{ url_for('agent.list_all') }}"
+                                class="text-base text-gray-500 hover:text-gray-900">
+                                Search All AI Agents
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('main.categories') }}"
+                                class="text-base text-gray-500 hover:text-gray-900">
+                                AI Agent Categories
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('main.integrations') }}"
+                                class="text-base text-gray-500 hover:text-gray-900">
+                                AI Agent Integrations
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('main.use_cases') }}"
+                                class="text-base text-gray-500 hover:text-gray-900">
+                                AI Agent Use Cases
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('main.reviews') }}" class="text-base text-gray-500 hover:text-gray-900">
+                                AI Agent Reviews
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-400 tracking-wider uppercase">Social</h3>
+                    <div class="mt-4 grid grid-cols-2 gap-4">
+                        <!-- Left Column -->
+                        <ul class="space-y-4">
+                            <li>
+                                <a href="https://github.com/dcblack87/Agent-Locker" target="_blank"
+                                    rel="noopener noreferrer" class="text-base text-gray-500 hover:text-gray-900">
+                                    <i class="fab fa-github mr-2"></i> GitHub
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://x.com/AgentLocker" target="_blank" rel="noopener noreferrer"
+                                    class="text-base text-gray-500 hover:text-gray-900">
+                                    <i class="fab fa-twitter mr-2"></i> Twitter
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://www.youtube.com/@AgentLocker" target="_blank" rel="noopener noreferrer"
+                                    class="text-base text-gray-500 hover:text-gray-900">
+                                    <i class="fab fa-youtube mr-2"></i> YouTube
+                                </a>
+                            </li>
+                        </ul>
+                        <!-- Right Column -->
+                        <ul class="space-y-4">
+                            <li>
+                                <a href="https://www.facebook.com/people/Agent-Locker/61571591409204/" target="_blank" rel="noopener noreferrer"
+                                    class="text-base text-gray-500 hover:text-gray-900">
+                                    <i class="fab fa-facebook mr-2"></i> Facebook
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://www.reddit.com/r/AgentLocker/" target="_blank" rel="noopener noreferrer"
+                                    class="text-base text-gray-500 hover:text-gray-900">
+                                    <i class="fab fa-reddit mr-2"></i> Reddit
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://discord.gg/de9P3rynk6"
+                                   target="_blank"
+                                   rel="noopener noreferrer"
+                                   class="text-base text-gray-500 hover:text-gray-900">
+                                    <i class="fab fa-discord mr-2"></i> Discord
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 border-t border-gray-200 pt-8">
+                <p class="text-center text-base text-gray-400">
+                    &copy; {{ current_year }} Agent Locker - The World's Largest AI Agent Directory. All rights
+                    reserved.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+    <!-- Template-specific scripts -->
+    {% block scripts %}{% endblock %}
+
+    <!-- Existing mobile menu and auth scripts -->
+    <script>
+        document.getElementById('mobile-menu-button').addEventListener('click', function () {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
+    </script>
+    {% block extra_js %}{% endblock %}
+    <script>
+        document.querySelectorAll('[data-color]').forEach(el => {
+            el.style.setProperty('--integration-color', el.dataset.color);
+        });
+    </script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-EB2W47WVTX"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-EB2W47WVTX');
+    </script>
+
+    <script>
+
+
+        // Auth menu dropdown functionality
+        const authMenuButton = document.getElementById('auth-menu-button');
+        const authMenuDropdown = document.getElementById('auth-menu-dropdown');
+
+        if (authMenuButton && authMenuDropdown) {
+            authMenuButton.addEventListener('click', () => {
+                const isExpanded = authMenuButton.getAttribute('aria-expanded') === 'true';
+
+                // Toggle the dropdown
+                authMenuDropdown.classList.toggle('hidden');
+                authMenuButton.setAttribute('aria-expanded', !isExpanded);
+
+                // Add a subtle animation
+                if (!isExpanded) {
+                    authMenuDropdown.classList.add('opacity-0', 'translate-y-1');
+                    setTimeout(() => {
+                        authMenuDropdown.classList.remove('opacity-0', 'translate-y-1');
+                    }, 50);
+                }
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', (event) => {
+                if (!authMenuButton.contains(event.target) && !authMenuDropdown.contains(event.target)) {
+                    authMenuDropdown.classList.add('hidden');
+                    authMenuButton.setAttribute('aria-expanded', 'false');
+                }
+            });
+        }
+    </script>
+    <script>
+    function clearSearch(button) {
+        // Redirect to homepage
+        window.location.href = "{{ url_for('main.index') }}";
+    }
+
+    // Hide default clear button in search input
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInputs = document.querySelectorAll('input[type="search"]');
+        searchInputs.forEach(input => {
+            input.style.webkitAppearance = 'none';
+        });
+    });
+    </script>
+    <style>
+    /* Hide default browser clear button */
+    input[type="search"]::-webkit-search-cancel-button,
+    input[type="search"]::-webkit-search-decoration {
+        -webkit-appearance: none;
+        appearance: none;
+    }
+
+    /* Ensure proper spacing for both icons */
+    input[type="search"] {
+        padding-right: 4rem;
+    }
+    </style>
+</body>
+
+</html>

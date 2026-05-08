@@ -1,0 +1,265 @@
+{% extends "base.html" %}
+
+{% block title %}About - The World's Largest AI Agent Directory{% endblock %}
+
+{% block meta_description %}Discover the future of AI at AgentLocker - the world's largest AI agent directory. With {{ stats.total_agents }}+ AI agents, {{ stats.total_users }}+ active users, and {{ stats.total_categories }}+ categories, we're where innovation meets opportunity.{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="bg-gradient-to-b from-blue-600 to-blue-800 py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center">
+            <h1 class="text-4xl font-extrabold text-white sm:text-5xl md:text-6xl">
+                The World's Largest<br>AI Agent Directory
+            </h1>
+            <p class="mt-3 max-w-md mx-auto text-base text-blue-100 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
+                Empowering innovation through the most comprehensive AI agent ecosystem
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Main Content -->
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <!-- Key Metrics Grid -->
+    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-12">
+        <!-- Total Agents Card -->
+        <div class="bg-white overflow-hidden shadow-lg rounded-xl">
+            <div class="p-6">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="rounded-md bg-blue-500 p-3">
+                            <i class="fas fa-robot text-white text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-gray-500 truncate">
+                                Total AI Agents
+                            </dt>
+                            <dd class="flex items-baseline">
+                                <div class="text-2xl font-semibold text-gray-900">
+                                    {{ stats.total_agents }}
+                                </div>
+                                {% if monthly_growth_rate > 0 %}
+                                <div class="ml-2 flex items-baseline text-sm font-semibold text-green-600">
+                                    <i class="fas fa-arrow-up mr-1"></i>
+                                    {{ monthly_growth_rate }}%
+                                </div>
+                                {% endif %}
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reviews Card -->
+        <div class="bg-white overflow-hidden shadow-lg rounded-xl">
+            <div class="p-6">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="rounded-md bg-green-500 p-3">
+                            <i class="fas fa-star text-white text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-gray-500 truncate">
+                                Total Reviews
+                            </dt>
+                            <dd class="text-2xl font-semibold text-gray-900">{{ stats.total_reviews }}</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Average Rating Card -->
+        <div class="bg-white overflow-hidden shadow-lg rounded-xl">
+            <div class="p-6">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="rounded-md bg-yellow-500 p-3">
+                            <i class="fas fa-star-half-alt text-white text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-gray-500 truncate">
+                                Average Rating
+                            </dt>
+                            <dd class="text-2xl font-semibold text-gray-900">{{ avg_rating }}/5</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Categories Card -->
+        <div class="bg-white overflow-hidden shadow-lg rounded-xl">
+            <div class="p-6">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="rounded-md bg-purple-500 p-3">
+                            <i class="fas fa-th-large text-white text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-gray-500 truncate">
+                                Categories
+                            </dt>
+                            <dd class="text-2xl font-semibold text-gray-900">{{ stats.total_categories }}</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mission Statement -->
+    <div class="text-center max-w-3xl mx-auto mb-16">
+        <h2 class="text-3xl font-bold text-gray-900 mb-4">Our Mission</h2>
+        <p class="text-lg text-gray-600">
+            We're building the most comprehensive platform for discovering, comparing, and integrating AI agents. Our mission is to accelerate AI adoption by connecting innovators with the tools they need to build the future.
+        </p>
+    </div>
+
+    <!-- Charts Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+        <!-- Category Distribution -->
+        <div class="bg-white p-6 rounded-xl shadow-lg">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Category Distribution</h3>
+            <div class="h-64">
+                <canvas id="categoryChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Growth Trends -->
+        <div class="bg-white p-6 rounded-xl shadow-lg">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Monthly Growth</h3>
+            <div class="h-64">
+                <canvas id="growthChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+        <div class="text-center">
+            <div class="w-12 h-12 mx-auto mb-4 bg-blue-100 rounded-full flex items-center justify-center">
+                <i class="fas fa-search text-blue-600 text-xl"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-900 mb-2">Easy Discovery</h3>
+            <p class="text-gray-600">
+                Find the perfect AI agent for your needs with our powerful search and filtering system.
+            </p>
+        </div>
+        <div class="text-center">
+            <div class="w-12 h-12 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
+                <i class="fas fa-users text-green-600 text-xl"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-900 mb-2">Community-Driven</h3>
+            <p class="text-gray-600">
+                Benefit from real user reviews, ratings, and discussions that shape the AI landscape.
+            </p>
+        </div>
+        <div class="text-center">
+            <div class="w-12 h-12 mx-auto mb-4 bg-purple-100 rounded-full flex items-center justify-center">
+                <i class="fas fa-chart-line text-purple-600 text-xl"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-900 mb-2">Market Insights</h3>
+            <p class="text-gray-600">
+                Stay informed with trending agents, category analytics, and market growth data.
+            </p>
+        </div>
+    </div>
+
+    <!-- CTA Section -->
+    <div class="bg-gradient-to-r from-blue-600 to-blue-800 rounded-xl shadow-lg p-8 text-center">
+        <h2 class="text-3xl font-bold text-white mb-4">Join the AI Revolution</h2>
+        <p class="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
+            Whether you're building the next breakthrough AI agent or searching for the perfect AI solution, you're in the right place.
+        </p>
+        <div class="flex justify-center gap-4">
+            <a href="{{ url_for('auth.register') }}" class="inline-flex items-center px-6 py-3 border border-transparent text-lg font-medium rounded-md text-blue-700 bg-white hover:bg-blue-50">
+                Get Started
+            </a>
+            <a href="{{ url_for('agent.list_all') }}" class="inline-flex items-center px-6 py-3 border border-white text-lg font-medium rounded-md text-white hover:bg-blue-700">
+                Browse Directory
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Initialization -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Category Chart
+    new Chart(document.getElementById('categoryChart'), {
+        type: 'doughnut',
+        data: {
+            labels: {{ category_stats|map(attribute='name')|list|tojson }},
+            datasets: [{
+                data: {{ category_stats|map(attribute='count')|list|tojson }},
+                backgroundColor: [
+                    '#3B82F6',
+                    '#10B981',
+                    '#F59E0B',
+                    '#EF4444',
+                    '#8B5CF6',
+                    '#EC4899'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+
+    // Growth Chart
+    new Chart(document.getElementById('growthChart'), {
+        type: 'line',
+        data: {
+            labels: {{ monthly_growth|map(attribute='month')|list|tojson }},
+            datasets: [{
+                label: 'New Agents',
+                data: {{ monthly_growth|map(attribute='count')|list|tojson }},
+                borderColor: '#3B82F6',
+                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        drawBorder: false
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

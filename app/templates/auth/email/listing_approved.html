@@ -1,0 +1,62 @@
+<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+    <img src="{{ url_for('static', filename='img/agent locker logo.png', _external=True) }}" 
+         alt="Agent Locker Logo" 
+         style="display: block; margin: 0 auto; height: 60px;">
+    
+    <h2 style="color: #1F2937; text-align: center; margin-top: 30px;">
+        Your Listing Has Been Approved! 🎉
+    </h2>
+    
+    <p style="color: #4B5563; text-align: center; margin-top: 20px;">
+        Great news! Your listing for <strong>{{ agent.name }}</strong> has been approved and is now live on Agent Locker.
+    </p>
+    
+    <div style="text-align: center; margin-top: 30px;">
+        <a href="{{ url_for('agent.detail', slug=agent.slug, _external=True) }}"
+           style="background-color: #2563EB; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
+            View Your Listing
+        </a>
+    </div>
+
+    <!-- Special Offer Section -->
+    <div style="margin-top: 40px; padding: 20px; background: linear-gradient(to right, #4F46E5, #6366F1); border-radius: 8px; color: white;">
+        <h3 style="color: white; text-align: center; margin: 0 0 15px 0;">
+            🌟 Exclusive Launch Offer
+        </h3>
+        <p style="color: #E0E7FF; text-align: center; margin-bottom: 20px;">
+            Get 50% off featured listing placement for your first month!
+        </p>
+        <div style="background-color: rgba(255, 255, 255, 0.1); padding: 15px; border-radius: 6px; margin-bottom: 20px;">
+            <div style="text-align: center; margin-bottom: 10px;">
+                <span style="background-color: #FEF3C7; color: #92400E; padding: 4px 12px; border-radius: 9999px; font-size: 14px;">
+                    Use code: AGENT50
+                </span>
+            </div>
+            <ul style="color: #E0E7FF; margin: 15px 0; padding-left: 20px;">
+                <li style="margin-bottom: 8px;">✓ #1 Position in Category</li>
+                <li style="margin-bottom: 8px;">✓ Featured on Every Agent Page</li>
+                <li style="margin-bottom: 8px;">✓ Premium Visibility</li>
+                <li style="margin-bottom: 8px;">✓ Permanent DoFollow Backlink</li>
+            </ul>
+        </div>
+        <div style="text-align: center;">
+            <a href="{{ url_for('main.advertise', _external=True) }}"
+               style="background-color: white; color: #4F46E5; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block; font-weight: 500;">
+                Claim Your 50% Discount
+            </a>
+        </div>
+    </div>
+    
+    <div style="margin-top: 30px; padding: 20px; background-color: #F3F4F6; border-radius: 8px;">
+        <h3 style="color: #1F2937; margin-top: 0;">What's Next?</h3>
+        <ul style="color: #4B5563; margin: 0; padding-left: 20px;">
+            <li style="margin-bottom: 10px;">Share your listing on social media</li>
+            <li style="margin-bottom: 10px;">Keep your listing information up to date</li>
+            <li style="margin-bottom: 10px;">Consider featuring your listing for more visibility</li>
+        </ul>
+    </div>
+    
+    <p style="color: #6B7280; text-align: center; margin-top: 30px; font-size: 14px;">
+        If you have any questions or need support, feel free to contact us.
+    </p>
+</div> 

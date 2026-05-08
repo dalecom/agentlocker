@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block title %}Login - AI Agent Directory{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 flex flex-col pt-12 sm:pt-20">
+    <div class="sm:mx-auto sm:w-full sm:max-w-md">
+        <!-- Logo with Animation -->
+        <div class="flex justify-center">
+            <div class="relative w-20 h-20 flex-shrink-0">
+                <img src="{{ url_for('static', filename='img/agent locker icon transparent.png') }}"
+                    alt="Agent Locker Logo" class="w-full h-full object-contain animate-float">
+                <div class="absolute -inset-0.5 bg-blue-500/10 rounded-2xl blur-xl -z-10"></div>
+            </div>
+        </div>
+
+        <h2 class="mt-8 text-center text-3xl font-extrabold text-gray-900">
+            Sign in to your account
+        </h2>
+        <p class="mt-4 text-center text-sm text-gray-600">
+            Or
+            <a href="{{ url_for('auth.register') }}" class="font-medium text-blue-600 hover:text-blue-500">
+                create a new account
+            </a>
+        </p>
+    </div>
+
+    <div class="mt-12 sm:mx-auto sm:w-full sm:max-w-md">
+        <div class="bg-white py-10 px-4 shadow sm:rounded-lg sm:px-10">
+            <!-- Login Form -->
+            <form method="POST" class="space-y-6">
+                {{ form.hidden_tag() }}
+
+                <!-- Email Field -->
+                <div>
+                    {{ form.email.label(class="block text-sm font-medium text-gray-700") }}
+                    <div class="mt-1">
+                        {{ form.email(class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md
+                        shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500
+                        sm:text-sm", placeholder="you@example.com") }}
+                        {% if form.email.errors %}
+                        <div class="text-sm text-red-600 mt-1">{{ form.email.errors[0] }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Password Field -->
+                <div>
+                    {{ form.password.label(class="block text-sm font-medium text-gray-700") }}
+                    <div class="mt-1 relative">
+                        {{ form.password(class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md
+                        shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500
+                        sm:text-sm", placeholder="••••••••") }}
+                        <button type="button" onclick="togglePasswordVisibility('password')"
+                            class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                            <i class="fas fa-eye text-gray-400 hover:text-gray-600"></i>
+                        </button>
+                        {% if form.password.errors %}
+                        <div class="text-sm text-red-600 mt-1">{{ form.password.errors[0] }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div>
+                    {{ form.submit(class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md
+                    shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none
+                    focus:ring-2 focus:ring-offset-2 focus:ring-blue-500") }}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function togglePasswordVisibility(fieldId) {
+        const field = document.getElementById(fieldId);
+        const button = field.nextElementSibling;
+        const icon = button.querySelector('i');
+
+        if (field.type === 'password') {
+            field.type = 'text';
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        } else {
+            field.type = 'password';
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
+    }
+</script>
+
+
+<!-- Animation Styles -->
+<style>
+    @keyframes float {
+
+        0%,
+        100% {
+            transform: translateY(0);
+        }
+
+        50% {
+            transform: translateY(-10px);
+        }
+    }
+
+    .animate-float {
+        animation: float 3s ease-in-out infinite;
+        will-change: transform;
+    }
+</style>
+
+
+{% endblock %}
+
+<style>
+    @keyframes float {
+
+        0%,
+        100% {
+            transform: translateY(0);
+        }
+
+        50% {
+            transform: translateY(-10px);
+        }
+    }
+
+    .animate-float {
+        animation: float 3s ease-in-out infinite;
+    }
+</style>

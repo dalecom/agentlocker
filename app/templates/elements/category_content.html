@@ -1,0 +1,139 @@
+
+<div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-12">
+        <h1 class="text-4xl font-extrabold text-gray-900 sm:text-5xl">
+            AI {{category.name}} Agents
+        </h1>
+        <p class="mt-3 max-w-2xl mx-auto text-xl text-gray-500 sm:mt-4">
+            Complete directory of AI {{category.name}} agents, apps and tools.
+        </p>
+    </div>
+
+<!-- Category and Stats Banner -->
+<div class="rounded-xl p-6 mb-8 shadow-sm" 
+     style="background: linear-gradient(to right, {{ category.color }}10, {{ category.color }}20);">
+    <div class="flex flex-col space-y-4">
+        <!-- Top row with category and stats -->
+        <div class="flex items-center justify-between">
+            <!-- Left side - Category -->
+            <div class="flex items-center space-x-6">
+                <div class="w-12 h-12 rounded-lg flex items-center justify-center"
+                     style="background-color: {{ category.color }}">
+                    <i class="{{ category.icon }} text-xl text-white"></i>
+                </div>
+                <div>
+                    <div class="text-sm font-medium" style="color: {{ category.color }}">Current Category</div>
+                    <div class="text-xl font-semibold text-gray-900">{{ category.name }}</div>
+                </div>
+            </div>
+
+            <!-- Right side - Stats -->
+            <div class="flex items-center">
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-cube" style="color: {{ category.color }}"></i>
+                    <div>
+                        <div class="text-sm font-medium" style="color: {{ category.color }}">Total Agents</div>
+                        <div class="text-xl font-semibold text-gray-900">{{ agents|length }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Divider -->
+        <div class="border-t" style="border-color: {{ category.color }}25"></div>
+
+        <!-- Bottom row with category navigation -->
+        <div class="flex items-center space-x-4">
+            <div class="text-gray-600">Browse other categories:</div>
+            <div class="flex flex-wrap gap-2">
+                {% for cat in categories %}
+                {% if cat.id != category.id %}
+                <a href="{{ url_for('main.category_detail', slug=cat.slug) }}"
+                    class="inline-flex items-center px-3 py-1.5 rounded-md text-sm hover:bg-opacity-10"
+                    style="color: {{ cat.color }}; background-color: {{ cat.color }}15;">
+                    <i class="{{ cat.icon }} mr-2"></i>
+                    {{ cat.name }}
+                </a>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Filters and Sort Options -->
+<form id="filterForm" method="GET" action="{{ url_for('main.chatbots') }}" class="mb-8">
+    <div class="flex flex-wrap gap-4 justify-between items-center">
+        <div class="flex gap-4">
+            <select name="sort"
+                class="rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                onchange="this.form.submit()">
+                <option value="newest" {% if request.args.get('sort')=='newest' %}selected{% endif %}>Newest First
+                </option>
+                <option value="rating" {% if request.args.get('sort')=='rating' %}selected{% endif %}>Highest Rated
+                </option>
+                <option value="reviews" {% if request.args.get('sort')=='reviews' %}selected{% endif %}>Most Reviews
+                </option>
+            </select>
+        </div>
+
+        <div class="flex-1 max-w-sm">
+            <input type="text" name="search" value="{{ request.args.get('search', '') }}"
+                placeholder="Search chatbots..."
+                class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
+        </div>
+    </div>
+</form>
+
+<!-- Agents Grid -->
+<div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    {% if agents %}
+    {% for agent in agents %}
+    <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+        <div class="p-6">
+            {% if agent.logo_url %}
+            <img src="{{ agent.logo_url }}" alt="{{ agent.name }}" class="w-16 h-16 object-cover rounded-lg mb-4">
+            {% endif %}
+
+            <h3 class="text-lg font-semibold text-gray-900">
+                <a href="{{ url_for('agent.detail', slug=agent.slug) }}" class="hover:text-blue-600">
+                    {{ agent.name }}
+                </a>
+            </h3>
+
+            <p class="text-sm text-gray-600 mt-1">{{ agent.provider }}</p>
+
+            <p class="text-sm text-gray-500 mt-2">
+                {{ agent.short_description or agent.description[:150] + '...' }}
+            </p>
+
+            <div class="mt-4 flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    {% if agent.average_rating %}
+                    <div class="flex items-center">
+                        <span class="text-yellow-400">★</span>
+                        <span class="ml-1 text-sm text-gray-600">{{ "%.1f"|format(agent.average_rating) }}</span>
+                    </div>
+                    {% endif %}
+
+                    {% if agent.total_reviews %}
+                    <span class="text-sm text-gray-500">({{ agent.total_reviews }} reviews)</span>
+                    {% endif %}
+                </div>
+
+                {% if agent.is_verified %}
+                <span
+                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                    Verified
+                </span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% else %}
+    <div class="col-span-full text-center py-12 text-gray-500">
+        No chatbots found. Please try adjusting your search criteria.
+    </div>
+    {% endif %}
+</div>

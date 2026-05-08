@@ -1,0 +1,27 @@
+{% if current_user.is_authenticated %}
+<form hx-post="{{ url_for('agent.upvote', id=agent.id) }}"
+      hx-swap="outerHTML"
+      class="inline-block">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <button type="submit"
+            class="group relative inline-flex items-center px-4 py-2 border border-gray-300 
+                   {{ 'bg-purple-50 border-purple-200 text-purple-700' if agent.id in current_user.upvoted_agent_ids else 'bg-white text-gray-700 hover:bg-gray-50' }}
+                   text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
+        <span class="flex items-center">
+            <i class="fas fa-chevron-up mr-2 
+                      {{ 'text-purple-600' if agent.id in current_user.upvoted_agent_ids else 'text-gray-400 group-hover:text-gray-500' }}">
+            </i>
+            <span>{{ agent.upvote_count|default(0, true) }} upvotes</span>
+        </span>
+    </button>
+</form>
+{% else %}
+<a href="{{ url_for('auth.login') }}"
+   class="group relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-gray-400 
+          text-sm font-medium rounded-md cursor-pointer hover:bg-gray-50 transition-colors">
+    <span class="flex items-center">
+        <i class="fas fa-chevron-up mr-2 text-gray-400"></i>
+        <span>{{ agent.upvote_count|default(0, true) }} upvotes</span>
+    </span>
+</a>
+{% endif %}

@@ -1,0 +1,350 @@
+{% extends "base.html" %}
+
+{% block head %}
+{{ super() }}
+<script src="https://cdn.ckeditor.com/ckeditor5/41.1.0/classic/ckeditor.js"></script>
+<style>
+    .ck-editor__editable {
+        min-height: 300px !important;
+        border-radius: 0 0 0.375rem 0.375rem !important;
+    }
+    
+    .ck-toolbar {
+        border-radius: 0.375rem 0.375rem 0 0 !important;
+    }
+
+    /* Image styles */
+    .ck-content .image {
+        margin: 1em 0;
+        clear: both;
+    }
+    
+    .ck-content .image.image-style-side {
+        float: right;
+        margin-left: 1.5em;
+        max-width: 50%;
+    }
+    
+    .ck-content .image.image-style-inline {
+        display: inline-block;
+        margin: 0 0.5em;
+    }
+    
+    .ck-content .image.image-style-block {
+        display: block;
+        margin: 1em auto;
+    }
+    
+    .ck-content .image img {
+        display: block;
+        margin: 0 auto;
+        max-width: 100%;
+        min-width: 50px;
+    }
+    
+    .ck-content .image figcaption {
+        text-align: center;
+        color: #6b7280;
+        font-size: 0.875rem;
+        padding: 0.5em;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-3xl mx-auto">
+        <div class="flex justify-between items-center mb-8">
+            <h1 class="text-2xl font-bold text-gray-900">
+                {{ 'Edit Blog Post' if post else 'New Blog Post' }}
+            </h1>
+            <a href="{{ url_for('admin.blog_posts') }}" 
+               class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                <i class="fas fa-arrow-left mr-2"></i>
+                Back to Posts
+            </a>
+        </div>
+
+        <form method="POST" enctype="multipart/form-data" class="space-y-6">
+            {{ form.csrf_token }}
+            
+            <div class="bg-white shadow rounded-lg p-6 space-y-6">
+                <!-- Title -->
+                <div>
+                    <label for="title" class="block text-sm font-medium text-gray-700">Title</label>
+                    <div class="mt-1">
+                        {{ form.title(class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md") }}
+                    </div>
+                    {% if form.title.errors %}
+                    <p class="mt-2 text-sm text-red-600">{{ form.title.errors[0] }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Slug -->
+                <div>
+                    <label for="slug" class="block text-sm font-medium text-gray-700">Slug</label>
+                    <div class="mt-1">
+                        {{ form.slug(class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md") }}
+                    </div>
+                    {% if form.slug.errors %}
+                    <p class="mt-2 text-sm text-red-600">{{ form.slug.errors[0] }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Category -->
+                <div>
+                    <label for="category_id" class="block text-sm font-medium text-gray-700">Category</label>
+                    <div class="mt-1">
+                        {{ form.category_id(class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md") }}
+                    </div>
+                    {% if form.category_id.errors %}
+                    <p class="mt-2 text-sm text-red-600">{{ form.category_id.errors[0] }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Excerpt -->
+                <div>
+                    <label for="excerpt" class="block text-sm font-medium text-gray-700">Excerpt</label>
+                    <div class="mt-1">
+                        {{ form.excerpt(class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md", rows="3") }}
+                    </div>
+                    {% if form.excerpt.errors %}
+                    <p class="mt-2 text-sm text-red-600">{{ form.excerpt.errors[0] }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Content with CKEditor -->
+                <div>
+                    <label for="content" class="block text-sm font-medium text-gray-700">Content</label>
+                    <div class="mt-1">
+                        <textarea 
+                            id="content" 
+                            name="content" 
+                            class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md">{{ post.content if post else '' }}</textarea>
+                    </div>
+                    {% if form.content.errors %}
+                    <p class="mt-2 text-sm text-red-600">{{ form.content.errors[0] }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Featured Image -->
+                <div>
+                    <label for="featured_image" class="block text-sm font-medium text-gray-700">Featured Image</label>
+                    <div class="mt-1">
+                        {{ form.featured_image(class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md") }}
+                    </div>
+                    {% if form.featured_image.errors %}
+                    <p class="mt-2 text-sm text-red-600">{{ form.featured_image.errors[0] }}</p>
+                    {% endif %}
+                    {% if post and post.featured_image %}
+                    <div class="mt-2">
+                        <img src="{{ post.featured_image }}" alt="Current featured image" class="h-32 w-auto object-cover rounded">
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Status Options -->
+                <div class="flex items-center space-x-6">
+                    <!-- Published -->
+                    <div class="flex items-center">
+                        {{ form.published(class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded") }}
+                        <label for="published" class="ml-2 block text-sm text-gray-700">Published</label>
+                    </div>
+
+                    <!-- Featured -->
+                    <div class="flex items-center">
+                        {{ form.featured(class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded") }}
+                        <label for="featured" class="ml-2 block text-sm text-gray-700">Featured</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="flex justify-end space-x-4">
+                <a href="{{ url_for('admin.blog_posts') }}"
+                   class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    Cancel
+                </a>
+                <button type="submit"
+                        class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    {{ 'Update Post' if post else 'Create Post' }}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM loaded');
+    
+    // Auto-generate slug from title
+    document.getElementById('title').addEventListener('input', function(e) {
+        if (!document.getElementById('slug').value) {
+            document.getElementById('slug').value = e.target.value
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/(^-|-$)/g, '');
+        }
+    });
+
+    // Initialize CKEditor
+    let editor;
+    const contentElement = document.querySelector('#content');
+    
+    ClassicEditor
+    .create(contentElement, {
+        initialData: contentElement.value || ' ',
+        toolbar: {
+            items: [
+                'heading',
+                '|',
+                'bold',
+                'italic',
+                'link',
+                'bulletedList',
+                'numberedList',
+                '|',
+                'uploadImage',
+                'imageStyle:full',
+                'imageStyle:side',
+                'imageResize',
+                '|',
+                'outdent',
+                'indent',
+                '|',
+                'blockQuote',
+                'insertTable',
+                'undo',
+                'redo'
+            ]
+        },
+        image: {
+            toolbar: [
+                'imageStyle:inline',
+                'imageStyle:block',
+                'imageStyle:side',
+                '|',
+                'toggleImageCaption',
+                'imageTextAlternative',
+                '|',
+                'imageResize:25',
+                'imageResize:50',
+                'imageResize:75',
+                'imageResize:original'
+            ],
+            resizeOptions: [
+                {
+                    name: 'imageResize:original',
+                    value: null,
+                    icon: 'original'
+                },
+                {
+                    name: 'imageResize:25',
+                    value: '25',
+                    icon: 'small'
+                },
+                {
+                    name: 'imageResize:50',
+                    value: '50',
+                    icon: 'medium'
+                },
+                {
+                    name: 'imageResize:75',
+                    value: '75',
+                    icon: 'large'
+                }
+            ],
+            styles: {
+                options: [
+                    { name: 'inline', className: 'image-style-inline' },
+                    { name: 'block', className: 'image-style-block' },
+                    { name: 'side', className: 'image-style-side' }
+                ]
+            }
+        },
+        simpleUpload: {
+            uploadUrl: '/admin/upload/ckeditor',
+            withCredentials: true,
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            }
+        },
+        link: {
+            defaultProperties: {
+                class: 'text-blue-600 underline hover:text-blue-800'
+            }
+        },
+        language: 'en'
+    })
+        .then(newEditor => {
+            console.log('CKEditor initialized');
+            editor = newEditor;
+            
+            // Add upload adapter logging
+            editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
+                return {
+                    upload: () => {
+                        return loader.file.then(file => {
+                            const formData = new FormData();
+                            formData.append('upload', file);
+                            
+                            return fetch('/admin/upload/ckeditor', {
+                                method: 'POST',
+                                credentials: 'same-origin',
+                                headers: {
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                },
+                                body: formData
+                            })
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error('Network response was not ok');
+                                }
+                                return response.json();
+                            })
+                            .then(data => {
+                                if (data.error) {
+                                    throw new Error(data.error.message);
+                                }
+                                return {
+                                    default: data.url
+                                };
+                            });
+                        });
+                    },
+                    abort: () => {}
+                };
+            };
+            
+            // Handle form submission
+            const form = document.querySelector('form');
+            const submitButton = form.querySelector('button[type="submit"]');
+            
+            submitButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log('Submit button clicked');
+                
+                try {
+                    // Get the content from CKEditor
+                    const editorContent = editor.getData();
+                    console.log('Editor content length:', editorContent.length);
+                    
+                    // Update the form data
+                    contentElement.value = editorContent || ' '; // Ensure there's always some content
+                    console.log('Content updated:', contentElement.value.substring(0, 50));
+                    
+                    // Submit the form
+                    console.log('Submitting form...');
+                    form.submit();
+                } catch (error) {
+                    console.error('Error during form submission:', error);
+                }
+            });
+        })
+        .catch(error => {
+            console.error('Error initializing CKEditor:', error);
+        });
+});
+</script>
+{% endblock %}

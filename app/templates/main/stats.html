@@ -1,0 +1,390 @@
+{% extends "base.html" %}
+
+{% block title %}AI Directory Statistics & Analytics{% endblock %}
+
+{% block meta_description %}Comprehensive statistics about AI tools, frameworks, categories, and integration methods in our AI directory.{% endblock %}
+
+{% block meta_keywords %}AI statistics, AI tools metrics, AI frameworks analytics, integration methods, AI use cases{% endblock %}
+
+{% block content %}
+<div class="bg-gray-50 min-h-screen py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-gray-900 mb-4">AI Directory Analytics</h1>
+            <p class="text-lg text-gray-600">Comprehensive insights into our AI ecosystem</p>
+        </div>
+
+        <!-- Key Metrics Cards -->
+        <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 mb-12">
+            <!-- AI Agents Card -->
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-lg" style="background-color: rgb(239, 246, 255); border: 1px solid rgb(219, 234, 254)">
+                        <i class="fas fa-robot" style="color: rgb(59, 130, 246)"></i>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-sm font-medium text-gray-900">AI Agents</h3>
+                        <p class="text-2xl font-bold" style="color: rgb(59, 130, 246)">{{ stats.total_agents }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Tools Card -->
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-lg" style="background-color: rgb(245, 243, 255); border: 1px solid rgb(237, 233, 254)">
+                        <i class="fas fa-tools" style="color: rgb(139, 92, 246)"></i>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-sm font-medium text-gray-900">AI Tools</h3>
+                        <p class="text-2xl font-bold" style="color: rgb(139, 92, 246)">{{ stats.total_tools }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Platforms Card -->
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-lg" style="background-color: rgb(236, 253, 245); border: 1px solid rgb(209, 250, 229)">
+                        <i class="fas fa-microchip" style="color: rgb(16, 185, 129)"></i>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-sm font-medium text-gray-900">Platforms</h3>
+                        <p class="text-2xl font-bold" style="color: rgb(16, 185, 129)">{{ stats.total_platforms }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Categories Card -->
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-lg" style="background-color: rgb(255, 247, 237); border: 1px solid rgb(254, 235, 200)">
+                        <i class="fas fa-sitemap" style="color: rgb(245, 158, 11)"></i>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-sm font-medium text-gray-900">Categories</h3>
+                        <p class="text-2xl font-bold" style="color: rgb(245, 158, 11)">{{ stats.total_categories }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Use Cases Card -->
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-lg" style="background-color: rgb(254, 242, 242); border: 1px solid rgb(254, 226, 226)">
+                        <i class="fas fa-lightbulb" style="color: rgb(239, 68, 68)"></i>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-sm font-medium text-gray-900">Use Cases</h3>
+                        <p class="text-2xl font-bold" style="color: rgb(239, 68, 68)">{{ stats.total_use_cases }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Integrations Card -->
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-lg" style="background-color: rgb(238, 242, 255); border: 1px solid rgb(224, 231, 255)">
+                        <i class="fas fa-plug" style="color: rgb(99, 102, 241)"></i>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-sm font-medium text-gray-900">Integrations</h3>
+                        <p class="text-2xl font-bold" style="color: rgb(99, 102, 241)">{{ stats.total_integrations }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+            <!-- Top Categories Chart -->
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Top 10 Categories</h3>
+                <div style="height: 300px; position: relative;">
+                    <canvas id="categoriesChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Top Integrations Chart -->
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Top 10 Integrations</h3>
+                <div style="height: 300px; position: relative;">
+                    <canvas id="integrationsChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Top Use Cases Chart -->
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Top 10 Use Cases</h3>
+                <div style="height: 300px; position: relative;">
+                    <canvas id="useCasesChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Social Media Platforms Chart -->
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Social Media Platform Distribution</h3>
+                <div style="height: 300px; position: relative;">
+                    <canvas id="socialMediaChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Featured Agents -->
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-8">
+            <div class="text-center mb-8">
+                <h2 class="text-2xl font-bold text-gray-900 mb-2">Featured AI Agents</h2>
+                <p class="text-gray-600">Our hand-picked selection of exceptional AI agents</p>
+            </div>
+
+            <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+                {% for agent in featured_agents %}
+                <a href="{{ url_for('agent.detail', slug=agent.slug) }}" class="block group">
+                    <div class="relative bg-white rounded-xl border border-gray-100 shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+                        <!-- Featured Badge -->
+                        <div class="absolute -top-3 -right-3 z-10">
+                            <div class="bg-purple-500 rounded-full p-2 shadow-lg">
+                                <i class="fas fa-star text-white"></i>
+                            </div>
+                        </div>
+
+                        <!-- Card Content -->
+                        <div class="p-6">
+                            <!-- Logo and Title -->
+                            <div class="flex items-center space-x-4">
+                                <div class="flex-shrink-0">
+                                    <img class="h-16 w-16 rounded-xl object-cover bg-white p-2 shadow-md" 
+                                         src="{{ agent.logo_url or url_for('static', filename='img/default-agent.png') }}" 
+                                         alt="{{ agent.name }}">
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">{{ agent.name }}</h3>
+                                    <p class="text-sm text-gray-500">{{ agent.provider }}</p>
+                                </div>
+                            </div>
+
+                            <!-- Description -->
+                            <p class="mt-3 text-gray-600 line-clamp-2">{{ agent.short_description }}</p>
+
+                            <!-- Categories -->
+                            <div class="mt-4 flex flex-wrap gap-2">
+                                {% for category in agent.categories[:3] %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                                      style="color: {{ category.color }}; background-color: {{ category.color }}10; border: 1px solid {{ category.color }}20">
+                                    {{ category.name }}
+                                </span>
+                                {% endfor %}
+                            </div>
+
+                            <!-- Stats -->
+                            <div class="mt-4 flex items-center justify-between text-sm text-gray-500">
+                                <div class="flex items-center">
+                                    <div class="flex items-center">
+                                        {% for i in range(5) %}
+                                        <i class="fas fa-star {% if agent.average_rating and i < agent.average_rating|int %}text-yellow-400{% else %}text-gray-200{% endif %} text-xs"></i>
+                                        {% endfor %}
+                                    </div>
+                                    <p class="ml-2 text-sm text-gray-500">({{ agent.average_rating|round(1) }})</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Rankings Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Top Rated Agents -->
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Top Rated Agents</h3>
+                <div class="space-y-4">
+                    {% for agent, avg_rating, review_count in top_rated %}
+                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                        <div class="flex items-center">
+                            <img src="{{ agent.logo_url or url_for('static', filename='img/default-agent.png') }}"
+                                 alt="{{ agent.name }}" 
+                                 class="w-12 h-12 rounded-lg object-cover">
+                            <div class="ml-4">
+                                <a href="{{ url_for('agent.detail', slug=agent.slug) }}" 
+                                   class="text-lg font-medium text-gray-900 hover:text-blue-600">
+                                    {{ agent.name }}
+                                </a>
+                                <div class="flex items-center mt-1">
+                                    <div class="flex items-center">
+                                        {% for i in range(5) %}
+                                        <i class="fas fa-star {% if i < avg_rating|int %}text-yellow-400{% else %}text-gray-300{% endif %}"></i>
+                                        {% endfor %}
+                                    </div>
+                                    <span class="ml-2 text-sm text-gray-600">({{ review_count }} reviews)</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-center text-2xl font-bold">
+                            <span class="text-blue-600">{{ "%.1f"|format(avg_rating) }}</span>
+                            <i class="fas fa-star text-yellow-400 ml-1"></i>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Most Reviewed Agents -->
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Most Reviewed Agents</h3>
+                <div class="space-y-4">
+                    {% for agent, review_count in most_reviewed %}
+                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                        <div class="flex items-center">
+                            <img src="{{ agent.logo_url or url_for('static', filename='img/default-agent.png') }}"
+                                 alt="{{ agent.name }}" 
+                                 class="w-12 h-12 rounded-lg object-cover">
+                            <div class="ml-4">
+                                <a href="{{ url_for('agent.detail', slug=agent.slug) }}"
+                                   class="text-lg font-medium text-gray-900 hover:text-blue-600">
+                                    {{ agent.name }}
+                                </a>
+                                <p class="text-sm text-gray-600 mt-1">
+                                    {{ agent.short_description[:100] }}...
+                                </p>
+                            </div>
+                        </div>
+                        <div class="text-2xl font-bold text-purple-600">
+                            {{ review_count }}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Most Viewed Agents -->
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Most Viewed Agents</h3>
+                <div class="space-y-4">
+                    {% for agent, view_count in most_viewed %}
+                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                        <div class="flex items-center">
+                            <img src="{{ agent.logo_url or url_for('static', filename='img/default-agent.png') }}"
+                                 alt="{{ agent.name }}" 
+                                 class="w-12 h-12 rounded-lg object-cover">
+                            <div class="ml-4">
+                                <a href="{{ url_for('agent.detail', slug=agent.slug) }}"
+                                   class="text-lg font-medium text-gray-900 hover:text-blue-600">
+                                    {{ agent.name }}
+                                </a>
+                                <p class="text-sm text-gray-600 mt-1">
+                                    {{ agent.short_description[:100] }}...
+                                </p>
+                            </div>
+                        </div>
+                        <div class="text-2xl font-bold text-green-600">
+                            {{ view_count }}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Common chart options for bar charts
+    const barChartOptions = {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+            legend: { display: false }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: { precision: 0 }
+            }
+        }
+    };
+
+    // Categories Chart
+    const categoriesCtx = document.getElementById('categoriesChart').getContext('2d');
+    const categoriesData = {{ top_categories|tojson }};
+    
+    new Chart(categoriesCtx, {
+        type: 'bar',
+        data: {
+            labels: categoriesData.map(item => item.name),
+            datasets: [{
+                data: categoriesData.map(item => item.count),
+                backgroundColor: categoriesData.map(item => item.color || '#3B82F6'),
+                borderRadius: 6
+            }]
+        },
+        options: barChartOptions
+    });
+
+    // Integrations Chart
+    const integrationsCtx = document.getElementById('integrationsChart').getContext('2d');
+    const integrationsData = {{ top_integrations|tojson }};
+    
+    new Chart(integrationsCtx, {
+        type: 'bar',
+        data: {
+            labels: integrationsData.map(item => item.name),
+            datasets: [{
+                data: integrationsData.map(item => item.count),
+                backgroundColor: integrationsData.map(item => item.color || '#8B5CF6'),
+                borderRadius: 6
+            }]
+        },
+        options: barChartOptions
+    });
+
+    // Use Cases Chart
+    const useCasesCtx = document.getElementById('useCasesChart').getContext('2d');
+    const useCasesData = {{ top_use_cases|tojson }};
+    
+    new Chart(useCasesCtx, {
+        type: 'bar',
+        data: {
+            labels: useCasesData.map(item => item.name),
+            datasets: [{
+                data: useCasesData.map(item => item.count),
+                backgroundColor: useCasesData.map(item => item.color || '#10B981'),
+                borderRadius: 6
+            }]
+        },
+        options: barChartOptions
+    });
+
+    // Social Media Chart
+    const socialMediaCtx = document.getElementById('socialMediaChart').getContext('2d');
+    const socialMediaData = {{ social_media_stats|tojson }};
+    
+    const socialMediaColors = {
+        'Facebook': '#1877F2',
+        'Twitter': '#1DA1F2',
+        'GitHub': '#171515',
+        'Discord': '#5865F2',
+        'LinkedIn': '#0A66C2'
+    };
+    
+    new Chart(socialMediaCtx, {
+        type: 'bar',
+        data: {
+            labels: socialMediaData.map(item => item.platform),
+            datasets: [{
+                data: socialMediaData.map(item => item.count),
+                backgroundColor: socialMediaData.map(item => socialMediaColors[item.platform] || '#6B7280'),
+                borderRadius: 6
+            }]
+        },
+        options: barChartOptions
+    });
+});
+</script>
+{% endblock %}

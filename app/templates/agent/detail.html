@@ -1,0 +1,1601 @@
+{% extends "base.html" %}
+
+{% block title %}{{ agent.name }} - AI for {{ agent.use_cases|map(attribute='name')|join(', ') }}{% endblock %}
+
+{% block meta_description %}{{ agent.name }} is an AI agent for {{ agent.use_cases|map(attribute='name')|join(', ') }} -
+{{ agent.short_description|truncate(160) }}{% endblock %}
+
+{% block meta_keywords %}{{ agent.name }}, {{ agent.categories|join(', ') }}, {{ agent.use_cases|join(', ') }}, AI
+agent{% endblock %}
+
+{% block og_type %}website{% endblock %}
+
+{% block og_image %}
+{%- if agent.logo_url -%}
+{%- if 'http' in agent.logo_url -%}
+{{ agent.logo_url }}
+{%- else -%}
+{{ request.host_url.rstrip('/') }}{{ agent.logo_url }}
+{%- endif -%}
+{%- else -%}
+{{ url_for('static', filename='img/agent locker logo.png', _external=True) }}
+{%- endif -%}
+{% endblock %}
+
+{% block meta %}
+{{ super() }}
+{% if agent.logo_url %}
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="1200">
+<meta property="og:image:type" content="image/png">
+{% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Disable text selection */
+    body {
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+
+    /* Allow selection for specific elements like code blocks if needed */
+    .selectable {
+        -webkit-user-select: text;
+        -moz-user-select: text;
+        -ms-user-select: text;
+        user-select: text;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Agent Header -->
+<div class="bg-blue rounded-xl shadow-lg mb-8">
+    <div class="relative">
+        <!-- Background Pattern -->
+        <div class="absolute inset-0 bg-gradient-to-r from-blue-600 to-blue-800 rounded-xl"></div>
+
+        <!-- Mobile Header (sm and below) -->
+        <div class="sm:hidden relative">
+            <!-- Background Pattern -->
+            <div class="absolute inset-0 bg-gradient-to-r from-blue-600 to-blue-800 rounded-xl"></div>
+
+            {% if agent.website %}
+            <a href="{{ agent.website }}" target="_blank" rel="noopener noreferrer nofollow"
+                class="absolute top-4 right-4 text-white hover:opacity-80 transition-opacity z-10">
+                <i class="fas fa-external-link-alt"></i>
+            </a>
+            {% endif %}
+
+            <div class="relative px-4 pt-6 pb-6">
+                <div class="flex items-center mb-4">
+                    <!-- Agent Logo -->
+                    <div class="relative">
+                        <img src="{{ agent.logo_url or url_for('static', filename='img/default-agent.png') }}"
+                            alt="{{ agent.name }}"
+                            class="w-24 h-24 rounded-xl shadow-lg object-contain bg-gradient-to-br from-gray-50 to-white">
+
+
+                        <div class="absolute -bottom-2 -right-2 flex space-x-1">
+                            {% if agent.is_open_source %}
+                            <div class="bg-green-500 rounded-lg p-1.5 shadow-lg" title="Open Source Project">
+                                <i class="fab fa-osi text-white text-xs"></i>
+                            </div>
+                            {% endif %}
+                            {% if agent.is_featured %}
+                            <div class="bg-purple-500 rounded-lg p-1.5 shadow-lg" title="Featured Agent">
+                                <i class="fas fa-star text-white text-xs"></i>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Mobile Title -->
+                    <div class="ml-4 flex-1">
+                        <div class="flex items-center justify-between">
+                            <a href="{{ agent.website }}" target="_blank" rel="noopener noreferrer nofollow"
+                                class="hover:opacity-90 transition-opacity">
+                                <h1 class="text-xl font-bold text-white leading-tight mb-1 sm:hidden">
+                                    {{ agent.name }}
+                                </h1>
+                            </a>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="star-rating text-sm mr-2">
+                                {% for i in range(5) %}
+                                {% if agent.average_rating and i < agent.average_rating|int %} <i
+                                    class="fas fa-star text-yellow-400"></i>
+                                    {% else %}
+                                    <i class="far fa-star text-blue-200"></i>
+                                    {% endif %}
+                                    {% endfor %}
+                            </div>
+                            <span class="text-white text-sm">
+                                {{ "%.1f"|format(agent.average_rating or 0) }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mobile Description -->
+                <p class="text-blue-100 text-sm mb-2">
+                    {{ agent.short_description }}
+                </p>
+
+
+            </div>
+        </div>
+
+        <!-- Desktop Header (hidden on mobile) -->
+        <div class="hidden sm:block relative px-8 pt-8 pb-8">
+            <a href="{{ agent.website }}" target="_blank" rel="noopener noreferrer nofollow"
+                class="absolute top-4 right-4 text-white hover:opacity-80 transition-opacity">
+                <i class="fas fa-external-link-alt"></i>
+            </a>
+
+            <div class="flex items-start space-x-6">
+                <!-- Agent Logo -->
+                <div class="flex-shrink-0">
+                    <div class="relative inline-block">
+                        <img src="{{ agent.logo_url or url_for('static', filename='img/default-agent.png') }}"
+                            alt="{{ agent.name }}"
+                            class="w-32 h-32 rounded-2xl shadow-xl object-contain transform transition-transform hover:scale-105 bg-gradient-to-br from-gray-50 to-white">
+
+                        <!-- Desktop Badges -->
+                        <div class="absolute -bottom-3 left-0 right-0 flex justify-center space-x-2">
+                            {% if agent.is_open_source %}
+                            <div class="bg-green-500 rounded-lg px-3 py-1 shadow-lg" title="Open Source Project">
+                                <i class="fab fa-osi text-white text-sm"></i>
+                            </div>
+                            {% endif %}
+                            {% if agent.is_featured %}
+                            <div class="bg-purple-500 rounded-lg px-3 py-1 shadow-lg" title="Featured Agent">
+                                <i class="fas fa-star text-white text-sm"></i>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Agent Info -->
+                <div class="flex-1">
+                    <div class="flex flex-col">
+                        <div class="flex items-center">
+                            <a href="{{ agent.website }}" target="_blank" rel="noopener noreferrer nofollow"
+                                class="hover:opacity-90 transition-opacity">
+                                <h1 class="text-4xl font-bold text-white mb-2 leading-tight flex items-center hidden sm:block">
+                                    {{ agent.name }}
+                                </h1>
+                            </a>
+                        </div>
+                        <p class="text-blue-100 text-xl mb-4 max-w-2xl">
+                            {{ agent.short_description }}
+                        </p>
+
+                        <!-- Rating and Reviews -->
+                        <div class="flex items-center space-x-4">
+                            <div class="flex items-center">
+                                <div class="star-rating mr-2">
+                                    {% for i in range(5) %}
+                                    {% if agent.average_rating and i < agent.average_rating|int %} <i
+                                        class="fas fa-star text-yellow-400"></i>
+                                        {% else %}
+                                        <i class="far fa-star text-gray-300"></i>
+                                        {% endif %}
+                                        {% endfor %}
+                                </div>
+                                <span class="text-white font-medium">
+                                    {{ "%.1f"|format(agent.average_rating or 0) }}
+                                </span>
+                            </div>
+
+                            <div class="text-blue-100">
+                                <span class="font-medium">{{ agent.total_reviews }}</span> reviews
+                            </div>
+
+                            {% if agent.monthly_users %}
+                            <div class="text-blue-100">
+                                <i class="fas fa-users text-blue-200 mr-1"></i>
+                                <span class="font-medium">{{ "{:,}".format(agent.monthly_users) }}</span> monthly users
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Content Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
+    <!-- Left Column (2/3) -->
+    <div class="lg:col-span-2 space-y-8">
+        <!-- Screenshot Card -->
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+            <div class="flex justify-center">
+                {% if agent.screenshot %}
+                <img src="{{ url_for('static', filename='uploads/' + agent.screenshot) }}"
+                    alt="Screenshot of {{ agent.name }}" class="w-full h-full object-cover">
+                {% else %}
+                <p class="text-gray-500">No screenshot available</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Overview -->
+        <div class="bg-white rounded-xl shadow-lg p-4 sm:p-8">
+            <h2 class="text-2xl font-bold mb-6">About {{ agent.name }}</h2>
+            <div class="text-gray-600">
+                {{ agent.description|safe }}
+            </div>
+        </div>
+
+        <!-- Mobile-only version of the right column info panel -->
+        <div class="lg:hidden">
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                <!-- Header Section -->
+                <div class="bg-gradient-to-r from-gray-50 to-gray-100 px-6 py-4 border-b border-gray-200">
+                    <div class="flex items-center justify-between">
+                        <!-- Agent Type Badge -->
+                        {% if agent.agent_type == 'agentic' %}
+                        <h2 class="text-lg font-semibold flex items-center">
+                            <i class="fas fa-brain text-indigo-600 mr-2"></i>
+                            <span>Agentic</span>
+                            <div class="ml-2 w-4 h-4 rounded-full bg-green-100 flex items-center justify-center">
+                                <i class="fas fa-check text-green-500 text-xs"></i>
+                            </div>
+                        </h2>
+                        {% elif agent.agent_type == 'platform' %}
+                        <h2 class="text-lg font-semibold">
+                            <i class="fas fa-layer-group text-blue-600 mr-2"></i>Agent Platform
+                        </h2>
+                        {% else %}
+                        <h2 class="text-lg font-semibold">
+                            <i class="fas fa-tools text-blue-600 mr-2"></i>AI Tool
+                        </h2>
+                        {% endif %}
+                        <!-- Upvotes -->
+                        <div class="flex items-center">
+                            {% include 'agent/_upvote_button.html' %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-6 space-y-6">
+                    <!-- Collection Button -->
+                    <div class="flex items-center justify-between">
+                        {% if current_user.is_authenticated %}
+                        <button onclick="toggleFavorite({{ agent.id }})"
+                            class="w-full flex items-center justify-center px-4 py-2.5 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all group"
+                            id="favorite-btn-mobile">
+                            <i
+                                class="fas fa-box text-lg mr-2 {% if agent in current_user.favorite_agents %}text-yellow-400{% else %}text-yellow-400 group-hover:text-yellow-500{% endif %}"></i>
+                            <span
+                                class="text-sm font-medium {% if agent in current_user.favorite_agents %}text-gray-800{% else %}text-gray-600 group-hover:text-blue-600{% endif %}">
+                                {% if agent in current_user.favorite_agents %}
+                                In the Locker
+                                {% else %}
+                                Add to Locker
+                                {% endif %}
+                            </span>
+                        </button>
+                        {% else %}
+                        <a href="{{ url_for('auth.login') }}"
+                            class="w-full flex items-center justify-center px-4 py-2.5 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all group">
+                            <i class="fas fa-box text-lg mr-2 text-yellow-400 group-hover:text-yellow-500"></i>
+                            <span class="text-sm font-medium text-gray-600 group-hover:text-blue-600">Add to
+                                Locker</span>
+                        </a>
+                        {% endif %}
+                    </div>
+
+                    <!-- Website Section -->
+                    {% if agent.website %}
+                    <div>
+                        <a href="{{ agent.website }}" target="_blank" rel="noopener noreferrer nofollow"
+                            class="w-full flex items-center justify-center px-4 py-2.5 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all group">
+                            <div class="flex items-center">
+                                <i class="fas fa-globe text-lg mr-2 text-blue-500 group-hover:text-blue-600"></i>
+                                <span class="text-sm font-medium text-gray-600 group-hover:text-blue-600">Visit
+                                    Website</span>
+                            </div>
+                        </a>
+                    </div>
+                    {% endif %}
+
+                    <!-- Open Source Section -->
+                    {% if agent.is_open_source and agent.source_repository %}
+                    <div>
+                        <a href="{{ agent.source_repository }}" target="_blank" rel="noopener noreferrer nofollow"
+                            class="w-full flex items-center justify-center px-4 py-2.5 border border-gray-200 rounded-lg hover:border-green-500 hover:bg-green-50 transition-all group">
+                            <div class="flex items-center">
+                                <i class="fab fa-osi text-lg mr-2 text-green-500 group-hover:text-green-600"></i>
+                                <span class="text-sm font-medium text-gray-600 group-hover:text-green-600">View Source
+                                    Code</span>
+                            </div>
+                        </a>
+                    </div>
+                    {% endif %}
+
+                    <!-- Documentation Section -->
+                    {% if agent.documentation_url %}
+                    <div>
+                        <a href="{{ agent.documentation_url }}" target="_blank" rel="noopener noreferrer nofollow"
+                            class="w-full flex items-center justify-center px-4 py-2.5 border border-gray-200 rounded-lg hover:border-purple-500 hover:bg-purple-50 transition-all group">
+                            <div class="flex items-center">
+                                <i class="fas fa-book text-lg mr-2 text-purple-500 group-hover:text-purple-600"></i>
+                                <span class="text-sm font-medium text-gray-600 group-hover:text-purple-600">View
+                                    Documentation</span>
+                            </div>
+                        </a>
+                    </div>
+                    {% endif %}
+
+                    <!-- API Section -->
+                    {% if agent.api_endpoint %}
+                    <div>
+                        <button onclick="showModal('apiModal')"
+                            class="w-full flex items-center justify-center px-4 py-2.5 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all group">
+                            <div class="flex items-center">
+                                <i class="fas fa-code text-lg mr-2 text-blue-500 group-hover:text-blue-600"></i>
+                                <span class="text-sm font-medium text-gray-600 group-hover:text-blue-600">View API
+                                    Details</span>
+                            </div>
+                        </button>
+                    </div>
+                    {% endif %}
+
+                    <!-- Info List -->
+                    <div class="space-y-4">
+                        <div class="flex justify-between">
+                            <!-- Developer Info -->
+                            <div class="flex items-center p-3 rounded-lg flex-1">
+                                <div
+                                    class="w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-code text-purple-500"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <div class="text-sm font-medium text-gray-900">Developer</div>
+                                    <div class="text-sm text-gray-500">{{ agent.provider }}</div>
+                                </div>
+                            </div>
+
+                            <!-- Added Date -->
+                            <div class="flex items-center p-3 rounded-lg flex-1">
+                                <div
+                                    class="w-10 h-10 rounded-lg bg-green-50 flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-calendar-alt text-green-500"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <div class="text-sm font-medium text-gray-900">Added</div>
+                                    <div class="text-sm text-gray-500">{{ agent.created_at | timeago }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Social Links -->
+                    {% if agent.github_url or agent.twitter_url or agent.facebook_url or agent.discord_url or
+                    agent.linkedin_url %}
+                    <div>
+                        <div class="flex items-center justify-center space-x-6">
+                            {% if agent.github_url %}
+                            <a href="{{ agent.github_url }}" target="_blank" rel="noopener noreferrer nofollow"
+                                class="hover:opacity-80 transition-opacity">
+                                <i class="fab fa-github text-xl" style="color: #333"></i>
+                            </a>
+                            {% endif %}
+
+                            {% if agent.twitter_url %}
+                            <a href="{{ agent.twitter_url }}" target="_blank" rel="noopener noreferrer nofollow"
+                                class="hover:opacity-80 transition-opacity">
+                                <i class="fab fa-twitter text-xl" style="color: #1DA1F2"></i>
+                            </a>
+                            {% endif %}
+
+                            {% if agent.facebook_url %}
+                            <a href="{{ agent.facebook_url }}" target="_blank" rel="noopener noreferrer nofollow"
+                                class="hover:opacity-80 transition-opacity">
+                                <i class="fab fa-facebook text-xl" style="color: #4267B2"></i>
+                            </a>
+                            {% endif %}
+
+                            {% if agent.discord_url %}
+                            <a href="{{ agent.discord_url }}" target="_blank" rel="noopener noreferrer nofollow"
+                                class="hover:opacity-80 transition-opacity">
+                                <i class="fab fa-discord text-xl" style="color: #5865F2"></i>
+                            </a>
+                            {% endif %}
+
+                            {% if agent.linkedin_url %}
+                            <a href="{{ agent.linkedin_url }}" target="_blank" rel="noopener noreferrer nofollow"
+                                class="hover:opacity-80 transition-opacity">
+                                <i class="fab fa-linkedin text-xl" style="color: #0A66C2"></i>
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Analytics Section -->
+                    <div class="pt-6 border-t border-gray-200">
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Analytics</h3>
+                        <div class="grid grid-cols-3 gap-4">
+                            <!-- Impressions -->
+                            <div class="bg-blue-50 rounded-lg p-3 text-center relative">
+                                <div class="absolute top-2 right-2">
+                                    <button onclick="showMetricInfo('impressions')"
+                                        class="text-blue-400 hover:text-blue-600">
+                                        <i class="fas fa-info-circle"></i>
+                                    </button>
+                                </div>
+                                <div class="text-base lg:text-lg font-bold text-blue-600 mb-1">
+                                    {{ agent.impression_count|default(0)|format_number }}
+                                </div>
+                                <div class="text-xs text-gray-600">
+                                    Impressions
+                                </div>
+                            </div>
+
+                            <!-- Views -->
+                            <div class="bg-green-50 rounded-lg p-3 text-center relative">
+                                <div class="absolute top-2 right-2">
+                                    <button onclick="showMetricInfo('views')"
+                                        class="text-green-400 hover:text-green-600">
+                                        <i class="fas fa-info-circle"></i>
+                                    </button>
+                                </div>
+                                <div class="text-base lg:text-lg font-bold text-green-600 mb-1">
+                                    {{ agent.view_count|default(0)|format_number }}
+                                </div>
+                                <div class="text-xs text-gray-600">
+                                    Views
+                                </div>
+                            </div>
+
+                            <!-- Clicks -->
+                            <div class="bg-purple-50 rounded-lg p-3 text-center relative">
+                                <div class="absolute top-2 right-2">
+                                    <button onclick="showMetricInfo('clicks')"
+                                        class="text-purple-400 hover:text-purple-600">
+                                        <i class="fas fa-info-circle"></i>
+                                    </button>
+                                </div>
+                                <div class="text-base lg:text-lg font-bold text-purple-600 mb-1">
+                                    {{ agent.click_count|default(0)|format_number }}
+                                </div>
+                                <div class="text-xs text-gray-600">
+                                    Clicks
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Edit/Claim Link -->
+                    {% if current_user.is_authenticated and (current_user.is_admin or agent.user_id == current_user.id)
+                    %}
+                    <div>
+                        <a href="{{ url_for('agent.edit', agent_id=agent.id, slug=agent.slug) }}"
+                            class="flex items-center justify-center px-4 py-2 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all group">
+                            <i class="fas fa-edit mr-2 text-gray-400 group-hover:text-blue-500"></i>
+                            <span class="text-sm font-medium text-gray-600 group-hover:text-blue-600">Edit Agent</span>
+                        </a>
+                    </div>
+                    {% else %}
+                    <div>
+                        <a href="{{ url_for('main.contact', subject='Claim Listing: ' + agent.name) }}"
+                            class="flex items-center justify-center px-4 py-2 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all group">
+                            <i class="fas fa-flag mr-2 text-gray-400 group-hover:text-blue-500"></i>
+                            <span class="text-sm font-medium text-gray-600 group-hover:text-blue-600">Claim
+                                Listing</span>
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Categories -->
+        <div class="bg-white rounded-xl shadow-lg p-4 sm:p-8">
+            <!-- Categories Section Title -->
+            {% if agent.agent_type == 'agentic' %}
+            <h2 class="text-xl sm:text-2xl font-bold mb-6">AI Agent Categories</h2>
+            {% elif agent.agent_type == 'platform' %}
+            <h2 class="text-xl sm:text-2xl font-bold mb-6">Platform Categories</h2>
+            {% else %}
+            <h2 class="text-xl sm:text-2xl font-bold mb-6">AI Tool Categories</h2>
+            {% endif %}
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                {% for category in agent.categories %}
+                <div class="flex items-start">
+                    <div class="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center"
+                        style="background-color: {{ category.color }}20">
+                        <i class="{{ category.icon }} text-lg" style="color: {{ category.color }}"></i>
+                    </div>
+                    <div class="ml-4">
+                        <a href="{{ url_for('main.category_detail', slug=category.slug) }}"
+                            class="font-semibold text-gray-900 hover:text-blue-600">
+                            {{ category.name }}
+                        </a>
+                        {% if category.description %}
+                        <p class="text-sm text-gray-600">{{ category.description }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+
+
+        <!-- Features/Capabilities -->
+        <div class="bg-white rounded-xl shadow-lg p-4 sm:p-8">
+            {% if agent.agent_type == 'agentic' %}
+            <h2 class="text-xl sm:text-2xl font-bold mb-6">
+                Agent Use Cases
+            </h2>
+            {% elif agent.agent_type == 'platform' %}
+            <h2 class="text-xl sm:text-2xl font-bold mb-6">
+                Platform Use Cases
+            </h2>
+            {% else %}
+            <h2 class="text-xl sm:text-2xl font-bold mb-6">
+                AI Tool Use Cases
+            </h2>
+            {% endif %}
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                {% for use_case in agent.use_cases %}
+                <a href="{{ url_for('main.use_case_detail', slug=use_case.slug) }}"
+                    class="flex items-start group hover:bg-gray-50 p-3 rounded-lg transition-colors">
+                    <div class="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center"
+                        style="background-color: {{ use_case.color }}20">
+                        <i class="{{ use_case.icon }} text-lg" style="color: {{ use_case.color }}"></i>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">{{
+                            use_case.name }}</h3>
+                        {% if use_case.description %}
+                        <p class="text-sm text-gray-600">{{ use_case.description }}</p>
+                        {% endif %}
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+
+
+
+        <!-- Reviews -->
+        <div class="bg-white rounded-xl shadow-lg p-4 sm:p-8">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold">Reviews</h2>
+                {% if current_user.is_authenticated %}
+                <button onclick="showModal('review-modal')" class="btn-primary">
+                    Write a Review
+                </button>
+                {% endif %}
+            </div>
+
+            <!-- Review Stats -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-8">
+                <div class="flex items-center space-x-4">
+                    <div class="text-5xl font-bold text-gray-900">
+                        {{ "%.1f"|format(agent.average_rating) }}
+                    </div>
+                    <div>
+                        <div class="star-rating mb-1">
+                            {% for i in range(5) %}
+                            {% if i < agent.average_rating|int %} <i class="fas fa-star text-yellow-400"></i>
+                                {% else %}
+                                <i class="far fa-star text-gray-300"></i>
+                                {% endif %}
+                                {% endfor %}
+                        </div>
+                        <div class="text-gray-600">
+                            Based on {{ agent.total_reviews }} reviews
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    {% for i in range(5, 0, -1) %}
+                    {% set percentage = (reviews|selectattr('rating', 'eq', i)|list|length / reviews|length *
+                    100)|round|int if reviews else 0 %}
+                    <div class="flex items-center">
+                        <div class="w-12 text-gray-600">{{ i }} star</div>
+                        <div class="flex-1 mx-4">
+                            <div class="h-2 rounded-full bg-gray-200">
+                                <div class="h-2 rounded-full bg-yellow-400" style="width: {{ percentage }}%"></div>
+                            </div>
+                        </div>
+                        <div class="w-12 text-gray-600">{{ percentage }}%</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Review List -->
+            <div class="space-y-6" id="reviews-container">
+                {% for review in reviews %}
+                {% include 'review/card.html' %}
+                {% endfor %}
+            </div>
+
+            {% if reviews.has_next %}
+            <div class="text-center mt-8">
+                <button onclick="loadMoreReviews()" class="btn-secondary" id="load-more-btn">
+                    Load More Reviews
+                </button>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Partners Section (visible on desktop only) -->
+        <div class="hidden lg:block">
+            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl shadow-lg p-8 mb-8">
+                <div class="max-w-3xl mx-auto text-center">
+                    <!-- Icon -->
+                    <div class="mb-6">
+                        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-100">
+                            <i class="fas fa-handshake text-2xl text-blue-600"></i>
+                        </div>
+                    </div>
+
+                    <!-- Content -->
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4">
+                        Need help implementing {{ agent.name }}?
+                    </h2>
+                    <p class="text-lg text-gray-600 mb-8">
+                        Connect with certified implementation partners who can help transform your business with {{
+                        agent.name }}. Our vetted experts specialize in AI integration and deployment.
+                    </p>
+
+                    <!-- CTA Button -->
+                    <a href="{{ url_for('main.partners') }}"
+                        class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-full text-white bg-blue-600 hover:bg-blue-700 transition-colors shadow-md hover:shadow-lg">
+                        <i class="fas fa-users-cog mr-2"></i>
+                        Find Implementation Partners
+                        <i class="fas fa-arrow-right ml-2"></i>
+                    </a>
+
+                    <!-- Features Grid -->
+                    <div class="grid md:grid-cols-3 gap-6 mt-12">
+                        <div class="bg-white rounded-xl p-6 shadow-sm">
+                            <div class="text-blue-600 mb-3">
+                                <i class="fas fa-check-circle text-xl"></i>
+                            </div>
+                            <h3 class="font-semibold text-gray-900 mb-2">Vetted Experts</h3>
+                            <p class="text-sm text-gray-600">Pre-screened partners with proven expertise in AI
+                                implementation</p>
+                        </div>
+
+                        <div class="bg-white rounded-xl p-6 shadow-sm">
+                            <div class="text-blue-600 mb-3">
+                                <i class="fas fa-rocket text-xl"></i>
+                            </div>
+                            <h3 class="font-semibold text-gray-900 mb-2">Fast Deployment</h3>
+                            <p class="text-sm text-gray-600">Accelerate your AI integration with experienced
+                                professionals</p>
+                        </div>
+
+                        <div class="bg-white rounded-xl p-6 shadow-sm">
+                            <div class="text-blue-600 mb-3">
+                                <i class="fas fa-shield-alt text-xl"></i>
+                            </div>
+                            <h3 class="font-semibold text-gray-900 mb-2">Guaranteed Results</h3>
+                            <p class="text-sm text-gray-600">Work with partners who understand your business needs</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column (1/3) -->
+    <div class="lg:col-span-1 space-y-8">
+        <!-- Agent Info Card -->
+        <div class="hidden lg:block bg-white rounded-xl shadow-lg overflow-hidden">
+            <!-- Header Section -->
+            <div class="bg-gradient-to-r from-gray-50 to-gray-100 px-6 py-4 border-b border-gray-200">
+                <div class="flex items-center justify-between">
+                    <!-- Agent Type Badge -->
+                    {% if agent.agent_type == 'agentic' %}
+                    <h2 class="text-lg font-semibold flex items-center">
+                        <i class="fas fa-brain text-indigo-600 mr-2"></i>
+                        <span>Agentic</span>
+                        <div class="ml-2 w-4 h-4 rounded-full bg-green-100 flex items-center justify-center">
+                            <i class="fas fa-check text-green-500 text-xs"></i>
+                        </div>
+                    </h2>
+                    {% elif agent.agent_type == 'platform' %}
+                    <h2 class="text-lg font-semibold">
+                        <i class="fas fa-layer-group text-blue-600 mr-2"></i>Agent Platform
+                    </h2>
+                    {% else %}
+                    <h2 class="text-lg font-semibold">
+                        <i class="fas fa-tools text-blue-600 mr-2"></i>AI Tool
+                    </h2>
+                    {% endif %}
+                    <!-- Upvotes -->
+                    {% if current_user.is_authenticated %}
+                    <div class="flex items-center">
+                        {% include 'agent/_upvote_button.html' %}
+                    </div>
+                    {% else %}
+                    <div class="flex items-center">
+                        {% include 'agent/_upvote_button.html' %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Content Section -->
+            <div class="p-6 space-y-6">
+                <!-- Collection Button -->
+                <div class="flex items-center justify-between">
+                    {% if current_user.is_authenticated %}
+                    <button onclick="toggleFavorite({{ agent.id }})"
+                        class="w-full flex items-center justify-center px-4 py-2.5 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all group"
+                        id="favorite-btn">
+                        <i
+                            class="fas fa-box text-lg mr-2 {% if agent in current_user.favorite_agents %}text-yellow-400{% else %}text-yellow-400 group-hover:text-yellow-500{% endif %}"></i>
+                        <span
+                            class="text-sm font-medium {% if agent in current_user.favorite_agents %}text-gray-800{% else %}text-gray-600 group-hover:text-blue-600{% endif %}">
+                            {% if agent in current_user.favorite_agents %}
+                            In the Locker
+                            {% else %}
+                            Add to Locker
+                            {% endif %}
+                        </span>
+                    </button>
+                    {% else %}
+                    <a href="{{ url_for('auth.login') }}"
+                        class="w-full flex items-center justify-center px-4 py-2.5 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all group">
+                        <i class="fas fa-box text-lg mr-2 text-yellow-400 group-hover:text-yellow-500"></i>
+                        <span class="text-sm font-medium text-gray-600 group-hover:text-blue-600">Add to Locker</span>
+                    </a>
+                    {% endif %}
+                </div>
+
+                <!-- Website Section -->
+                {% if agent.website %}
+                <div>
+                    <a href="{{ agent.website }}" target="_blank" rel="noopener noreferrer nofollow"
+                        class="w-full flex items-center justify-center px-4 py-2.5 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all group">
+                        <div class="flex items-center">
+                            <i class="fas fa-globe text-lg mr-2 text-blue-500 group-hover:text-blue-600"></i>
+                            <span class="text-sm font-medium text-gray-600 group-hover:text-blue-600">Visit
+                                Website</span>
+                        </div>
+                    </a>
+                </div>
+                {% endif %}
+
+                <!-- Open Source Section -->
+                {% if agent.is_open_source and agent.source_repository %}
+                <div>
+                    <a href="{{ agent.source_repository }}" target="_blank" rel="noopener noreferrer nofollow"
+                        class="w-full flex items-center justify-center px-4 py-2.5 border border-gray-200 rounded-lg hover:border-green-500 hover:bg-green-50 transition-all group">
+                        <div class="flex items-center">
+                            <i class="fab fa-osi text-lg mr-2 text-green-500 group-hover:text-green-600"></i>
+                            <span class="text-sm font-medium text-gray-600 group-hover:text-green-600">View Source
+                                Code</span>
+                        </div>
+                    </a>
+                </div>
+                {% endif %}
+
+                <!-- Documentation Section -->
+                {% if agent.documentation_url %}
+                <div>
+                    <a href="{{ agent.documentation_url }}" target="_blank" rel="noopener noreferrer nofollow"
+                        class="w-full flex items-center justify-center px-4 py-2.5 border border-gray-200 rounded-lg hover:border-purple-500 hover:bg-purple-50 transition-all group">
+                        <div class="flex items-center">
+                            <i class="fas fa-book text-lg mr-2 text-purple-500 group-hover:text-purple-600"></i>
+                            <span class="text-sm font-medium text-gray-600 group-hover:text-purple-600">View
+                                Documentation</span>
+                        </div>
+                    </a>
+                </div>
+                {% endif %}
+
+                <!-- API Section -->
+                {% if agent.api_endpoint %}
+                <div>
+                    <button onclick="showModal('apiModal')"
+                        class="w-full flex items-center justify-center px-4 py-2.5 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all group">
+                        <div class="flex items-center">
+                            <i class="fas fa-code text-lg mr-2 text-blue-500 group-hover:text-blue-600"></i>
+                            <span class="text-sm font-medium text-gray-600 group-hover:text-blue-600">View API
+                                Details</span>
+                        </div>
+                    </button>
+                </div>
+                {% endif %}
+
+                <!-- Info List -->
+                <div class="space-y-4">
+                    <div class="flex justify-between">
+                        <!-- Developer Info -->
+                        <div class="flex items-center p-3 rounded-lg flex-1">
+                            <div
+                                class="w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-code text-purple-500"></i>
+                            </div>
+                            <div class="ml-3">
+                                <div class="text-sm font-medium text-gray-900">Developer</div>
+                                <div class="text-sm text-gray-500">{{ agent.provider }}</div>
+                            </div>
+                        </div>
+
+                        <!-- Added Date -->
+                        <div class="flex items-center p-3 rounded-lg flex-1">
+                            <div
+                                class="w-10 h-10 rounded-lg bg-green-50 flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-calendar-alt text-green-500"></i>
+                            </div>
+                            <div class="ml-3">
+                                <div class="text-sm font-medium text-gray-900">Added</div>
+                                <div class="text-sm text-gray-500">{{ agent.created_at | timeago }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Social Links -->
+                {% if agent.github_url or agent.twitter_url or agent.facebook_url or agent.discord_url or
+                agent.linkedin_url %}
+                <div>
+                    <div class="flex items-center justify-center space-x-6">
+                        {% if agent.github_url %}
+                        <a href="{{ agent.github_url }}" target="_blank" rel="noopener noreferrer nofollow"
+                            class="hover:opacity-80 transition-opacity">
+                            <i class="fab fa-github text-xl" style="color: #333"></i>
+                        </a>
+                        {% endif %}
+
+                        {% if agent.twitter_url %}
+                        <a href="{{ agent.twitter_url }}" target="_blank" rel="noopener noreferrer nofollow"
+                            class="hover:opacity-80 transition-opacity">
+                            <i class="fab fa-twitter text-xl" style="color: #1DA1F2"></i>
+                        </a>
+                        {% endif %}
+
+                        {% if agent.facebook_url %}
+                        <a href="{{ agent.facebook_url }}" target="_blank" rel="noopener noreferrer nofollow"
+                            class="hover:opacity-80 transition-opacity">
+                            <i class="fab fa-facebook text-xl" style="color: #4267B2"></i>
+                        </a>
+                        {% endif %}
+
+                        {% if agent.discord_url %}
+                        <a href="{{ agent.discord_url }}" target="_blank" rel="noopener noreferrer nofollow"
+                            class="hover:opacity-80 transition-opacity">
+                            <i class="fab fa-discord text-xl" style="color: #5865F2"></i>
+                        </a>
+                        {% endif %}
+
+                        {% if agent.linkedin_url %}
+                        <a href="{{ agent.linkedin_url }}" target="_blank" rel="noopener noreferrer nofollow"
+                            class="hover:opacity-80 transition-opacity">
+                            <i class="fab fa-linkedin text-xl" style="color: #0A66C2"></i>
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Analytics Section -->
+                <div class="pt-6 border-t border-gray-200">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Analytics</h3>
+                    <div class="grid grid-cols-3 gap-4">
+                        <!-- Impressions -->
+                        <div class="bg-blue-50 rounded-lg p-3 text-center relative">
+                            <div class="absolute top-2 right-2">
+                                <button onclick="showMetricInfo('impressions')"
+                                    class="text-blue-400 hover:text-blue-600">
+                                    <i class="fas fa-info-circle"></i>
+                                </button>
+                            </div>
+                            <div class="text-base lg:text-lg font-bold text-blue-600 mb-1">
+                                {{ agent.impression_count|default(0)|format_number }}
+                            </div>
+                            <div class="text-xs text-gray-600">
+                                Impressions
+                            </div>
+                        </div>
+
+                        <!-- Views -->
+                        <div class="bg-green-50 rounded-lg p-3 text-center relative">
+                            <div class="absolute top-2 right-2">
+                                <button onclick="showMetricInfo('views')"
+                                    class="text-green-400 hover:text-green-600">
+                                    <i class="fas fa-info-circle"></i>
+                                </button>
+                            </div>
+                            <div class="text-base lg:text-lg font-bold text-green-600 mb-1">
+                                {{ agent.view_count|default(0)|format_number }}
+                            </div>
+                            <div class="text-xs text-gray-600">
+                                Views
+                            </div>
+                        </div>
+
+                        <!-- Clicks -->
+                        <div class="bg-purple-50 rounded-lg p-3 text-center relative">
+                            <div class="absolute top-2 right-2">
+                                <button onclick="showMetricInfo('clicks')"
+                                    class="text-purple-400 hover:text-purple-600">
+                                    <i class="fas fa-info-circle"></i>
+                                </button>
+                            </div>
+                            <div class="text-base lg:text-lg font-bold text-purple-600 mb-1">
+                                {{ agent.click_count|default(0)|format_number }}
+                            </div>
+                            <div class="text-xs text-gray-600">
+                                Clicks
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Metric Info Modal -->
+                <div id="metricInfoModal"
+                    class="modal hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
+                    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+                        <div class="mt-3">
+                            <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4" id="metricInfoTitle"></h3>
+                            <p class="text-sm text-gray-600" id="metricInfoDescription"></p>
+                            <div class="mt-4 flex justify-end">
+                                <button onclick="closeModal('metricInfoModal')"
+                                    class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300">
+                                    Close
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Edit/Claim Link -->
+                {% if current_user.is_authenticated and (current_user.is_admin or agent.user_id == current_user.id) %}
+                <div>
+                    <a href="{{ url_for('agent.edit', agent_id=agent.id, slug=agent.slug) }}"
+                        class="flex items-center justify-center px-4 py-2 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all group">
+                        <i class="fas fa-edit mr-2 text-gray-400 group-hover:text-blue-500"></i>
+                        <span class="text-sm font-medium text-gray-600 group-hover:text-blue-600">Edit Agent</span>
+                    </a>
+                </div>
+                {% else %}
+                <div>
+                    <a href="{{ url_for('main.contact', subject='Claim Listing: ' + agent.name) }}"
+                        class="flex items-center justify-center px-4 py-2 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all group">
+                        <i class="fas fa-flag mr-2 text-gray-400 group-hover:text-blue-500"></i>
+                        <span class="text-sm font-medium text-gray-600 group-hover:text-blue-600">Claim Listing</span>
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+
+        <!-- Pricing -->
+        <div class="bg-white rounded-xl shadow-lg p-4 sm:p-8">
+            <div class="flex items-center justify-between mb-6">
+                <!-- Pricing Section Title -->
+                {% if agent.agent_type == 'agentic' %}
+                <h2 class="text-2xl font-bold">Agent Pricing</h2>
+                {% elif agent.agent_type == 'platform' %}
+                <h2 class="text-2xl font-bold">Platform Pricing</h2>
+                {% else %}
+                <h2 class="text-2xl font-bold">AI Tool Pricing</h2>
+                {% endif %}
+
+                <!-- Free Tier Badge -->
+                {% if agent.has_free_tier %}
+                <span
+                    class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                    <i class="fas fa-check-circle mr-1"></i>
+                    Free Tier Available
+                </span>
+                {% endif %}
+            </div>
+
+            <!-- Pricing Model -->
+            {% if agent.pricing_model %}
+            <div class="mb-8">
+                <div class="flex items-center mb-3">
+                    <i class="fas fa-tag text-blue-600 mr-2"></i>
+                    <h3 class="text-lg font-semibold text-gray-900">
+                        {% if agent.pricing_model == 'free' %}
+                        Free Model
+                        {% elif agent.pricing_model == 'freemium' %}
+                        Freemium Model
+                        {% elif agent.pricing_model == 'pay_as_you_go' %}
+                        Pay-As-You-Go Model
+                        {% elif agent.pricing_model == 'subscription' %}
+                        Subscription Model
+                        {% elif agent.pricing_model == 'usage' %}
+                        Usage-Based Model
+                        {% elif agent.pricing_model == 'enterprise' %}
+                        Enterprise Model
+                        {% elif agent.pricing_model == 'contact' %}
+                        Custom Pricing
+                        {% elif agent.pricing_model == 'one_time' %}
+                        One-Time Purchase
+                        {% elif agent.pricing_model == 'other' %}
+                        Custom Model
+                        {% else %}
+                        {{ agent.pricing_model|title }} Model
+                        {% endif %}
+                    </h3>
+                </div>
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <p class="text-gray-700">
+                        {% if agent.pricing_model == 'free' %}
+                        Completely free to use with no hidden costs. Access all features without any payment required.
+                        {% elif agent.pricing_model == 'freemium' %}
+                        Free basic features with premium features available for paid users. Start for free and upgrade
+                        as needed.
+                        {% elif agent.pricing_model == 'pay_as_you_go' %}
+                        Flexible pay-per-use pricing. Only pay for what you consume, with no upfront commitments or
+                        monthly fees.
+                        {% elif agent.pricing_model == 'subscription' %}
+                        Monthly or annual subscription plans with tiered pricing and feature sets. Predictable costs
+                        with included usage limits.
+                        {% elif agent.pricing_model == 'usage' %}
+                        Pay only for what you use. Costs scale with your actual usage, with volume discounts available
+                        for higher usage levels.
+                        {% elif agent.pricing_model == 'enterprise' %}
+                        Customized enterprise plans with dedicated support, SLAs, and tailored features for large
+                        organizations.
+                        {% elif agent.pricing_model == 'contact' %}
+                        Contact sales team for custom pricing tailored to your specific needs and requirements.
+                        {% elif agent.pricing_model == 'one_time' %}
+                        One-time purchase with lifetime access. Pay once and own forever, including all future updates.
+                        {% elif agent.pricing_model == 'other' %}
+                        Custom or hybrid pricing model. Contact provider for detailed pricing information.
+                        {% else %}
+                        {{ agent.pricing_model }}
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Starting Price -->
+            {% if agent.starting_price %}
+            <div class="mb-8">
+                <div class="flex items-center mb-3">
+                    <i class="fas fa-dollar-sign text-green-600 mr-2"></i>
+                    <h3 class="text-lg font-semibold text-gray-900">Paid plans starting from</h3>
+                </div>
+                <div class="bg-blue-50 rounded-lg p-6 text-center">
+                    <div class="text-3xl font-bold text-gray-900 mb-2">
+                        ${{ agent.starting_price }}
+                    </div>
+                    {% if agent.has_free_tier %}
+                    <p class="text-sm text-blue-600">
+                        <i class="fas fa-info-circle mr-1"></i>
+                        Free tier includes basic features to get started
+                    </p>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Price Details -->
+            {% if agent.price_details %}
+            <div class="mb-8">
+                <div class="flex items-center mb-3">
+                    <i class="fas fa-list-ul text-purple-600 mr-2"></i>
+                    <h3 class="text-lg font-semibold text-gray-900">Plan Features</h3>
+                </div>
+                <div class="space-y-3">
+                    {% for detail in agent.price_details.split('\n') %}
+                    <div class="flex items-start">
+                        <i class="fas fa-check text-green-500 mt-1 mr-3"></i>
+                        <span class="text-gray-600">{{ detail }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Additional Info -->
+            <div class="mt-8 pt-6 border-t border-gray-200">
+                <div class="space-y-4">
+                    <div class="flex items-start text-sm text-gray-600">
+                        <i class="fas fa-info-circle text-blue-600 mt-1 mr-2"></i>
+                        <p>Prices may vary based on usage volume and selected features. Contact sales for custom
+                            enterprise pricing.</p>
+                    </div>
+                    {% if agent.website %}
+                    <a href="{{ agent.website }}" target="_blank" rel="noopener noreferrer nofollow"
+                        class="inline-flex items-center text-sm text-blue-600 hover:text-blue-800">
+                        <i class="fas fa-external-link-alt mr-1"></i>
+                        View detailed pricing on website
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Integration Methods -->
+        <div class="bg-white rounded-xl shadow-lg p-4 sm:p-8">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold">Integration Methods</h2>
+                {% if agent.api_endpoint %}
+                <button onclick="showModal('apiModal')"
+                    class="text-sm text-blue-600 hover:text-blue-800 flex items-center">
+                    <i class="fas fa-code mr-1"></i>
+                    View API Details
+                </button>
+                {% endif %}
+            </div>
+
+            {% if agent.integration_method_list %}
+            <div class="space-y-4">
+                {% for method in agent.integration_method_list %}
+                <a href="{{ url_for('main.integration_detail', slug=method.slug) }}"
+                    class="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                    <div class="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center"
+                        style="background-color: {{ method.color }}20">
+                        <i class="{{ method.icon }} text-lg" style="color: {{ method.color }}"></i>
+                    </div>
+                    <div class="ml-3">
+                        <span class="text-sm text-gray-700">{{ method.name }}</span>
+                        {% if method.description %}
+                        <p class="text-xs text-gray-500">{{ method.description }}</p>
+                        {% endif %}
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center py-8 text-gray-500">
+                <i class="fas fa-plug text-gray-400 text-4xl mb-4"></i>
+                <p>No integration methods specified</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Partners Section (visible on mobile only) -->
+        <div class="block lg:hidden">
+            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl shadow-lg p-8 mb-8">
+                <div class="max-w-3xl mx-auto text-center">
+                    <!-- Icon -->
+                    <div class="mb-6">
+                        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-100">
+                            <i class="fas fa-handshake text-2xl text-blue-600"></i>
+                        </div>
+                    </div>
+
+                    <!-- Content -->
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4">
+                        Need help implementing {{ agent.name }}?
+                    </h2>
+                    <p class="text-lg text-gray-600 mb-8">
+                        Connect with certified implementation partners who can help transform your business with {{
+                        agent.name }}. Our vetted experts specialize in AI integration and deployment.
+                    </p>
+
+                    <!-- CTA Button -->
+                    <a href="{{ url_for('main.partners') }}"
+                        class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-full text-white bg-blue-600 hover:bg-blue-700 transition-colors shadow-md hover:shadow-lg">
+                        <i class="fas fa-users-cog mr-2"></i>
+                        Find Implementation Partners
+                        <i class="fas fa-arrow-right ml-2"></i>
+                    </a>
+
+                    <!-- Features Grid -->
+                    <div class="grid md:grid-cols-3 gap-6 mt-12">
+                        <div class="bg-white rounded-xl p-6 shadow-sm">
+                            <div class="text-blue-600 mb-3">
+                                <i class="fas fa-check-circle text-xl"></i>
+                            </div>
+                            <h3 class="font-semibold text-gray-900 mb-2">Vetted Experts</h3>
+                            <p class="text-sm text-gray-600">Pre-screened partners with proven expertise in AI
+                                implementation</p>
+                        </div>
+
+                        <div class="bg-white rounded-xl p-6 shadow-sm">
+                            <div class="text-blue-600 mb-3">
+                                <i class="fas fa-rocket text-xl"></i>
+                            </div>
+                            <h3 class="font-semibold text-gray-900 mb-2">Fast Deployment</h3>
+                            <p class="text-sm text-gray-600">Accelerate your AI integration with experienced
+                                professionals</p>
+                        </div>
+
+                        <div class="bg-white rounded-xl p-6 shadow-sm">
+                            <div class="text-blue-600 mb-3">
+                                <i class="fas fa-shield-alt text-xl"></i>
+                            </div>
+                            <h3 class="font-semibold text-gray-900 mb-2">Guaranteed Results</h3>
+                            <p class="text-sm text-gray-600">Work with partners who understand your business needs</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Similar Agents -->
+        <div class="bg-white rounded-xl shadow-lg p-4 sm:p-8">
+            <!-- Similar Agents Section Title -->
+            {% if agent.agent_type == 'agentic' %}
+            <h2 class="text-xl sm:text-2xl font-bold mb-6">Similar Agents</h2>
+            {% elif agent.agent_type == 'platform' %}
+            <h2 class="text-xl sm:text-2xl font-bold mb-6">Similar Platforms</h2>
+            {% else %}
+            <h2 class="text-xl sm:text-2xl font-bold mb-6">Similar Tools</h2>
+            {% endif %}
+
+            <div class="space-y-4">
+                {% for similar in similar_agents %}
+                <a href="{{ url_for('agent.detail', slug=similar.slug) }}"
+                    class="block p-4 border border-gray-100 rounded-lg hover:shadow-md transition-all duration-200">
+                    <div class="flex items-center space-x-4">
+                        <!-- Agent Logo -->
+                        <div class="flex-shrink-0">
+                            <img src="{{ similar.logo_url or url_for('static', filename='img/default-agent.png') }}"
+                                alt="{{ similar.name }}" class="w-16 h-16 rounded-lg object-cover bg-gray-50">
+                        </div>
+
+                        <!-- Agent Info -->
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-start justify-between">
+                                <div>
+                                    <h3 class="font-semibold text-gray-900 mb-1">{{ similar.name }}</h3>
+                                    <p class="text-sm text-gray-600 line-clamp-1">
+                                        {{ similar.short_description }}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Stats -->
+                            <div class="flex items-center space-x-4 mt-2 text-sm text-gray-600">
+                                <!-- Rating -->
+                                {% if similar.average_rating %}
+                                <div class="flex items-center">
+                                    <div class="flex space-x-1 mr-1">
+                                        {% for i in range(5) %}
+                                        {% if i < similar.average_rating|int %} <i class="fas fa-star text-yellow-400">
+                                            </i>
+                                            {% else %}
+                                            <i class="far fa-star text-gray-300"></i>
+                                            {% endif %}
+                                            {% endfor %}
+                                    </div>
+                                    <span>({{ similar.total_reviews or 0 }})</span>
+                                </div>
+                                {% endif %}
+
+                                <!-- Categories (only show on larger screens) -->
+                                <div class="hidden sm:flex items-center space-x-2">
+                                    {% if similar.categories %}
+                                    {% for category in similar.categories[:2] %}
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium"
+                                        style="color: {{ category.color }}; background-color: {{ category.color }}10; border: 1px solid {{ category.color }}20">
+                                        {{ category.name }}
+                                    </span>
+                                    {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Review Modal -->
+{% include 'review/modal.html' %}
+
+<!-- Simple API Modal -->
+<div id="apiModal" class="modal hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+        <div class="mt-3">
+            <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4">API Integration</h3>
+            {% if agent.api_endpoint %}
+            <p class="text-sm text-gray-600">API Endpoint:</p>
+            <code class="block bg-gray-100 p-2 rounded mt-1 selectable">{{ agent.api_endpoint }}</code>
+            {% endif %}
+            <div class="mt-4 flex justify-end">
+                <button onclick="closeModal('apiModal')"
+                    class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Contact Modal -->
+{% if agent.pricing_info.custom_quote %}
+{% include 'agent/contact_modal.html' %}
+{% endif %}
+
+
+
+<!-- Featured Agents -->
+<div class="bg-gradient-to-b from-white to-gray-50 mt-16">
+    <div class="max-w-10xl mx-auto py-8 px-4 sm:py-12 sm:px-6 lg:px-8">
+        <div class="text-center">
+            <h2 class="text-3xl font-extrabold text-gray-900">Featured Agents</h2>
+            <p class="mt-3 max-w-2xl mx-auto text-xl text-gray-500">
+                Discover our hand-picked selection of exceptional AI agents
+            </p>
+        </div>
+
+        <div class="mt-8 relative">
+            <!-- Decorative Elements -->
+            <div class="absolute inset-0 flex items-center" aria-hidden="true">
+                <div class="w-full border-t border-gray-200"></div>
+            </div>
+            <div class="absolute inset-0">
+                <div class="h-full bg-gradient-to-r from-transparent via-white to-transparent"></div>
+            </div>
+
+            <!-- Featured Agents Grid -->
+            <div class="relative">
+                <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+                    {% for agent in featured_agents %}
+                    <a href="{{ url_for('agent.detail', slug=agent.slug) }}" class="block group">
+                        <div class="relative bg-white rounded-2xl shadow-xl transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 agent-card"
+                            data-agent-id="{{ agent.id }}">
+                            <!-- Purple Featured Badge -->
+                            <div class="absolute -top-3 -right-3 z-10">
+                                <div class="bg-purple-500 rounded-full p-2 shadow-lg">
+                                    <i class="fas fa-star text-white"></i>
+                                </div>
+                            </div>
+
+                            <!-- Card Content -->
+                            <div class="p-6">
+                                <!-- Logo and Title -->
+                                <div class="flex items-center space-x-4">
+                                    <div class="flex-shrink-0">
+                                        <img class="h-16 w-16 rounded-xl object-cover bg-white p-2 shadow-md"
+                                            src="{{ agent.logo_url or url_for('static', filename='img/default-agent.png') }}"
+                                            alt="{{ agent.name }}">
+                                    </div>
+                                    <div>
+                                        <h3
+                                            class="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
+                                            {{ agent.name }}</h3>
+                                        <p class="text-sm text-gray-500">{{ agent.provider }}</p>
+                                    </div>
+                                </div>
+
+                                <!-- Description -->
+                                <p class="mt-3 text-gray-600 line-clamp-2">{{ agent.short_description }}</p>
+
+                                <!-- Categories -->
+                                <div class="mt-4 flex flex-wrap gap-2">
+                                    {% for category in agent.categories[:3] %}
+                                    <span
+                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                                        style="color: {{ category.color }}; background-color: {{ category.color }}10; border: 1px solid {{ category.color }}20">
+                                        {{ category.name }}
+                                    </span>
+                                    {% endfor %}
+                                </div>
+
+                                <!-- Stats -->
+                                <div class="mt-4 flex items-center justify-between text-sm text-gray-500">
+                                    <div class="flex items-center">
+                                        <div class="flex items-center">
+                                            {% for i in range(5) %}
+                                            <i
+                                                class="fas fa-star {% if agent.average_rating and i < agent.average_rating|int %}text-yellow-400{% else %}text-gray-200{% endif %} text-xs"></i>
+                                            {% endfor %}
+                                        </div>
+                                        <p class="ml-2 text-sm text-gray-500">({{ agent.average_rating|round(1) }})</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Initialize page-specific variables -->
+<script>
+    window.AGENT_ID = {{ agent.id | tojson | safe }};
+
+    // Track impressions using Intersection Observer
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting && !entry.target.dataset.impressed) {
+                entry.target.dataset.impressed = 'true';
+                const agentId = entry.target.dataset.agentId;
+
+                fetch(`/agent/${agentId}/track/impression`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({
+                        source_page: window.location.href
+                    })
+                }).catch(error => console.error('Error tracking impression:', error));
+            }
+        });
+    });
+
+    // Observe all agent cards (including featured agents)
+    document.querySelectorAll('.agent-card').forEach(card => {
+        observer.observe(card);
+    });
+
+    async function toggleFavorite(agentId) {
+        try {
+            const response = await fetch(`/agent/${agentId}/favorite`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                credentials: 'same-origin'
+            });
+
+            const data = await response.json();
+            console.log('Response Data:', data); // Log the response data for debugging
+
+            if (data.success) {
+                // Update the favorite button appearance
+                const favoriteBtn = document.getElementById('favorite-btn');
+                const heartIcon = favoriteBtn.querySelector('i');
+                const buttonText = favoriteBtn.querySelector('span');
+
+                if (data.is_favorite) {
+                    heartIcon.classList.add('text-yellow-400');
+                    buttonText.textContent = 'In the Locker';
+                } else {
+                    heartIcon.classList.remove('text-yellow-400');
+                    buttonText.textContent = 'Add to Locker';
+                }
+
+                utils.showToast(data.message, 'success');
+            } else {
+                // utils.showToast(data.message || 'Error updating favorite status', 'error');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            // utils.showToast('Error updating favorite status', 'error');
+        }
+    }
+
+    async function toggleUpvote(agentId) {
+        try {
+            const response = await fetch(`/agent/${agentId}/upvote`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                credentials: 'same-origin'
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                const upvoteBtn = document.getElementById(`upvote-btn-${agentId}`);
+                const upvoteIcon = upvoteBtn.querySelector('i');
+                const upvoteCount = document.getElementById(`upvote-count-${agentId}`);
+
+                upvoteIcon.classList.toggle('text-blue-600');
+                upvoteCount.textContent = data.new_count;
+
+                utils.showToast(data.message, 'success');
+            } else {
+                utils.showToast(data.message || 'Error updating upvote', 'error');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            utils.showToast('Error updating upvote', 'error');
+        }
+    }
+
+    // Prevent copy/paste
+    document.addEventListener('copy', function (e) {
+        e.preventDefault();
+        return false;
+    });
+
+    document.addEventListener('paste', function (e) {
+        e.preventDefault();
+        return false;
+    });
+
+    // Prevent right click
+    document.addEventListener('contextmenu', function (e) {
+        e.preventDefault();
+        return false;
+    });
+
+    // Prevent keyboard shortcuts
+    document.addEventListener('keydown', function (e) {
+        if ((e.ctrlKey || e.metaKey) &&
+            (e.key === 'c' || e.key === 'C' || e.key === 'v' || e.key === 'V')) {
+            e.preventDefault();
+            return false;
+        }
+    });
+
+    // Track page view only
+    fetch(`/agent/${AGENT_ID}/track/view`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        },
+        body: JSON.stringify({
+            source_page: document.referrer
+        })
+    }).catch(error => console.error('Error tracking view:', error));
+
+    // Track outbound clicks
+    document.addEventListener('DOMContentLoaded', function () {
+        const trackableLinks = document.querySelectorAll('a[href^="http"]');
+        trackableLinks.forEach(link => {
+            link.addEventListener('click', function (e) {
+                fetch(`/agent/${AGENT_ID}/track/click`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({
+                        source_page: window.location.href,
+                        target_url: this.href
+                    })
+                }).catch(error => console.error('Error tracking click:', error));
+            });
+        });
+    });
+
+    function showMetricInfo(metric) {
+        const modal = document.getElementById('metricInfoModal');
+        const title = document.getElementById('metricInfoTitle');
+        const description = document.getElementById('metricInfoDescription');
+
+        const metricInfo = {
+            impressions: {
+                title: 'Impressions',
+                description: 'Number of times this agent appeared in search results or listings. This metric helps track how often your agent is being discovered by users browsing the platform.'
+            },
+            views: {
+                title: 'Page Views',
+                description: 'Number of times users visited this agent\'s detail page. This indicates how many users were interested enough to learn more about your agent.'
+            },
+            clicks: {
+                title: 'External Clicks',
+                description: 'Number of times users clicked on external links (website, documentation, etc.). This shows how many users took action to engage with your agent outside the platform.'
+            }
+        };
+
+        title.textContent = metricInfo[metric].title;
+        description.textContent = metricInfo[metric].description;
+        modal.classList.remove('hidden');
+    }
+</script>
+
+
+
+
+{% endblock %}

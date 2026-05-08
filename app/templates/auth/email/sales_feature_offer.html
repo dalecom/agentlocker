@@ -1,0 +1,81 @@
+<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+    <img src="{{ url_for('static', filename='img/agent locker logo.png', _external=True) }}" 
+         alt="Agent Locker Logo" 
+         style="display: block; margin: 0 auto; height: 60px;">
+    
+    <h2 style="color: #1F2937; text-align: center; margin-top: 30px;">
+        Feature Your AI Agent on Agent Locker
+    </h2>
+    
+    <div style="margin-top: 30px; color: #4B5563;">
+        <p>Hi there,</p>
+        
+        <p>I noticed your AI agent "{{ agent.name }}" on Agent Locker and wanted to reach out personally. Your listing has been gaining traction, and I believe it has great potential to reach even more users.</p>
+        
+        <div style="background-color: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 20px; margin: 20px 0;">
+            <div style="margin-bottom: 15px;">
+                <div style="margin-left: 12px;">
+                    <p style="color: #1F2937; font-weight: bold; margin: 0; font-size: 16px;">{{ agent.name }}</p>
+                    <p style="color: #4B5563; margin: 4px 0 0 0; font-size: 14px;">Performance Overview</p>
+                </div>
+            </div>
+            
+            <div style="display: flex; justify-content: space-between; align-items: start; background: white; padding: 15px 25px; border-radius: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+                <div style="text-align: center; width: 30%;">
+                    <p style="color: #1F2937; font-weight: 600; margin: 0; font-size: 24px;">{{ "{:,}".format(agent.impression_count) }}</p>
+                    <p style="color: #4B5563; margin: 5px 0 0 0; font-size: 13px; text-transform: uppercase;">IMPRESSIONS</p>
+                </div>
+                <div style="text-align: center; width: 30%; border-left: 1px solid #E5E7EB; border-right: 1px solid #E5E7EB; margin: 0 15px; padding: 0 15px;">
+                    <p style="color: #1F2937; font-weight: 600; margin: 0; font-size: 24px;">{{ "{:,}".format(agent.view_count) }}</p>
+                    <p style="color: #4B5563; margin: 5px 0 0 0; font-size: 13px; text-transform: uppercase;">PAGE VIEWS</p>
+                </div>
+                <div style="text-align: center; width: 30%;">
+                    <p style="color: #1F2937; font-weight: 600; margin: 0; font-size: 24px;">{{ "{:,}".format(agent.click_count) }}</p>
+                    <p style="color: #4B5563; margin: 5px 0 0 0; font-size: 13px; text-transform: uppercase;">CLICKS</p>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 15px;">
+                <a href="{{ url_for('agent.detail', slug=agent.slug, _external=True) }}" 
+                   style="color: #2563EB; text-decoration: none; font-size: 14px; display: inline-flex; align-items: center;">
+                    View your agent's analytics
+                    <span style="margin-left: 4px; font-size: 16px;">→</span>
+                </a>
+            </div>
+        </div>
+
+        <p>We're currently offering premium featured spots for {{ next_month }}, which include:</p>
+        
+        <ul style="color: #4B5563; margin: 20px 0; padding-left: 20px;">
+            <li style="margin-bottom: 10px;">🏆 #1 Position in your category</li>
+            <li style="margin-bottom: 10px;">🌟 Featured placement across all agent pages</li>
+            <li style="margin-bottom: 10px;">📈 Enhanced SEO with DoFollow links</li>
+            <li style="margin-bottom: 10px;">🎯 Targeted visibility to {{ monthly_views }}+ monthly visitors</li>
+        </ul>
+
+        <div style="background-color: #F3F4F6; padding: 20px; border-radius: 8px; margin: 30px 0;">
+            <p style="color: #1F2937; font-weight: bold; margin: 0;">💡 Quick Stats:</p>
+            <ul style="color: #4B5563; margin: 10px 0; padding-left: 20px;">
+                <li>Featured agents receive 5x more views</li>
+                <li>Average engagement increase of 300%</li>
+                <li>Priority placement in search results</li>
+            </ul>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="{{ url_for('main.advertise', _external=True) }}"
+               style="background-color: #2563EB; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
+                Learn More About Featured Listings
+            </a>
+        </div>
+
+        <p style="margin-top: 30px;">Would you be interested in featuring {{ agent.name }} next month? I'd be happy to provide more details or answer any questions you might have.</p>
+
+        <p style="margin-top: 20px;">Best regards,<br>David<br>Agent Locker Team</p>
+    </div>
+    
+    <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #E5E7EB; font-size: 14px; color: #6B7280; text-align: center;">
+        <p>Agent Locker - The Premier AI Agent Directory</p>
+        <p>View your listing: <a href="{{ url_for('agent.detail', slug=agent.slug, _external=True) }}" style="color: #2563EB;">{{ agent.name }}</a></p>
+    </div>
+</div> 

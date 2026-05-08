@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}AI Integrations - Connect Your Favorite Tools & Platforms{% endblock %}
+
+{% block meta_description %}Explore our comprehensive collection of AI integrations. Connect your AI agents with popular platforms and tools to enhance your workflow and productivity.{% endblock %}
+
+{% block meta_keywords %}AI integrations, AI tool connections, artificial intelligence integrations, AI platform connections, AI automation{% endblock %}
+
+{% block og_type %}website{% endblock %}
+
+{% block content %}
+<div class="container mx-auto py-8">
+    <div class="grid grid-cols-12 gap-8">
+        <!-- Left Sidebar - Integrations Overview -->
+        <div class="col-span-12 md:col-span-4">
+            <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                <!-- Header with Cover -->
+                <div class="relative h-32 bg-gradient-to-r from-purple-600 to-purple-800">
+                    <div class="absolute -bottom-12 left-1/2 transform -translate-x-1/2">
+                        <div class="relative">
+                            <div class="w-24 h-24 rounded-full border-4 border-white shadow-md bg-white flex items-center justify-center">
+                                <i class="fas fa-plug text-4xl text-purple-600"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Info Section -->
+                <div class="pt-16 px-6 pb-6">
+                    <div class="text-center">
+                        <h2 class="text-2xl font-bold text-gray-900">AI Integrations</h2>
+                        <p class="text-gray-500 mt-1">
+                            Connect AI agents with your favorite tools and platforms
+                        </p>
+                    </div>
+
+                    <!-- Stats Section -->
+                    <div class="mt-6 grid grid-cols-1 gap-4">
+                        <a href="{{ url_for('agent.list_all') }}" class="block hover:shadow-lg transition-shadow">
+                            <div class="bg-white overflow-hidden shadow rounded-lg">
+                                <div class="px-4 py-5 sm:p-6 text-center">
+                                    <dt class="text-3xl font-bold text-purple-600">{{ stats.total_agents }}</dt>
+                                    <dd class="mt-1 text-gray-600">AI Agents</dd>
+                                </div>
+                            </div>
+                        </a>
+                        <a href="{{ url_for('main.integrations') }}" class="block hover:shadow-lg transition-shadow">
+                            <div class="bg-white overflow-hidden shadow rounded-lg">
+                                <div class="px-4 py-5 sm:p-6 text-center">
+                                    <dt class="text-3xl font-bold text-purple-600">{{ stats.total_integrations }}</dt>
+                                    <dd class="mt-1 text-gray-600">Integrations</dd>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Content Area - Integrations Grid -->
+        <div class="col-span-12 md:col-span-8">
+            <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-100">
+                    <h3 class="text-lg font-semibold text-gray-900">Browse Ai Agent Integrations</h3>
+                </div>
+                
+                <div class="p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {% for integration in integrations %}
+                        <a href="{{ url_for('main.integration_detail', slug=integration.slug) }}" 
+                           class="group bg-white border rounded-xl shadow-sm hover:shadow-md transition">
+                            <div class="flex flex-col h-full">
+                                <!-- Integration Icon Banner -->
+                                <div class="h-24 relative bg-gray-50 flex items-center justify-center" style="background-color: {{ integration.color }}20">
+                                    <div class="flex-shrink-0">
+                                        <i class="{{ integration.icon }} text-4xl" style="color: {{ integration.color }};"></i>
+                                    </div>
+                                </div>
+                                
+                                <!-- Integration Content -->
+                                <div class="p-4 flex-1 flex flex-col">
+                                    <div>
+                                        <h4 class="text-lg font-semibold text-gray-900 group-hover:text-purple-600 transition">
+                                            {{ integration.name }}
+                                        </h4>
+                                        <p class="mt-2 text-sm text-gray-600">
+                                            {{ integration.description }}
+                                        </p>
+                                    </div>
+                                    
+                                    <!-- Footer -->
+                                    <div class="mt-4 pt-4 border-t border-gray-100 flex justify-between items-center">
+                                        <span class="text-sm text-gray-500">
+                                            {{ integration.agent_count }} Compatible Agents
+                                        </span>
+                                        <span class="text-sm font-medium text-purple-600 group-hover:text-purple-700">
+                                            View Details →
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

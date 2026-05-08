@@ -1,0 +1,229 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+    <!-- Header -->
+    <div class="md:flex md:items-center md:justify-between mb-8">
+        <div class="flex-1 min-w-0">
+            <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl">
+                Category Management
+            </h2>
+        </div>
+        <div class="mt-4 flex items-center space-x-4 md:mt-0 md:ml-4">
+            <span class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                {{ categories|length }} {{ 'category' if categories|length == 1 else 'categories' }}
+            </span>
+            <button type="button" 
+                    onclick="openCreateModal()"
+                    class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                <i class="fas fa-plus mr-2"></i>
+                Add Category
+            </button>
+        </div>
+    </div>
+
+    <!-- Categories Grid -->
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {% for category in categories %}
+        <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="p-5">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <i class="{{ category.icon }} text-2xl" style="color: {{ category.color }};"></i>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-gray-500 truncate">
+                                {{ category.name }}
+                            </dt>
+                            <dd class="flex items-baseline">
+                                <div class="text-xs text-gray-500">
+                                    {{ category.verified_agent_count }} verified agents
+                                </div>
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <p class="text-sm text-gray-600">{{ category.description }}</p>
+                </div>
+            </div>
+            <div class="bg-gray-50 px-5 py-3">
+                <div class="text-sm">
+                    <button onclick="editCategory('{{ category.id }}')" 
+                            class="font-medium text-blue-600 hover:text-blue-500">
+                        Edit
+                    </button>
+                    <button onclick="deleteCategory('{{ category.id }}')"
+                            class="ml-4 font-medium text-red-600 hover:text-red-500">
+                        Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Create/Edit Modal -->
+    <div id="categoryModal" class="fixed inset-0 bg-gray-500 bg-opacity-75 hidden">
+        <div class="flex items-center justify-center min-h-screen">
+            <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+                <form method="POST" action="{{ url_for('admin.create_category') }}" class="p-6">
+                    {{ form.csrf_token }}
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">
+                        Create New Category
+                    </h3>
+                    
+                    <div class="space-y-4">
+                        <!-- Name -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Name</label>
+                            {{ form.name(class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm") }}
+                        </div>
+
+                        <!-- Slug -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">
+                                Slug
+                                <span class="text-xs text-gray-500 ml-1">(URL-friendly version of name)</span>
+                            </label>
+                            {{ form.slug(class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm") }}
+                            <p class="mt-1 text-xs text-gray-500">Leave blank to auto-generate from name</p>
+                        </div>
+
+                        <!-- Description -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Description</label>
+                            {{ form.description(class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm", rows="3") }}
+                        </div>
+
+                        <!-- Icon -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Icon Class</label>
+                            {{ form.icon(class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm", placeholder="fas fa-chart-line") }}
+                        </div>
+
+                        <!-- Color -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Color</label>
+                            <div class="mt-1 flex items-center space-x-2">
+                                {{ form.color(class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm", type="text", placeholder="#10B981") }}
+                                <input type="color" 
+                                       class="h-9 w-9 border border-gray-300 rounded-md cursor-pointer"
+                                       onchange="document.getElementById('color').value = this.value">
+                            </div>
+                        </div>
+
+                        <!-- Display Order -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Display Order</label>
+                            {{ form.display_order(class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm") }}
+                        </div>
+                    </div>
+
+                    <div class="mt-6 flex justify-end space-x-3">
+                        <button type="button" 
+                                onclick="document.getElementById('categoryModal').classList.add('hidden')"
+                                class="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-500">
+                            Cancel
+                        </button>
+                        <button type="submit"
+                                class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            Create Category
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+function openCreateModal() {
+    // Reset form for create
+    const form = document.querySelector('#categoryModal form');
+    form.reset();
+    form.action = "{{ url_for('admin.create_category') }}";
+    document.querySelector('#categoryModal h3').textContent = 'Create New Category';
+    document.querySelector('#categoryModal button[type="submit"]').textContent = 'Create Category';
+    
+    // Show modal
+    document.getElementById('categoryModal').classList.remove('hidden');
+}
+
+async function deleteCategory(categoryId) {
+    if (confirm('Are you sure you want to delete this category?')) {
+        try {
+            const response = await fetch(`/admin/categories/${categoryId}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRFToken': document.querySelector('input[name="csrf_token"]').value
+                }
+            });
+            
+            if (response.ok) {
+                location.reload();
+            } else {
+                showToast('Error deleting category', 'error');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showToast('Error deleting category', 'error');
+        }
+    }
+}
+
+// Function to auto-generate slug from name
+function generateSlug(name) {
+    return name.toLowerCase()
+        .replace(/[^\w\s-]/g, '')
+        .replace(/[\s_-]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+}
+
+// Event listener to name field to auto-generate slug
+document.querySelector('#name').addEventListener('input', function(e) {
+    const slugField = document.querySelector('#slug');
+    if (!slugField.value) { // Only update if slug is empty
+        slugField.value = generateSlug(e.target.value);
+    }
+});
+
+// Update editCategory function to include slug
+async function editCategory(categoryId) {
+    try {
+        const response = await fetch(`/admin/categories/${categoryId}`);
+        const category = await response.json();
+        
+        // Update form action and button text
+        const form = document.querySelector('#categoryModal form');
+        form.action = `/admin/categories/${categoryId}/edit`;
+        document.querySelector('#categoryModal h3').textContent = 'Edit Category';
+        document.querySelector('#categoryModal button[type="submit"]').textContent = 'Update Category';
+        
+        // Populate form fields
+        document.querySelector('#name').value = category.name;
+        document.querySelector('#slug').value = category.slug;
+        document.querySelector('#description').value = category.description;
+        document.querySelector('#icon').value = category.icon;
+        document.querySelector('#color').value = category.color;
+        document.querySelector('#display_order').value = category.display_order;
+        
+        // Show modal
+        document.getElementById('categoryModal').classList.remove('hidden');
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('Error loading category data', 'error');
+    }
+}
+
+// Close modal when clicking outside
+document.getElementById('categoryModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        document.getElementById('categoryModal').classList.add('hidden');
+    }
+});
+</script>
+{% endblock %}

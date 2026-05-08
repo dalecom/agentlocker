@@ -1,0 +1,901 @@
+{% extends "base.html" %}
+
+
+{% block extra_css %}
+<style>
+    body {
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+
+    input[type="text"],
+    input[type="search"],
+    select,
+    .selectable {
+        -webkit-user-select: text;
+        -moz-user-select: text;
+        -ms-user-select: text;
+        user-select: text;
+    }
+
+    /* Scrollbar Styling */
+    .hover-scrollbar {
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none; /* IE and Edge */
+    }
+
+    .hover-scrollbar::-webkit-scrollbar {
+        width: 0px; /* Chrome, Safari, Opera */
+        background: transparent;
+    }
+
+    .hover-scrollbar:hover {
+        scrollbar-width: thin;
+        -ms-overflow-style: auto;
+    }
+
+    .hover-scrollbar:hover::-webkit-scrollbar {
+        width: 4px;
+    }
+
+    .hover-scrollbar:hover::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 4px;
+    }
+
+    .hover-scrollbar:hover::-webkit-scrollbar-thumb {
+        background: #888;
+    }
+</style>
+{% endblock %}
+
+{% block title %}AgentLocker - The World's Largest AI Agent Directory{% endblock %}
+
+{% block meta_description %}Discover, compare, and integrate with the world's most comprehensive AI agent directory.
+Find the perfect AI solutions for your needs, updated daily with new AI tools and agents.{% endblock %}
+
+{% block meta_keywords %}AI agents, artificial intelligence directory, AI tools, machine learning agents, AI
+marketplace{% endblock %}
+
+{% block og_type %}website{% endblock %}
+
+{% block content %}
+
+
+{% include 'elements/_desktop_browse.html' %}
+
+<!-- Directory Content -->
+<div id="content" class="max-w-10xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="flex flex-col lg:flex-row lg:space-x-8">
+        <!-- Left Sidebar - Categories -->
+        <div class="hidden lg:block w-64 flex-shrink-0 space-y-6">
+            
+            {% include 'elements/_agent_type_selector.html' %}
+            <!-- Categories Section -->
+            <div id="categories-section">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Categories</h3>
+                <div style="max-height: 500px; overflow-y: auto;" 
+                     class="pr-2 hover-scrollbar">
+                    <!-- All Categories option -->
+                    <label class="flex items-center justify-between px-3 py-2 text-sm rounded-lg hover:bg-gray-50 group cursor-pointer">
+                        <div class="flex items-center">
+                            <input type="radio" name="filter" value="" class="hidden peer" 
+                                   {% if not request.args.get('category') and not request.args.get('use_case') and not request.args.get('integration') %}checked{% endif %}>
+                            <span class="{% if not request.args.get('category') and not request.args.get('use_case') and not request.args.get('integration') %}opacity-100{% else %}opacity-0 group-hover:opacity-100{% endif %} mr-2">
+                                <i class="fas fa-check-circle text-blue-500"></i>
+                            </span>
+                            <i class="fas fa-folder text-yellow-500 mr-2"></i>
+                            <span class="text-gray-700 peer-checked:text-blue-600">All Categories</span>
+                        </div>
+                    </label>
+                    
+                    {% for category in categories %}
+                    <label class="flex items-center justify-between px-3 py-2 text-sm rounded-lg hover:bg-gray-50 group cursor-pointer">
+                        <div class="flex items-center">
+                            <input type="radio" name="filter" value="category-{{ category.id }}" class="hidden peer"
+                                   {% if request.args.get('category')|int == category.id %}checked{% endif %}>
+                            <span class="{% if request.args.get('category')|int == category.id %}opacity-100{% else %}opacity-0 group-hover:opacity-100{% endif %} mr-2">
+                                <i class="fas fa-check-circle text-blue-500"></i>
+                            </span>
+                            <i class="{{ category.icon }} w-4 mr-1.5" style="color: {{ category.color }}"></i>
+                            <span class="text-gray-700 peer-checked:text-blue-600">{{ category.name }}</span>
+                        </div>
+                        <span class="bg-gray-50 text-gray-500 px-1.5 py-0.5 rounded text-xs">
+                            {{ category.agent_count }}
+                        </span>
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Use Cases Section -->
+            <div id="use-cases-section">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Use Cases</h3>
+                <div style="max-height: 500px; overflow-y: auto;" 
+                     class="pr-2 hover-scrollbar">
+                    <!-- All Use Cases option -->
+                    <label class="flex items-center justify-between px-3 py-2 text-sm rounded-lg hover:bg-gray-50 group cursor-pointer">
+                        <div class="flex items-center">
+                            <input type="radio" name="use_case_filter" value="" class="hidden peer"
+                                   {% if not request.args.get('use_case') %}checked{% endif %}>
+                            <span class="{% if not request.args.get('use_case') %}opacity-100{% else %}opacity-0 group-hover:opacity-100{% endif %} mr-2">
+                                <i class="fas fa-check-circle text-blue-500"></i>
+                            </span>
+                            <i class="fas fa-layer-group w-5 mr-2 text-gray-400"></i>
+                            <span class="text-gray-700 peer-checked:text-blue-600">All Use Cases</span>
+                        </div>
+                    </label>
+
+                    <!-- Existing use cases with counts -->
+                    {% for use_case in use_cases|sort(attribute='name') %}
+                    <label class="flex items-center justify-between px-3 py-2 text-sm rounded-lg hover:bg-gray-50 group cursor-pointer">
+                        <div class="flex items-center">
+                            <input type="radio" name="use_case_filter" value="use_case-{{ use_case.id }}" class="hidden peer"
+                                   {% if request.args.get('use_case')|int == use_case.id %}checked{% endif %}>
+                            <span class="{% if request.args.get('use_case')|int == use_case.id %}opacity-100{% else %}opacity-0 group-hover:opacity-100{% endif %} mr-2">
+                                <i class="fas fa-check-circle text-blue-500"></i>
+                            </span>
+                            <i class="{{ use_case.icon }} w-5 mr-2" style="color: {{ use_case.color }}"></i>
+                            <span class="text-gray-700 peer-checked:text-blue-600">{{ use_case.name }}</span>
+                        </div>
+                        <span class="bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full text-xs">
+                            {{ use_case.solution_count }}
+                        </span>
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Integration Methods Section -->
+            <div id="integrations-section">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Integrations</h3>
+                <div style="max-height: 500px; overflow-y: auto;" 
+                     class="pr-2 hover-scrollbar">
+                    <!-- All Integrations option -->
+                    <label class="flex items-center justify-between px-3 py-2 text-sm rounded-lg hover:bg-gray-50 group cursor-pointer">
+                        <div class="flex items-center">
+                            <input type="radio" name="integration_filter" value="" class="hidden peer"
+                                   {% if not request.args.get('integration') %}checked{% endif %}>
+                            <span class="{% if not request.args.get('integration') %}opacity-100{% else %}opacity-0 group-hover:opacity-100{% endif %} mr-2">
+                                <i class="fas fa-check-circle text-blue-500"></i>
+                            </span>
+                            <i class="fas fa-plug w-5 mr-2 text-gray-400"></i>
+                            <span class="text-gray-700 peer-checked:text-blue-600">All Integrations</span>
+                        </div>
+                    </label>
+
+                    <!-- Existing integrations with counts -->
+                    {% for integration in integrations|sort(attribute='name') %}
+                    <label class="flex items-center justify-between px-3 py-2 text-sm rounded-lg hover:bg-gray-50 group cursor-pointer">
+                        <div class="flex items-center">
+                            <input type="radio" name="integration_filter" value="integration-{{ integration.id }}" class="hidden peer"
+                                   {% if request.args.get('integration')|int == integration.id %}checked{% endif %}>
+                            <span class="{% if request.args.get('integration')|int == integration.id %}opacity-100{% else %}opacity-0 group-hover:opacity-100{% endif %} mr-2">
+                                <i class="fas fa-check-circle text-blue-500"></i>
+                            </span>
+                            <i class="{{ integration.icon }} w-4 mr-1.5" style="color: {{ integration.color }}"></i>
+                            <span class="text-gray-700 peer-checked:text-blue-600">{{ integration.name }}</span>
+                        </div>
+                        <span class="bg-gray-50 text-gray-500 px-1.5 py-0.5 rounded text-xs">
+                            {{ integration.agent_count }}
+                        </span>
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Content Area -->
+        <div class="flex-1">
+            <!-- Search and Sort -->
+            <form id="searchForm" method="GET" action="{{ url_for('agent.list_all') }}" class="mb-6">
+                <div class="flex flex-col gap-4">
+                    <!-- Mobile Layout -->
+                    <div class="lg:hidden space-y-6">
+                        <!-- Agent Type Selector -->
+                        <form id="mobileTypeForm">
+                            <div class="flex rounded-lg border border-gray-200 bg-white">
+                                <label class="flex-1 cursor-pointer">
+                                    <input type="radio" name="type" value="tool" class="hidden" 
+                                           {% if request.args.get('type') == 'tool' %}checked{% endif %}
+                                           onchange="handleMobileTypeChange(this)">
+                                    <div class="flex items-center justify-center px-4 py-3 text-sm font-medium {{ 'bg-blue-50' if request.args.get('type') == 'tool' else 'bg-white hover:bg-gray-50' }} first:rounded-l-lg w-full">
+                                        <i class="fas fa-tools text-blue-400 mr-1.5"></i>
+                                        Tools
+                                    </div>
+                                </label>
+                                <label class="flex-1 cursor-pointer border-x border-gray-200">
+                                    <input type="radio" name="type" value="agentic" class="hidden"
+                                           {% if not request.args.get('type') or request.args.get('type') == 'agentic' %}checked{% endif %}
+                                           onchange="handleMobileTypeChange(this)">
+                                    <div class="flex items-center justify-center px-4 py-3 text-sm font-medium {{ 'bg-blue-50' if not request.args.get('type') or request.args.get('type') == 'agentic' else 'bg-white hover:bg-gray-50' }} w-full">
+                                        <i class="fas fa-robot text-yellow-400 mr-1.5"></i>
+                                        Agentic
+                                    </div>
+                                </label>
+                                <label class="flex-1 cursor-pointer">
+                                    <input type="radio" name="type" value="platform" class="hidden"
+                                           {% if request.args.get('type') == 'platform' %}checked{% endif %}
+                                           onchange="handleMobileTypeChange(this)">
+                                    <div class="flex items-center justify-center px-4 py-3 text-sm font-medium {{ 'bg-blue-50' if request.args.get('type') == 'platform' else 'bg-white hover:bg-gray-50' }} last:rounded-r-lg w-full">
+                                        <i class="fas fa-layer-group text-green-400 mr-1.5"></i>
+                                        Platform
+                                    </div>
+                                </label>
+                            </div>
+                        </form>
+
+                        <!-- Search Input and Free Checkbox Row -->
+                        <div class="flex items-center gap-3">
+                            <div class="relative flex-1">
+                                <input type="text" name="search" value="{{ request.args.get('search', '') }}"
+                                    placeholder="Search agents..."
+                                    class="w-full pl-10 pr-4 py-2 text-sm rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-search text-gray-400"></i>
+                                </div>
+                            </div>
+
+                            <!-- Mobile Pricing Filter -->
+                            <div class="lg:hidden">
+                                <label class="inline-flex items-center cursor-pointer">
+                                    <input type="hidden" name="pricing" value="{{ request.args.get('pricing', '') }}">
+                                    <input type="checkbox" id="mobilePricingFilter" 
+                                           {% if request.args.get('pricing')=='free' %}checked{% endif %}
+                                           class="form-checkbox h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                                           onchange="handleMobilePricingChange(this)">
+                                    <span class="ml-2 text-sm text-gray-600">Free</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Mobile Category Selector -->
+                        <div class="w-full">
+                            <div class="relative" x-data="{ open: false }">
+                                <button @click="open = !open" type="button"
+                                    class="w-full text-left text-sm font-medium bg-white border border-gray-200 rounded-lg hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 cursor-pointer shadow-sm hover:shadow py-2.5 pl-3 pr-10">
+                                    <span class="flex items-center">
+                                        {% if request.args.get('category') %}
+                                        {% for category in categories %}
+                                        {% if category.id|string == request.args.get('category') %}
+                                        <i class="{{ category.icon }} mr-2" style="color: {{ category.color }}"></i>
+                                        <span>{{ category.name }}</span>
+                                        {% endif %}
+                                        {% endfor %}
+                                        {% else %}
+                                        <i class="fas fa-folder text-yellow-500 mr-2"></i>
+                                        <span>All Categories</span>
+                                        {% endif %}
+                                    </span>
+                                    <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                                        <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M19 9l-7 7-7-7"></path>
+                                        </svg>
+                                    </span>
+                                </button>
+
+                                <div x-show="open" x-cloak x-transition:enter="transition ease-out duration-200"
+                                    x-transition:enter-start="opacity-0 transform scale-95"
+                                    x-transition:enter-end="opacity-100 transform scale-100"
+                                    x-transition:leave="transition ease-in duration-150"
+                                    x-transition:leave-start="opacity-100 transform scale-100"
+                                    x-transition:leave-end="opacity-0 transform scale-95" @click.outside="open = false"
+                                    class="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg">
+                                    <a href="{{ url_for('main.index', sort=request.args.get('sort'), search=request.args.get('search'), pricing=request.args.get('pricing'), type=request.args.get('type')) }}"
+                                        @click="open = false"
+                                        class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 {% if not request.args.get('category') %}bg-blue-50 text-blue-600{% endif %}">
+                                        <i class="fas fa-folder text-yellow-500 mr-2"></i>
+                                        All Categories
+                                    </a>
+
+                                    {% for category in categories %}
+                                    <a href="{{ url_for('main.index', category=category.id, sort=request.args.get('sort'), search=request.args.get('search'), pricing=request.args.get('pricing'), type=request.args.get('type')) }}"
+                                        @click="open = false"
+                                        class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 {% if request.args.get('category')|int == category.id %}bg-blue-50 text-blue-600{% endif %}">
+                                        <i class="{{ category.icon }} mr-2" style="color: {{ category.color }}"></i>
+                                        {{ category.name }}
+                                    </a>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                   
+
+
+            </form>
+
+            <!-- Agents Grid -->
+            <div class="grid gap-6 grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-3">
+                {% if agents %}
+                {% for agent in agents %}
+                <div class="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-200 relative group agent-card"
+                    data-agent-id="{{ agent.id }}">
+                    <!-- Featured Badge -->
+                    {% if agent.is_featured %}
+                    <div class="absolute -top-3 -right-3 z-10">
+                        <div class="bg-purple-500 rounded-full p-2 shadow-lg">
+                            <i class="fas fa-star text-white"></i>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <div class="p-6">
+                        <div class="flex items-start space-x-4">
+                            <!-- Agent Logo -->
+                            <a href="{{ url_for('agent.detail', slug=agent.slug) }}"
+                                class="flex-shrink-0 block group-hover:opacity-90 transition-opacity">
+                                <img src="{{ agent.logo_url or url_for('static', filename='img/default-agent.png') }}"
+                                    alt="{{ agent.name }}" class="w-20 h-20 object-cover rounded-xl shadow-sm">
+                            </a>
+
+                            <!-- Agent Info -->
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center justify-between">
+                                    <h3 class="text-lg font-semibold text-gray-900 line-clamp-1">
+                                        <a href="{{ url_for('agent.detail', slug=agent.slug) }}"
+                                            class="hover:text-blue-600 transition-colors agent-name-link">
+                                            {{ agent.name }}
+                                        </a>
+                                    </h3>
+
+                                </div>
+
+                                <p class="text-sm text-gray-600 mt-1">{{ agent.provider }}</p>
+
+                                <!-- Rating & Reviews -->
+                                <div class="flex items-center space-x-3 mt-2">
+                                    {% if agent.average_rating %}
+                                    <div class="flex items-center">
+                                        <div class="flex space-x-1">
+                                            {% for i in range(5) %}
+                                            {% if i < agent.average_rating|int %} <i
+                                                class="fas fa-star text-yellow-400 text-sm"></i>
+                                                {% else %}
+                                                <i class="far fa-star text-gray-300 text-sm"></i>
+                                                {% endif %}
+                                                {% endfor %}
+                                        </div>
+                                        <span class="ml-2 text-sm text-gray-600">{{ "%.1f"|format(agent.average_rating)
+                                            }}</span>
+                                    </div>
+                                    {% endif %}
+
+                                    {% if agent.total_reviews %}
+                                    <span class="text-sm text-gray-500">
+                                        ({{ agent.total_reviews }})
+                                    </span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Description -->
+                        <p class="text-sm text-gray-600 mt-4 line-clamp-2">
+                            {{ agent.short_description or agent.description[:150] + '...' }}
+                        </p>
+
+                        <!-- Categories -->
+                        {% if agent.categories %}
+                        <div class="mt-4 flex flex-wrap gap-2">
+                            {% for category in agent.categories[:2] %}
+                            <a href="{{ url_for('agent.list_all', category=category.id) }}"
+                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium hover:opacity-75 transition-opacity"
+                                style="color: {{ category.color }}; background-color: {{ category.color }}10; border: 1px solid {{ category.color }}20">
+                                <i class="{{ category.icon }} mr-1"></i>
+                                {{ category.name }}
+                            </a>
+                            {% endfor %}
+                            {% if agent.categories|length > 2 %}
+                            <span
+                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium text-gray-500 bg-gray-50 border border-gray-200">
+                                +{{ agent.categories|length - 2 }} more
+                            </span>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+
+                        <!-- Bottom Row with Upvote Button and Count -->
+                        <div class="mt-4 flex items-center justify-end space-x-2">
+
+                            <!-- Upvote Button -->
+
+                            {% include 'agent/_upvote_button.html' %}
+
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                {% else %}
+                <div class="col-span-full text-center py-8">
+                    <p class="text-gray-500">No agents found matching your criteria.</p>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Update pagination links to include all filters -->
+            {% if pagination and pagination.pages > 1 %}
+            <div class="mt-8 flex justify-center">
+                <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                    <!-- Previous page -->
+                    {% if pagination.has_prev %}
+                    <a href="{{ url_for('main.index', 
+                                       page=pagination.prev_num,
+                                       use_case=request.args.get('use_case'),
+                                       integration=request.args.get('integration'),
+                                       category=request.args.get('category'),
+                                       search=request.args.get('search'),
+                                       type=request.args.get('type'),
+                                       sort=request.args.get('sort'),
+                                       pricing=request.args.get('pricing'),
+                                       rating=request.args.get('rating'),
+                                       reviews=request.args.get('reviews')) }}" 
+                       class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                        <span class="sr-only">Previous</span>
+                        <i class="fas fa-chevron-left"></i>
+                    </a>
+                    {% endif %}
+
+                    <!-- Page numbers -->
+                    {% for page_num in pagination.iter_pages(left_edge=2, left_current=2, right_current=3, right_edge=2) %}
+                        {% if page_num %}
+                            {% if page_num == pagination.page %}
+                            <span class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-blue-50 text-sm font-medium text-blue-600">
+                                {{ page_num }}
+                            </span>
+                            {% else %}
+                            <a href="{{ url_for('main.index', 
+                                               page=page_num,
+                                               use_case=request.args.get('use_case'),
+                                               integration=request.args.get('integration'),
+                                               category=request.args.get('category'),
+                                               search=request.args.get('search'),
+                                               type=request.args.get('type'),
+                                               sort=request.args.get('sort'),
+                                               pricing=request.args.get('pricing'),
+                                               rating=request.args.get('rating'),
+                                               reviews=request.args.get('reviews')) }}" 
+                               class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+                                {{ page_num }}
+                            </a>
+                            {% endif %}
+                        {% else %}
+                            <span class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">
+                                ...
+                            </span>
+                        {% endif %}
+                    {% endfor %}
+
+                    <!-- Next page -->
+                    {% if pagination.has_next %}
+                    <a href="{{ url_for('main.index', 
+                                       page=pagination.next_num,
+                                       use_case=request.args.get('use_case'),
+                                       integration=request.args.get('integration'),
+                                       category=request.args.get('category'),
+                                       search=request.args.get('search'),
+                                       type=request.args.get('type'),
+                                       sort=request.args.get('sort'),
+                                       pricing=request.args.get('pricing'),
+                                       rating=request.args.get('rating'),
+                                       reviews=request.args.get('reviews')) }}" 
+                       class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                        <span class="sr-only">Next</span>
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                    {% endif %}
+                </nav>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Featured Agents -->
+<div class="bg-gradient-to-b from-white to-gray-50">
+    <div class="max-w-10xl mx-auto py-8 px-4 sm:py-12 sm:px-6 lg:px-8">
+        <div class="text-center">
+            <h2 class="text-3xl font-extrabold text-gray-900">Featured Agents</h2>
+            <p class="mt-3 max-w-2xl mx-auto text-xl text-gray-500">
+                Discover our hand-picked selection of exceptional AI agents
+            </p>
+        </div>
+
+        <div class="mt-8 relative">
+            <!-- Decorative Elements -->
+            <div class="absolute inset-0 flex items-center" aria-hidden="true">
+                <div class="w-full border-t border-gray-200"></div>
+            </div>
+            <div class="absolute inset-0">
+                <div class="h-full bg-gradient-to-r from-transparent via-white to-transparent"></div>
+            </div>
+
+            <!-- Featured Agents Grid -->
+            <div class="relative">
+                <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+                    {% for agent in featured_agents %}
+                    <div class="relative bg-white rounded-2xl shadow-xl transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 agent-card"
+                        data-agent-id="{{ agent.id }}">
+                        <!-- Purple Featured Badge -->
+                        <div class="absolute -top-3 -right-3 z-10">
+                            <div class="bg-purple-500 rounded-full p-2 shadow-lg">
+                                <i class="fas fa-star text-white"></i>
+                            </div>
+                        </div>
+
+                        <!-- Card Content -->
+                        <div class="p-6">
+                            <!-- Logo and Title -->
+                            <div class="flex items-center space-x-4">
+                                <div class="flex-shrink-0">
+                                    <a href="{{ url_for('agent.detail', slug=agent.slug) }}" class="block">
+                                        <img class="h-16 w-16 rounded-xl object-cover bg-white p-2 shadow-md"
+                                            src="{{ agent.logo_url or url_for('static', filename='img/default-agent.png') }}"
+                                            alt="{{ agent.name }}">
+                                    </a>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-gray-900">
+                                        <a href="{{ url_for('agent.detail', slug=agent.slug) }}"
+                                            class="hover:text-blue-600 transition-colors">{{ agent.name }}</a>
+                                    </h3>
+                                    <p class="text-sm text-gray-500">{{ agent.provider }}</p>
+                                </div>
+                            </div>
+
+                            <!-- Description -->
+                            <p class="mt-3 max-w-3xl mx-auto text-gray-600">{{ agent.short_description }}</p>
+
+                            <!-- Categories -->
+                            <div class="mt-4 flex flex-wrap gap-2">
+                                {% for category in agent.categories[:3] %}
+                                <a href="{{ url_for('agent.list_all', category=category.id) }}"
+                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium hover:opacity-75 transition-opacity"
+                                    style="color: {{ category.color }}; background-color: {{ category.color }}10; border: 1px solid {{ category.color }}20">
+                                    {{ category.name }}
+                                </a>
+                                {% endfor %}
+                            </div>
+
+                            <!-- Stats -->
+                            <div class="mt-4 flex items-center justify-between text-sm text-gray-500">
+                                <div class="flex items-center">
+                                    <div class="flex items-center">
+                                        {% for i in range(5) %}
+                                        <i
+                                            class="fas fa-star {% if agent.average_rating and i < agent.average_rating|int %}text-yellow-400{% else %}text-gray-200{% endif %} text-xs"></i>
+                                        {% endfor %}
+                                    </div>
+                                    <p class="ml-2 text-sm text-gray-500">({{ agent.average_rating|round(1) }})</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<style>
+    @keyframes float {
+
+        0%,
+        100% {
+            transform: translateY(0);
+        }
+
+        50% {
+            transform: translateY(-10px);
+        }
+    }
+
+    .animate-float {
+        animation: float 3s ease-in-out infinite;
+    }
+</style>
+
+{% block extra_js %}
+<script src="https://unpkg.com/@popperjs/core@2"></script>
+<script src="https://unpkg.com/tippy.js@6"></script>
+<link rel="stylesheet" href="https://unpkg.com/tippy.js@6/themes/light-border.css"/>
+
+<script>
+    function handleMobilePricingChange(checkbox) {
+        const currentUrl = new URL(window.location.href);
+        const params = currentUrl.searchParams;
+        
+        // Update pricing parameter
+        if (checkbox.checked) {
+            params.set('pricing', 'free');
+        } else {
+            params.delete('pricing');
+        }
+        
+        // Keep the current type parameter if it exists
+        const currentType = params.get('type');
+        if (currentType) {
+            params.set('type', currentType);
+        }
+        
+        // Navigate to new URL
+        window.location.href = `${currentUrl.origin}${currentUrl.pathname}?${params.toString()}`;
+    }
+
+    function handleDesktopPricingChange(select) {
+        const form = select.closest('form');
+        const hiddenInput = form.querySelector('input[name="pricing"]');
+        const currentCategory = new URLSearchParams(window.location.search).get('category');
+
+        hiddenInput.value = select.value;
+
+
+        if (currentCategory) {
+            const categoryInput = document.createElement('input');
+            categoryInput.type = 'hidden';
+            categoryInput.name = 'category';
+            categoryInput.value = currentCategory;
+            form.appendChild(categoryInput);
+        }
+
+        form.submit();
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // Check if user agent is a bot
+        const isBot = /bot|googlebot|crawler|spider|robot|crawling/i.test(navigator.userAgent);
+        
+        if (!isBot) {  // Only track impressions for non-bot traffic
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && !entry.target.dataset.impressed) {
+                        entry.target.dataset.impressed = 'true';
+                        const agentId = entry.target.dataset.agentId;
+
+                        fetch(`/agent/${agentId}/track/impression`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                            },
+                            body: JSON.stringify({
+                                source_page: window.location.href
+                            })
+                        }).catch(error => console.error('Error tracking impression:', error));
+                    }
+                });
+            }, {
+                threshold: 0,
+                rootMargin: '0px',
+                root: null
+            });
+
+            // Observe all agent cards
+            document.querySelectorAll('.agent-card').forEach(card => {
+                observer.observe(card);
+            });
+        }
+
+        const searchForm = document.getElementById('searchForm');
+        const searchInput = searchForm.querySelector('input[name="search"]');
+        const desktopSortSelect = searchForm.querySelector('.lg\\:flex select[name="sort"]');
+
+        // Handle desktop sort only
+        if (desktopSortSelect) {
+            desktopSortSelect.addEventListener('change', function (e) {
+                e.preventDefault();
+                const formData = new FormData(searchForm);
+                const params = new URLSearchParams();
+
+                for (let [key, value] of formData.entries()) {
+                    params.set(key, value);
+                }
+
+                const url = `${searchForm.action}?${params.toString()}`;
+                window.location.href = url;
+            });
+        }
+
+        // Handle search input
+        let timeout = null;
+        searchInput.addEventListener('input', function () {
+            clearTimeout(timeout);
+            timeout = setTimeout(function () {
+                searchForm.submit();
+            }, 500);
+        });
+
+        // Prevent copy/paste except for search inputs
+        document.addEventListener('copy', function (e) {
+            if (!e.target.matches('input[type="text"], input[type="search"], select, .selectable')) {
+                e.preventDefault();
+                return false;
+            }
+        });
+
+        document.addEventListener('paste', function (e) {
+            if (!e.target.matches('input[type="text"], input[type="search"], select, .selectable')) {
+                e.preventDefault();
+                return false;
+            }
+        });
+
+        // Prevent right click except for agent names
+        document.addEventListener('contextmenu', function (e) {
+            if (!e.target.matches('input[type="text"], input[type="search"], select, .selectable, .agent-name-link')) {
+                e.preventDefault();
+                return false;
+            }
+        });
+
+        // Prevent keyboard shortcuts
+        document.addEventListener('keydown', function (e) {
+            if ((e.ctrlKey || e.metaKey) &&
+                (e.key === 'c' || e.key === 'C' || e.key === 'v' || e.key === 'V')) {
+                if (!e.target.matches('input[type="text"], input[type="search"], select, .selectable')) {
+                    e.preventDefault();
+                    return false;
+                }
+            }
+        });
+
+        if (window.innerWidth < 1024 && new URLSearchParams(window.location.search).has('category')) {
+            const contentElement = document.getElementById('content');
+            if (contentElement) {
+                contentElement.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Handle all filter types
+        const filterTypes = ['filter', 'use_case_filter', 'integration_filter'];
+        
+        filterTypes.forEach(filterType => {
+            const filterRadios = document.querySelectorAll(`input[name="${filterType}"]`);
+            filterRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    const currentUrl = new URL(window.location.href);
+                    const params = currentUrl.searchParams;
+                    
+                    // Keep existing filters except for the one being changed
+                    if (filterType === 'filter') {
+                        params.delete('category');
+                    } else if (filterType === 'use_case_filter') {
+                        params.delete('use_case');
+                    } else if (filterType === 'integration_filter') {
+                        params.delete('integration');
+                    }
+                    
+                    params.delete('page'); // Reset to first page when changing filters
+                    
+                    // Add new filter param based on selection
+                    if (this.value) {
+                        const [type, id] = this.value.split('-');
+                        params.set(type, id);
+                    }
+                    
+                    // Preserve other params like search, sort, and pricing
+                    window.location.href = currentUrl.toString();
+                });
+            });
+        });
+    });
+
+    function handleDesktopSearchInput(event, input) {
+        clearTimeout(input.timeout);
+        input.timeout = setTimeout(() => {
+            const form = input.closest('form');
+            const currentCategory = new URLSearchParams(window.location.search).get('category');
+            const params = new URLSearchParams();
+
+            // Adds only the search term
+            params.set('search', input.value);
+
+            // Preserve category if it exists
+            if (currentCategory) {
+                params.set('category', currentCategory);
+            }
+
+            // Redirect to the clean URL
+            window.location.href = `${form.action}?${params.toString()}`;
+        }, 500);
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const agentTypeRadios = document.querySelectorAll('input[name="agent_type"]');
+        
+        agentTypeRadios.forEach(radio => {
+            radio.addEventListener('change', function() {
+                const currentUrl = new URL(window.location.href);
+                const params = currentUrl.searchParams;
+                
+                params.set('type', this.value);
+                params.delete('page'); // Reset to first page when changing type
+                
+                window.location.href = currentUrl.toString();
+            });
+        });
+    });
+
+    function handleSortChange(select) {
+        const currentUrl = new URL(window.location.href);
+        const params = currentUrl.searchParams;
+        
+        // Update the changed parameter (sort or pricing)
+        if (select.value) {
+            params.set(select.name, select.value);
+        } else {
+            params.delete(select.name);
+        }
+        
+        // Reset to first page when changing filters
+        params.delete('page');
+        
+        // Preserve all other parameters (category, use_case, integration, search)
+        window.location.href = currentUrl.toString();
+    }
+
+    function scrollToSection(sectionId) {
+        const section = document.getElementById(sectionId);
+        if (section) {
+            // Find the "All" option label in the section
+            const allOptionLabel = section.querySelector('label:first-of-type');
+            
+            if (allOptionLabel) {
+                // Add a small delay to ensure proper positioning
+                setTimeout(() => {
+                    const headerOffset = 100;
+                    const elementPosition = allOptionLabel.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                    
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: 'smooth'
+                    });
+                }, 50);
+            }
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize all tooltips
+        tippy('[data-tippy-content]', {
+            theme: 'light-border',
+            placement: 'right',
+            arrow: true,
+            maxWidth: 300,
+            animation: 'shift-away',
+            interactive: true,
+            delay: [100, 100],
+        });
+    });
+
+    function handleMobileTypeChange(radio) {
+        const currentUrl = new URL(window.location.href);
+        const params = currentUrl.searchParams;
+        
+        // Update type parameter
+        if (radio.value) {
+            params.set('type', radio.value);
+        } else {
+            params.delete('type');
+        }
+        
+        // Reset to first page
+        params.delete('page');
+        
+        // Navigate to new URL with main.index endpoint
+        window.location.href = `${window.location.origin}/?${params.toString()}`;
+    }
+</script>
+{% endblock %}
+{% endblock %}

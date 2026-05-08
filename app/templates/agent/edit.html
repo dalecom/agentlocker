@@ -1,0 +1,582 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+    <div class="bg-white rounded-xl shadow-lg p-8 max-w-5xl mx-auto">
+        <h1 class="text-3xl font-bold mb-8">Edit Agent: {{ agent.name }}</h1>
+
+        <form method="POST" enctype="multipart/form-data" action="{{ url_for('agent.edit', slug=agent.slug) }}">
+            {{ form.csrf_token }}
+
+            <!-- Basic Information -->
+            <div class="space-y-6 mb-12 bg-gray-50 p-6 rounded-xl border border-gray-100">
+                <div class="flex items-center mb-4">
+                    <div class="flex-shrink-0 w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center mr-3">
+                        <i class="fas fa-info-circle text-blue-600"></i>
+                    </div>
+                    <h2 class="text-xl font-semibold text-gray-900">Basic Information</h2>
+                </div>
+
+                <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                    <div>
+                        {{ form.name.label(class="block text-sm font-medium text-gray-700 mb-1") }}
+                        {{ form.name(class="form-input w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500", value=agent.name) }}
+                    </div>
+
+                    <div>
+                        {{ form.provider.label(class="block text-sm font-medium text-gray-700 mb-1") }}
+                        {{ form.provider(class="form-input w-full rounded-md", value=agent.provider) }}
+                    </div>
+
+                    <div>
+                        {{ form.agent_type.label(class="block text-sm font-medium text-gray-700 mb-1") }}
+                        <p class="text-sm text-gray-500 mb-2">Select the type of AI agent</p>
+                        <div class="space-y-2">
+                            <!-- Tool Option -->
+                            <label class="flex items-center px-3 py-2 text-sm rounded-lg hover:bg-gray-100 cursor-pointer">
+                                <input type="radio" name="agent_type" value="tool" class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                                       {% if agent.agent_type == 'tool' %}checked{% endif %}>
+                                <span class="ml-2 flex items-center">
+                                    <i class="fas fa-tools text-blue-400 mr-2"></i>
+                                    <span class="text-gray-700">AI Tool</span>
+                                </span>
+                            </label>
+
+                            <!-- Agentic Option -->
+                            <label class="flex items-center px-3 py-2 text-sm rounded-lg hover:bg-gray-100 cursor-pointer">
+                                <input type="radio" name="agent_type" value="agentic" class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                                       {% if agent.agent_type == 'agentic' %}checked{% endif %}>
+                                <span class="ml-2 flex items-center">
+                                    <i class="fas fa-robot text-blue-400 mr-2"></i>
+                                    <span class="text-gray-700">Agentic AI</span>
+                                </span>
+                            </label>
+
+                            <!-- Platform Option -->
+                            <label class="flex items-center px-3 py-2 text-sm rounded-lg hover:bg-gray-100 cursor-pointer">
+                                <input type="radio" name="agent_type" value="platform" class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                                       {% if agent.agent_type == 'platform' %}checked{% endif %}>
+                                <span class="ml-2 flex items-center">
+                                    <i class="fas fa-layer-group text-blue-400 mr-2"></i>
+                                    <span class="text-gray-700">Agent Platform</span>
+                                </span>
+                            </label>
+                        </div>
+                        {% if form.agent_type.errors %}
+                        <div class="text-red-500 text-sm mt-1">{% for error in form.agent_type.errors %}{{ error }}{% endfor %}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div>
+                    {{ form.short_description.label(class="block text-sm font-medium text-gray-700 mb-1") }}
+                    <p class="text-sm text-gray-500 mb-2">A brief one-line description for listings (max 110 characters)
+                    </p>
+                    {{ form.short_description(class="form-input w-full rounded-md",
+                    value=agent.short_description,
+                    maxlength="110",
+                    oninput="updateCharCount(this, 'shortDescCount')",
+                    **{"data-counter": "shortDescCount"}) }}
+                    <div class="text-xs text-gray-500 mt-1 text-right" id="shortDescCount">
+                        {{ agent.short_description|length if agent.short_description else 0 }}/110 characters
+                    </div>
+                    {% if form.short_description.errors %}
+                    <div class="text-red-500 text-sm mt-1">{% for error in form.short_description.errors %}{{ error }}{%
+                        endfor %}</div>
+                    {% endif %}
+                </div>
+
+                <div>
+                    {{ form.description.label(class="block text-sm font-medium text-gray-700 mb-1") }}
+                    {{ form.description(class="form-textarea w-full rounded-md h-32", value=agent.description) }}
+                </div>
+            </div>
+
+            <!-- URLs -->
+            <div class="space-y-6 mb-12 bg-gray-50 p-6 rounded-xl border border-gray-100">
+                <div class="flex items-center mb-4">
+                    <div class="flex-shrink-0 w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center mr-3">
+                        <i class="fas fa-link text-green-600"></i>
+                    </div>
+                    <h2 class="text-xl font-semibold">URLs & Resources</h2>
+                </div>
+
+                <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                    <div>
+                        {{ form.website.label(class="block text-sm font-medium text-gray-700 mb-1") }}
+                        {{ form.website(
+                        class="form-input w-full rounded-md",
+                        value=agent.website if agent.website != 'None' else '',
+                        pattern="https?://.+",
+                        title="Please enter a valid URL starting with http:// or https://"
+                        ) }}
+                    </div>
+
+                    <div>
+                        {{ form.api_endpoint.label(class="block text-sm font-medium text-gray-700 mb-1") }}
+                        {{ form.api_endpoint(
+                        class="form-input w-full rounded-md",
+                        value=agent.api_endpoint if agent.api_endpoint != 'None' else '',
+                        pattern="https?://.+",
+                        title="Please enter a valid URL starting with http:// or https://"
+                        ) }}
+                    </div>
+
+                    <div>
+                        {{ form.documentation_url.label(class="block text-sm font-medium text-gray-700 mb-1") }}
+                        <p class="text-sm text-gray-500 mb-2">Link to your agent's documentation or API reference</p>
+                        {{ form.documentation_url(
+                            class="form-input w-full rounded-md",
+                            value=agent.documentation_url if agent.documentation_url not in [None, 'None'] else '',
+                            pattern="https?://.+",
+                            title="Please enter a valid URL starting with http:// or https://"
+                        ) }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Media -->
+            <div class="space-y-6 mb-12 bg-gray-50 p-6 rounded-xl border border-gray-100">
+                <div class="flex items-center mb-4">
+                    <div class="flex-shrink-0 w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center mr-3">
+                        <i class="fas fa-images text-purple-600"></i>
+                    </div>
+                    <h2 class="text-xl font-semibold">Media</h2>
+                </div>
+
+                <!-- Logo Upload -->
+                <div>
+                    {{ form.logo.label(class="block text-sm font-medium text-gray-700 mb-1") }}
+                    {{ form.logo(class="form-input w-full rounded-md") }}
+                    {% if agent.logo_url %}
+                    <div class="mt-2">
+                        <img src="{{ agent.logo_url }}" alt="Current logo" class="h-20 w-20 object-contain">
+                        <p class="text-sm text-gray-500">Current logo (upload new to replace)</p>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Screenshot Upload -->
+                <div>
+                    {{ form.screenshot.label(class="block text-sm font-medium text-gray-700 mb-1") }}
+                    <p class="text-sm text-gray-500 mb-2">Upload a screenshot showing your agent in action</p>
+                    {{ form.screenshot(class="form-input w-full rounded-md") }}
+                    {% if agent.screenshot %}
+                    <div class="mt-2">
+                        <img src="{{ url_for('static', filename='uploads/' + agent.screenshot) }}"
+                            alt="Current screenshot" class="h-40 w-full object-cover rounded-lg shadow-sm">
+                        <p class="text-sm text-gray-500 mt-1">Current screenshot (upload new to replace)</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Features Section -->
+            <div class="bg-gray-50 p-6 rounded-xl border border-gray-100 space-y-6 mb-12">
+                <div class="flex items-center mb-4">
+                    <div class="flex-shrink-0 w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center mr-3">
+                        <i class="fas fa-star text-purple-600"></i>
+                    </div>
+                    <h2 class="text-xl font-semibold text-gray-900">Features & Integration</h2>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Use Cases -->
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        {{ form.use_cases.label(class="block text-base font-medium text-gray-900 mb-3") }}
+                        <div class="space-y-3">
+                            {% for option in form.use_cases %}
+                            {% set use_case = use_cases|selectattr("id", "equalto", option.data|int)|first %}
+                            <div
+                                class="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-white transition-colors">
+                                <input type="checkbox" name="{{ option.name }}" id="{{ option.id }}"
+                                    value="{{ option.data }}"
+                                    class="h-5 w-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500" {% if
+                                    option.checked %}checked{% endif %}>
+                                <label for="{{ option.id }}" class="ml-3 flex items-center justify-between flex-1">
+                                    <div class="flex items-center">
+                                        {% if use_case %}
+                                        <i class="{{ use_case.icon }} mr-2" style="color: {{ use_case.color }}"></i>
+                                        {% else %}
+                                        <i class="fas fa-cube mr-2 text-gray-500"></i>
+                                        {% endif %}
+                                        <span class="text-sm text-gray-700">{{ option.label.text }}</span>
+                                    </div>
+                                </label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Integration Methods -->
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        {{ form.integration_methods.label(class="block text-base font-medium text-gray-900 mb-3") }}
+                        <div class="space-y-3">
+                            {% for choice in form.integration_methods.choices %}
+                            {% set method = integration_methods|selectattr("id", "equalto", choice[0]|int)|first %}
+                            <div
+                                class="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-white transition-colors">
+                                <input type="checkbox" name="integration_methods" id="method_{{ choice[0] }}"
+                                    value="{{ choice[0] }}"
+                                    class="h-5 w-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500" {% if
+                                    form.integration_methods.data and choice[0] in form.integration_methods.data %}checked{% endif %}>
+                                <label for="method_{{ choice[0] }}" class="ml-3 flex items-center justify-between flex-1">
+                                    <div class="flex items-center">
+                                        {% if method %}
+                                        <i class="{{ method.icon }} mr-2" style="color: {{ method.color }}"></i>
+                                        {% else %}
+                                        <i class="fas fa-plug mr-2 text-gray-500"></i>
+                                        {% endif %}
+                                        <span class="text-sm text-gray-700">{{ choice[1] }}</span>
+                                    </div>
+                                </label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Categories -->
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        {{ form.categories.label(class="block text-base font-medium text-gray-900 mb-3") }}
+                        <div class="space-y-3">
+                            {% for choice in form.categories.choices %}
+                            {% set category = categories|selectattr("id", "equalto", choice[0]|int)|first %}
+                            <div
+                                class="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-white transition-colors">
+                                <input type="checkbox" name="categories" id="category_{{ choice[0] }}"
+                                    value="{{ choice[0] }}"
+                                    class="h-5 w-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500" {% if
+                                    form.categories.data and choice[0] in form.categories.data %}checked{% endif %}>
+                                <label for="category_{{ choice[0] }}"
+                                    class="ml-3 flex items-center justify-between flex-1">
+                                    <div class="flex items-center">
+                                        {% if category %}
+                                        <i class="{{ category.icon }} mr-2" style="color: {{ category.color }}"></i>
+                                        {% else %}
+                                        <i class="fas fa-folder mr-2 text-gray-500"></i>
+                                        {% endif %}
+                                        <span class="text-sm text-gray-700">{{ choice[1] }}</span>
+                                    </div>
+                                </label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Open Source Info -->
+            <div class="mt-8 mb-12 bg-gray-50 p-6 rounded-xl border border-gray-100">
+                <div class="flex items-center mb-4">
+                    <div class="flex-shrink-0 w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center mr-3">
+                        <i class="fab fa-osi text-green-600"></i>
+                    </div>
+                    <h2 class="text-xl font-semibold">Open Source Status</h2>
+                </div>
+                
+                <div class="flex items-center mb-4">
+                    {{ form.is_open_source(
+                        class="h-5 w-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500",
+                        checked=agent.is_open_source
+                    ) }}
+                    {{ form.is_open_source.label(class="ml-2 block text-sm font-medium text-gray-700") }}
+                </div>
+                
+                <div id="source-repo-field" class="{% if not agent.is_open_source %}hidden{% endif %}">
+                    {{ form.source_repository.label(class="block text-sm font-medium text-gray-700 mb-1") }}
+                    <p class="text-sm text-gray-500 mb-2">Link to the public source code repository</p>
+                    {{ form.source_repository(
+                        class="form-input w-full rounded-md",
+                        value=agent.source_repository if agent.source_repository not in [None, 'None'] else '',
+                        pattern="https?://(www\.)?(github|gitlab|bitbucket)\.[a-z]+/.*",
+                        title="Please enter a valid repository URL"
+                    ) }}
+                </div>
+            </div>
+
+            <!-- Pricing -->
+            <div class="space-y-6 mb-12 bg-gray-50 p-6 rounded-xl border border-gray-100">
+                <div class="flex items-center mb-4">
+                    <div class="flex-shrink-0 w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center mr-3">
+                        <i class="fas fa-tag text-green-600"></i>
+                    </div>
+                    <h2 class="text-xl font-semibold">Pricing</h2>
+                </div>
+
+                <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                    <!-- Pricing Model -->
+                    <div>
+                        {{ form.pricing_model.label(class="block text-sm font-medium text-gray-700 mb-1") }}
+                        <p class="text-sm text-gray-500 mb-2">How is your service priced?</p>
+                        {{ form.pricing_model(
+                        class="form-select w-full rounded-md",
+                        required=True
+                        ) }}
+                        {% if form.pricing_model.errors %}
+                        <div class="text-red-500 text-sm mt-1">{% for error in form.pricing_model.errors %}{{ error }}{%
+                            endfor %}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Starting Price -->
+                    <div>
+                        {{ form.starting_price.label(class="block text-sm font-medium text-gray-700 mb-1") }}
+                        <p class="text-sm text-gray-500 mb-2">Starting price for paid plans (required, in USD)</p>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <span class="text-gray-500 sm:text-sm">$</span>
+                            </div>
+                            {{ form.starting_price(
+                                class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full pl-7 p-3 text-base border-gray-300 rounded-md",
+                                placeholder="99",
+                                required=True
+                            ) }}
+                        </div>
+                        {% if form.starting_price.errors %}
+                        <div class="text-red-500 text-sm mt-1">{% for error in form.starting_price.errors %}{{ error }}{% endfor %}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Monthly Users -->
+                    <div>
+                        {{ form.monthly_users.label(class="block text-sm font-medium text-gray-700 mb-1") }}
+                        <p class="text-sm text-gray-500 mb-2">Approximate number of monthly active users</p>
+                        {{ form.monthly_users(
+                        class="form-input w-full rounded-md",
+                        value=agent.monthly_users,
+                        placeholder="1000"
+                        ) }}
+                        {% if form.monthly_users.errors %}
+                        <div class="text-red-500 text-sm mt-1">{% for error in form.monthly_users.errors %}{{ error }}{%
+                            endfor %}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Free Tier -->
+                    <div class="flex flex-col justify-center">
+                        <label class="flex items-center space-x-3">
+                            {{ form.has_free_tier(
+                            class="h-5 w-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                            ) }}
+                            <span class="text-sm text-gray-700">Offers a free tier</span>
+                        </label>
+                        <p class="text-sm text-gray-500 mt-1 ml-8">Check if you offer a free plan or trial</p>
+                    </div>
+                </div>
+
+                <!-- Price Details -->
+                <div class="mt-6">
+                    {{ form.price_details.label(class="block text-sm font-medium text-gray-700 mb-1") }}
+                    <p class="text-sm text-gray-500 mb-2">List the key features included in your pricing (one per line)
+                    </p>
+                    {{ form.price_details(
+                    class="form-textarea w-full rounded-md h-32",
+                    placeholder="- Basic plan includes 100 API calls/month
+                    - Pro plan includes unlimited API calls
+                    - Enterprise plan includes dedicated support"
+                    ) }}
+                    {% if form.price_details.errors %}
+                    <div class="text-red-500 text-sm mt-1">{% for error in form.price_details.errors %}{{ error }}{%
+                        endfor %}</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Social Media Links -->
+            <div class="space-y-6 mb-12 bg-gray-50 p-6 rounded-xl border border-gray-100">
+                <div class="flex items-center mb-4">
+                    <div class="flex-shrink-0 w-8 h-8 rounded-lg bg-red-100 flex items-center justify-center mr-3">
+                        <i class="fas fa-share-alt text-red-600"></i>
+                    </div>
+                    <h2 class="text-xl font-semibold">Social Media</h2>
+                </div>
+                <p class="text-sm text-gray-500 mb-4">
+                    <i class="fas fa-info-circle text-blue-500 mr-1"></i>
+                    Remember to include the full URL with <code class="bg-gray-100 px-1 py-0.5 rounded">https://</code>
+                    (e.g., <code class="bg-gray-100 px-1 py-0.5 rounded">https://github.com/username</code>)
+                </p>
+
+                <div class="grid grid-cols-1 gap-6 sm:grid-cols-3">
+                    <!-- GitHub -->
+                    <div>
+                        <div class="flex items-center mb-1">
+                            <i class="fab fa-github text-gray-600 mr-2"></i>
+                            {{ form.github_url.label(class="text-sm font-medium text-gray-700") }}
+                            <span class="text-gray-400 text-xs ml-1">(Optional)</span>
+                        </div>
+                        {{ form.github_url(
+                        class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full p-3 text-base border-gray-300 rounded-md",
+                        value=agent.github_url if agent.github_url != 'None' else '',
+                        placeholder="https://github.com/...",
+                        pattern="https?://(?:www\.)?github\.com/.+",
+                        title="Please enter a valid GitHub URL"
+                        ) }}
+                        {% if form.github_url.errors %}
+                        <div class="text-red-500 text-sm mt-1">{% for error in form.github_url.errors %}{{ error }}{%
+                            endfor %}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Twitter -->
+                    <div>
+                        <div class="flex items-center mb-1">
+                            <i class="fab fa-x-twitter text-gray-600 mr-2"></i>
+                            {{ form.twitter_url.label(class="text-sm font-medium text-gray-700") }}
+                            <span class="text-gray-400 text-xs ml-1">(Optional)</span>
+                        </div>
+                        {{ form.twitter_url(
+                        class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full p-3 text-base border-gray-300 rounded-md",
+                        value=agent.twitter_url if agent.twitter_url != 'None' else '',
+                        placeholder="https://twitter.com/...",
+                        pattern="https?://(?:www\.)?(?:twitter\.com|x\.com)/.+",
+                        title="Please enter a valid Twitter/X URL"
+                        ) }}
+                        {% if form.twitter_url.errors %}
+                        <div class="text-red-500 text-sm mt-1">{% for error in form.twitter_url.errors %}{{ error }}{%
+                            endfor %}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Facebook -->
+                    <div>
+                        <div class="flex items-center mb-1">
+                            <i class="fab fa-facebook text-gray-600 mr-2"></i>
+                            {{ form.facebook_url.label(class="text-sm font-medium text-gray-700") }}
+                            <span class="text-gray-400 text-xs ml-1">(Optional)</span>
+                        </div>
+                        {{ form.facebook_url(
+                        class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full p-3 text-base border-gray-300 rounded-md",
+                        value=agent.facebook_url if agent.facebook_url != 'None' else '',
+                        placeholder="https://facebook.com/...",
+                        pattern="https?://(?:www\.)?facebook\.com/.+",
+                        title="Please enter a valid Facebook URL"
+                        ) }}
+                        {% if form.facebook_url.errors %}
+                        <div class="text-red-500 text-sm mt-1">{% for error in form.facebook_url.errors %}{{ error }}{%
+                            endfor %}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Discord -->
+                    <div>
+                        <div class="flex items-center mb-1">
+                            <i class="fab fa-discord text-gray-600 mr-2"></i>
+                            {{ form.discord_url.label(class="text-sm font-medium text-gray-700") }}
+                        </div>
+                        {{ form.discord_url(
+                        class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full p-3 text-base border-gray-300 rounded-md",
+                        placeholder="https://discord.gg/...",
+                        pattern="https?://(?:www\.)?discord\.(?:gg|com)/(?:invite/)?[a-zA-Z0-9]+",
+                        title="Please enter a valid Discord invite URL"
+                        ) }}
+                        {% if form.discord_url.errors %}
+                        <div class="text-red-500 text-sm mt-1">{% for error in form.discord_url.errors %}{{ error }}{% endfor %}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- LinkedIn -->
+                    <div>
+                        <div class="flex items-center mb-1">
+                            <i class="fab fa-linkedin text-gray-600 mr-2"></i>
+                            {{ form.linkedin_url.label(class="text-sm font-medium text-gray-700") }}
+                        </div>
+                        {{ form.linkedin_url(
+                        class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full p-3 text-base border-gray-300 rounded-md",
+                        placeholder="https://linkedin.com/...",
+                        pattern="https?:\/\/(www\.)?linkedin\.com\/(company|in)\/[a-zA-Z0-9\-\_]+\/?.*",
+                        title="Please enter a valid LinkedIn profile or company URL (e.g., https://linkedin.com/company/example or https://linkedin.com/in/username)"
+                        ) }}
+                        {% if form.linkedin_url.errors %}
+                        <div class="text-red-500 text-sm mt-1">{% for error in form.linkedin_url.errors %}{{ error }}{% endfor %}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="flex justify-end space-x-4 mt-12 pt-6 border-t border-gray-200">
+                <a href="{{ url_for('agent.detail', slug=agent.slug) }}" 
+                    class="px-6 py-3 border border-gray-300 text-base font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 shadow-sm">
+                    Cancel
+                </a>
+                {{ form.submit(
+                    class="inline-flex items-center px-8 py-3 border border-transparent text-base font-medium rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200"
+                ) }}
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{{ super() }}
+<script>
+    function updateCharCount(input, counterId) {
+        const counter = document.getElementById(counterId);
+        counter.textContent = `${input.value.length}/110 characters`;
+    }
+
+    function validateURL(input) {
+        if (input.value && !input.value.match(/^https?:\/\/.+/)) {
+            input.setCustomValidity("Please enter a valid URL starting with http:// or https://");
+        } else {
+            input.setCustomValidity("");
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const shortDesc = document.querySelector('[data-counter="shortDescCount"]');
+        if (shortDesc) {
+            updateCharCount(shortDesc, 'shortDescCount');
+        }
+
+        // Add URL validation listeners
+        const urlInputs = document.querySelectorAll('input[pattern]');
+        urlInputs.forEach(input => {
+            input.addEventListener('input', () => validateURL(input));
+            input.addEventListener('invalid', (e) => {
+                if (input.value && !input.value.startsWith('http')) {
+                    e.preventDefault();
+                    input.setCustomValidity("Please enter a valid URL starting with http:// or https://");
+                }
+            });
+        });
+
+        // Handle open source repository field visibility
+        const openSourceCheckbox = document.querySelector('#is_open_source');
+        const sourceRepoField = document.querySelector('#source-repo-field');
+        
+        if (openSourceCheckbox && sourceRepoField) {
+            openSourceCheckbox.addEventListener('change', function() {
+                sourceRepoField.classList.toggle('hidden', !this.checked);
+            });
+        }
+    });
+    // Limit maximum selections
+    document.addEventListener('DOMContentLoaded', function () {
+        // Limit use cases to 4
+        const useCaseCheckboxes = document.querySelectorAll('input[name^="use_cases"]');
+        useCaseCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function () {
+                const checked = document.querySelectorAll('input[name^="use_cases"]:checked');
+                if (checked.length > 4) {
+                    this.checked = false;
+                    alert('You can select up to 4 use cases');
+                }
+            });
+        });
+
+        // Limit categories to 5
+        const categoryCheckboxes = document.querySelectorAll('input[name^="categories"]');
+        categoryCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function () {
+                const checked = document.querySelectorAll('input[name^="categories"]:checked');
+                if (checked.length > 5) {
+                    this.checked = false;
+                    alert('You can select up to 5 categories');
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

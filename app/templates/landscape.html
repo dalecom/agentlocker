@@ -1,0 +1,425 @@
+{% extends "base.html" %}
+
+{% block title %}AI Agent Ecosystem 2024 - Market Analysis & Trends{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Disable text selection */
+    body {
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+    
+    /* Allow selection for specific elements like code blocks if needed */
+    .selectable {
+        -webkit-user-select: text;
+        -moz-user-select: text;
+        -ms-user-select: text;
+        user-select: text;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section - Full Width -->
+<div class="bg-gradient-to-b from-blue-600 to-blue-800 py-16">
+    <div class="max-w-10xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center">
+            <h1 class="text-4xl font-extrabold text-white sm:text-5xl md:text-6xl">
+                AI Agent Ecosystem 2024
+            </h1>
+            <p class="mt-3 max-w-md mx-auto text-base text-blue-100 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
+                Comprehensive analysis of the AI agent ecosystem
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Main Content - Match Header Width -->
+<div class="max-w-10xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <!-- Key Metrics Grid -->
+    <div class="hidden lg:grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-12">
+        <!-- Total Agents Card -->
+        <div class="bg-white overflow-hidden shadow-lg rounded-xl">
+            <div class="p-6">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="rounded-md bg-blue-500 p-3">
+                            <i class="fas fa-robot text-white text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-gray-500 truncate">
+                                Total AI Agents
+                            </dt>
+                            <dd class="flex items-baseline">
+                                <div class="text-2xl font-semibold text-gray-900">
+                                    {{ total_agents }}
+                                </div>
+                                {% if monthly_growth_rate > 0 %}
+                                <div class="ml-2 flex items-baseline text-sm font-semibold text-green-600">
+                                    <i class="fas fa-arrow-up mr-1"></i>
+                                    {{ monthly_growth_rate }}%
+                                </div>
+                                {% endif %}
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reviews Card -->
+        <div class="bg-white overflow-hidden shadow-lg rounded-xl">
+            <div class="p-6">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="rounded-md bg-green-500 p-3">
+                            <i class="fas fa-star text-white text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-gray-500 truncate">
+                                Total Reviews
+                            </dt>
+                            <dd class="text-2xl font-semibold text-gray-900">{{ total_reviews }}</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Average Rating Card -->
+        <div class="bg-white overflow-hidden shadow-lg rounded-xl">
+            <div class="p-6">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="rounded-md bg-yellow-500 p-3">
+                            <i class="fas fa-star-half-alt text-white text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-gray-500 truncate">
+                                Average Rating
+                            </dt>
+                            <dd class="text-2xl font-semibold text-gray-900">{{ avg_rating }}/5</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Open Source Card -->
+        <div class="bg-white overflow-hidden shadow-lg rounded-xl">
+            <div class="p-6">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="rounded-md bg-purple-500 p-3">
+                            <i class="fab fa-github text-white text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-gray-500 truncate">
+                                Open Source Agents
+                            </dt>
+                            <dd class="text-2xl font-semibold text-gray-900">
+                                {{ open_source_count }} ({{ open_source_percentage }}%)
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Categories Grid -->
+    <div class="grid auto-rows-[minmax(100px,auto)] grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+        {% for category in categories|sort(attribute='agent_count', reverse=true) %}
+        {% if category.agents %}
+        <div class="h-fit w-full">
+            <!-- Category Header -->
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center space-x-2">
+                    <div class="p-1.5 rounded-lg" style="background-color: {{ category.color }}15">
+                        <i class="{{ category.icon }} text-base" style="color: {{ category.color }}"></i>
+                    </div>
+                    <div>
+                        <a href="{{ url_for('main.category_detail', slug=category.slug) }}" 
+                           class="text-lg font-bold text-gray-900 hover:text-blue-600">
+                            {{ category.name }}
+                        </a>
+                        <p class="text-xs text-gray-500">{{ category.description or 'All ' + category.name + ' AI Agents' }}</p>
+                    </div>
+                </div>
+                <span class="px-2 py-0.5 text-xs font-medium rounded-full" 
+                      style="background-color: {{ category.color }}15; color: {{ category.color }}">
+                    {{ category.agent_count }}
+                </span>
+            </div>
+
+            <!-- Agents Grid - Changed back to 3 columns -->
+            <div class="grid grid-cols-3 gap-2 w-full">
+                {% for agent in category.agents %}
+                <div class="relative w-full">
+                    <a href="{{ url_for('agent.detail', slug=agent.slug) }}" 
+                       class="group bg-white hover:bg-gray-50 rounded-full px-3 py-1.5 border border-gray-200 transition-all duration-200 flex items-center w-full"
+                       data-tippy-content="<strong>{{ agent.name }}</strong><br>{% if agent.short_description %}{{ agent.short_description }}{% endif %}">
+                        
+                        <!-- Left side with logo and name -->
+                        <div class="flex items-center space-x-2 min-w-0 flex-1">
+                            <!-- Logo/Icon -->
+                            {% if agent.logo_url %}
+                            <img src="{{ agent.logo_url }}" alt="{{ agent.name }}" 
+                                 class="w-5 h-5 flex-shrink-0 object-contain rounded">
+                            {% else %}
+                            <div class="w-5 h-5 flex-shrink-0 rounded flex items-center justify-center"
+                                 style="background-color: {{ category.color }}15">
+                                <i class="fas fa-robot text-xs" style="color: {{ category.color }}"></i>
+                            </div>
+                            {% endif %}
+
+                            <!-- Name with exactly 14 chars + ellipsis -->
+                            <span class="text-sm text-gray-700 truncate">
+                                {{ agent.name[:14] }}{% if agent.name|length > 14 %}...{% endif %}
+                            </span>
+                        </div>
+
+                        <!-- Count on the right -->
+                        <span class="text-sm text-gray-500 flex-shrink-0 ml-3">{{ agent.count }}</span>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+
+    <!-- Charts Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+        <!-- Category Distribution -->
+        <div class="bg-white p-6 rounded-xl shadow-lg">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Category Distribution</h3>
+            <div class="h-64">
+                <canvas id="categoryChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Growth Trends -->
+        <div class="bg-white p-6 rounded-xl shadow-lg">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Growth Trends</h3>
+            <div class="h-64">
+                <canvas id="growthChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Additional Stats -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Categories -->
+        <div class="bg-white p-6 rounded-xl shadow-lg">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Categories</h3>
+            <div class="space-y-4">
+                {% for cat in category_stats %}
+                <div class="flex items-center">
+                    <div class="flex-1">
+                        <div class="flex justify-between mb-1">
+                            <a href="{{ url_for('main.category_detail', slug=categories|selectattr('name', 'equalto', cat.name)|first|attr('slug')) }}" 
+                               class="text-sm font-medium text-gray-700 hover:text-blue-600 flex items-center">
+                                {% set category = categories|selectattr("name", "equalto", cat.name)|first %}
+                                {% if category %}
+                                <i class="{{ category.icon }} mr-2" style="color: {{ category.color }}"></i>
+                                {% else %}
+                                <i class="fas fa-folder mr-2 text-gray-500"></i>
+                                {% endif %}
+                                {{ cat.name }}
+                            </a>
+                            <span class="text-sm font-medium text-gray-700">{{ cat.count }}</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-blue-600 h-2 rounded-full" style="width: {{ cat.percentage }}%"></div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Integration Methods -->
+        <div class="bg-white p-6 rounded-xl shadow-lg">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Integration Methods</h3>
+            <div class="space-y-4">
+                {% for method, count in integration_stats %}
+                <div class="flex items-center">
+                    <div class="flex-1">
+                        <div class="flex justify-between mb-1">
+                            <span class="text-sm font-medium text-gray-700 flex items-center">
+                                {% set integration = integration_methods|selectattr("name", "equalto", method)|first %}
+                                {% if integration %}
+                                <i class="{{ integration.icon }} mr-2" style="color: {{ integration.color }}"></i>
+                                {% else %}
+                                <i class="fas fa-plug mr-2 text-gray-500"></i>
+                                {% endif %}
+                                {{ method }}
+                            </span>
+                            <span class="text-sm font-medium text-gray-700">{{ count }}</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-purple-600 h-2 rounded-full" style="width: {{ (count / total_agents * 100)|round }}%"></div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Use Cases -->
+        <div class="bg-white p-6 rounded-xl shadow-lg">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Use Cases</h3>
+            <div class="space-y-4">
+                {% for use_case, count in use_case_stats %}
+                <div class="flex items-center">
+                    <div class="flex-1">
+                        <div class="flex justify-between mb-1">
+                            <span class="text-sm font-medium text-gray-700 flex items-center">
+                                {% set uc = use_cases|selectattr("name", "equalto", use_case)|first %}
+                                {% if uc %}
+                                <i class="{{ uc.icon }} mr-2" style="color: {{ uc.color }}"></i>
+                                {% else %}
+                                <i class="fas fa-cube mr-2 text-gray-500"></i>
+                                {% endif %}
+                                {{ use_case }}
+                            </span>
+                            <span class="text-sm font-medium text-gray-700">{{ count }}</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-green-600 h-2 rounded-full" style="width: {{ (count / total_agents * 100)|round }}%"></div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    
+</div>
+
+<!-- Charts Initialization -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/tippy.js@6/dist/tippy.css" />
+<script src="https://unpkg.com/@popperjs/core@2"></script>
+<script src="https://unpkg.com/tippy.js@6"></script>
+<script>
+    // Category Chart
+    new Chart(document.getElementById('categoryChart'), {
+        type: 'doughnut',
+        data: {
+            labels: {{ category_stats|map(attribute='name')|list|tojson }},
+            datasets: [{
+                data: {{ category_stats|map(attribute='count')|list|tojson }},
+                backgroundColor: [
+                    '#3B82F6',
+                    '#10B981',
+                    '#F59E0B',
+                    '#EF4444',
+                    '#8B5CF6',
+                    '#EC4899'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+
+    // Growth Chart
+    new Chart(document.getElementById('growthChart'), {
+        type: 'line',
+        data: {
+            labels: {{ monthly_growth|map(attribute=0)|list|tojson }},
+            datasets: [{
+                label: 'Total Agents',
+                data: {{ monthly_growth|map(attribute=1)|list|tojson }},
+                borderColor: '#3B82F6',
+                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        drawBorder: false
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        tippy('[data-tippy-content]', {
+            allowHTML: true,
+            theme: 'light-border',
+            animation: 'scale',
+            duration: [200, 150]
+        });
+    });
+</script>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Prevent copy/paste
+    document.addEventListener('copy', function(e) {
+        e.preventDefault();
+        return false;
+    });
+    
+    document.addEventListener('paste', function(e) {
+        e.preventDefault();
+        return false;
+    });
+    
+    // Prevent right click
+    document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+        return false;
+    });
+    
+    // Prevent keyboard shortcuts
+    document.addEventListener('keydown', function(e) {
+        if ((e.ctrlKey || e.metaKey) && 
+            (e.key === 'c' || e.key === 'C' || e.key === 'v' || e.key === 'V')) {
+            e.preventDefault();
+            return false;
+        }
+    });
+</script>
+{% endblock %} 

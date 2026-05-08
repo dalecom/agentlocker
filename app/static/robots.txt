@@ -1,0 +1,29 @@
+# Global rules
+User-agent: *
+Disallow: /agent/*/track/
+Disallow: /agent/*/track/impression
+Disallow: /agent/*/track/view
+Disallow: /agent/*/track/click
+Disallow: /auth/
+Disallow: /admin/
+Disallow: /users/
+Disallow: /contact
+Disallow: /advertise
+
+# Prevent crawling of form submissions and dynamic actions
+Disallow: /*?*sort=
+Disallow: /*?*filter=
+Disallow: /*?*search=
+Disallow: /*?*type=
+
+# Allow specific directories explicitly
+Allow: /agent/
+Allow: /blog/
+Allow: /categories/
+Allow: /integrations/
+Allow: /use-cases/
+Allow: /static/
+Allow: /
+
+# Sitemap declaration
+Sitemap: https://www.agentlocker.ai/sitemap.xml

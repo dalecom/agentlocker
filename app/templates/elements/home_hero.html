@@ -1,0 +1,25 @@
+<!-- Hero Section -->
+<div class="relative bg-gradient-to-r from-blue-600 to-blue-800 -mt-24 pt-24">
+    <div class="relative px-4 py-16 sm:px-6 sm:py-24 lg:py-32 lg:px-8">
+        <h1 class="text-center text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl">
+            Discover the Perfect AI Agent<br>for Your Needs
+        </h1>
+        <p class="mt-6 max-w-lg mx-auto text-center text-xl text-blue-100 sm:max-w-2xl">
+            Compare features, read reviews, and find the best AI solutions from leading providers worldwide.
+        </p>
+        <div class="mt-10 max-w-sm mx-auto sm:max-w-none sm:flex sm:justify-center">
+            <div class="space-y-4 sm:space-y-0 sm:flex-nowrap sm:mx-auto sm:space-x-4">
+                <a href="{{ url_for('agent.list_all') }}" 
+                   class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-blue-700 bg-white hover:bg-blue-50 md:py-4 md:text-lg md:px-10">
+                    Browse Agents
+                </a>
+                {% if not current_user.is_authenticated %}
+                <a href="{{ url_for('auth.register') }}" 
+                   class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-500 hover:bg-blue-600 md:py-4 md:text-lg md:px-10">
+                    Get Started
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>

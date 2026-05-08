@@ -1,0 +1,121 @@
+<!-- Moved Desktop Browse Section -->
+<form method="GET" action="{{ url_for('main.index') }}">
+    <div class="max-w-10xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="hidden lg:flex items-center gap-6 justify-center">
+            <!-- Browse Section -->
+            <div class="inline-flex items-center bg-white px-3 py-2.5 rounded-lg shadow-sm border border-gray-100 w-auto">
+                <span class="text-sm font-medium text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full mr-2">
+                    {{ total_agents }}
+                </span>
+                <span class="text-sm text-gray-600 font-medium mr-2">
+                    {% if request.args.get('type') == 'tool' %}
+                        Tools in
+                    {% elif request.args.get('type') == 'platform' %}
+                        Platforms in
+                    {% elif request.args.get('type') == 'agentic' %}
+                        Agents in
+                    {% else %}
+                        Agents in
+                    {% endif %}
+                </span>
+                
+                {% if request.args.get('category') %}
+                    {% for category in categories %}
+                        {% if category.id|string == request.args.get('category') %}
+                        <span class="flex items-center text-base font-medium px-2.5 py-1 rounded-lg"
+                              style="color: {{ category.color }}; background-color: {{ category.color }}10;">
+                            <i class="{{ category.icon }} mr-2"></i>
+                            {{ category.name }}
+                        </span>
+                        {% endif %}
+                    {% endfor %}
+                {% else %}
+                <span class="flex items-center text-base font-medium px-2.5 py-1 rounded-lg text-gray-700 cursor-pointer hover:text-blue-600" onclick="scrollToSection('categories-section')">
+                    <i class="fas fa-folder text-yellow-500 mr-2"></i>
+                    {{ total_categories }} Categories
+                </span>
+                {% endif %}
+
+                <!-- Use Case -->
+                <span class="text-sm text-gray-600 font-medium mx-2">for</span>
+                {% if request.args.get('use_case') %}
+                    {% for use_case in use_cases %}
+                        {% if use_case.id|string == request.args.get('use_case') %}
+                        <span class="flex items-center text-base font-medium px-2.5 py-1 rounded-lg"
+                              style="color: {{ use_case.color }}; background-color: {{ use_case.color }}10;">
+                            <i class="{{ use_case.icon }} mr-2"></i>
+                            {{ use_case.name }}
+                        </span>
+                        {% endif %}
+                    {% endfor %}
+                {% else %}
+                <span class="flex items-center text-base font-medium px-2.5 py-1 rounded-lg text-gray-700 cursor-pointer hover:text-blue-600" onclick="scrollToSection('use-cases-section')">
+                    <i class="fas fa-layer-group text-purple-500 mr-2"></i>
+                    {{ total_use_cases }} Use Cases
+                </span>
+                {% endif %}
+
+                <!-- Integration -->
+                <span class="text-sm text-gray-600 font-medium mx-2">with</span>
+                {% if request.args.get('integration') %}
+                    {% for integration in integrations %}
+                        {% if integration.id|string == request.args.get('integration') %}
+                        <span class="flex items-center text-base font-medium px-2.5 py-1 rounded-lg"
+                              style="color: {{ integration.color }}; background-color: {{ integration.color }}10;">
+                            <i class="{{ integration.icon }} mr-2"></i>
+                            {{ integration.name }}
+                        </span>
+                        {% endif %}
+                    {% endfor %}
+                {% else %}
+                <span class="flex items-center text-base font-medium px-2.5 py-1 rounded-lg text-gray-700 cursor-pointer hover:text-blue-600" onclick="scrollToSection('integrations-section')">
+                    <i class="fas fa-plug text-green-500 mr-2"></i>
+                    {{ total_integrations }} Integrations
+                </span>
+                {% endif %}
+            </div>
+
+            <!-- Sort and Filter -->
+            <div class="flex items-center gap-4 flex-shrink-0">
+                <!-- Sort Filter -->
+                <div class="relative">
+                    <select name="sort"
+                        class="appearance-none w-auto pl-3 pr-10 py-2.5 text-sm font-medium bg-white border border-gray-200 rounded-lg hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 cursor-pointer shadow-sm hover:shadow"
+                        onchange="handleSortChange(this)">
+                        <option value="newest" {% if request.args.get('sort')=='newest' %}selected{% endif %}>⚡ Newest</option>
+                        <option value="rating" {% if request.args.get('sort')=='rating' %}selected{% endif %}>⭐ Top Rated</option>
+                        <option value="reviews" {% if request.args.get('sort')=='reviews' %}selected{% endif %}>📝 Most Reviews</option>
+                    </select>
+                    <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none text-gray-500">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Pricing Filter -->
+                <div class="relative">
+                    <select name="pricing"
+                        class="appearance-none w-auto pl-3 pr-10 py-2.5 text-sm font-medium bg-white border border-gray-200 rounded-lg hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 cursor-pointer shadow-sm hover:shadow"
+                        onchange="handleSortChange(this)">
+                        <option value="">💰 All Pricing</option>
+                        <option value="free" {% if request.args.get('pricing')=='free' %}selected{% endif %}>🎁 Free</option>
+                        <option value="paid" {% if request.args.get('pricing')=='paid' %}selected{% endif %}>💸 Paid</option>
+                    </select>
+                    <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none text-gray-500">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Reset Button -->
+                <a href="{{ url_for('main.index') }}" 
+                   class="inline-flex items-center px-3 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 shadow-sm hover:shadow group">
+                    <i class="fas fa-redo-alt mr-2 group-hover:rotate-180 transition-transform duration-500 text-red-500"></i>
+                    Reset
+                </a>
+            </div>
+        </div>
+    </div>
+</form>

@@ -1,0 +1,678 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 py-6">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Page Header -->
+        <div class="mb-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-900">Admin Overview</h1>
+                    <p class="mt-1 text-sm text-gray-500">Real-time platform analytics and insights</p>
+                </div>
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                    <span class="w-2 h-2 mr-2 rounded-full bg-green-500 animate-pulse"></span>
+                    Live Data
+                </span>
+            </div>
+            
+            <!-- Admin Quick Links -->
+            <div class="mt-4 flex flex-wrap gap-2">
+                <a href="{{ url_for('admin.blog_posts') }}" 
+                   class="inline-flex items-center px-3 py-1.5 bg-pink-100 text-pink-700 text-sm rounded-lg hover:bg-pink-200 transition">
+                    <i class="fas fa-blog mr-1.5"></i>
+                    Blog
+                </a>
+                <a href="{{ url_for('user.manage_users') }}" 
+                   class="inline-flex items-center px-3 py-1.5 bg-blue-100 text-blue-700 text-sm rounded-lg hover:bg-blue-200 transition">
+                    <i class="fas fa-users-cog mr-1.5"></i>
+                    Users
+                </a>
+                <a href="{{ url_for('agent.verify_listings') }}" 
+                   class="inline-flex items-center px-3 py-1.5 bg-yellow-100 text-yellow-700 text-sm rounded-lg hover:bg-yellow-200 transition">
+                    <i class="fas fa-check-circle mr-1.5"></i>
+                    Listings
+                </a>
+                <a href="{{ url_for('admin.sales') }}" 
+                   class="inline-flex items-center px-3 py-1.5 bg-green-100 text-green-700 text-sm rounded-lg hover:bg-green-200 transition">
+                    <i class="fas fa-dollar-sign mr-1.5"></i>
+                    Sales
+                </a>
+            </div>
+        </div>
+
+        <!-- Main Stats Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <!-- 1. Total Agents -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 transition duration-300 hover:shadow-md">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-xl bg-blue-50 mr-4">
+                        <i class="fas fa-robot text-blue-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-500">AI Agents</p>
+                        <p class="text-2xl font-bold text-gray-900">{{ stats.total_agents }}</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 2. Total Users -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 transition duration-300 hover:shadow-md">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-xl bg-green-50 mr-4">
+                        <i class="fas fa-users text-green-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-500">Verified Users</p>
+                        <p class="text-2xl font-bold text-gray-900">{{ stats.total_users }}</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 3. Total Reviews -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 transition duration-300 hover:shadow-md">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-xl bg-yellow-50 mr-4">
+                        <i class="fas fa-star text-yellow-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-500">Agent Reviews</p>
+                        <p class="text-2xl font-bold text-gray-900">{{ stats.total_reviews }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. Agents in Lockers -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 transition duration-300 hover:shadow-md">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-xl bg-pink-50 mr-4">
+                        <i class="fas fa-heart text-pink-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-500">Agents in Lockers</p>
+                        <p class="text-2xl font-bold text-gray-900">{{ stats.total_favorites }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. Total Impressions -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 transition duration-300 hover:shadow-md">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-xl bg-purple-50 mr-4">
+                        <i class="fas fa-eye text-purple-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-500">Total Impressions</p>
+                        <p class="text-2xl font-bold text-gray-900">{{ stats.total_impressions }}</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 6. Total Views -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 transition duration-300 hover:shadow-md">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-xl bg-indigo-50 mr-4">
+                        <i class="fas fa-chart-line text-indigo-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-500">Total Views</p>
+                        <p class="text-2xl font-bold text-gray-900">{{ stats.total_views }}</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 7. Total Clicks -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 transition duration-300 hover:shadow-md">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-xl bg-pink-50 mr-4">
+                        <i class="fas fa-mouse-pointer text-pink-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-500">Total Clicks</p>
+                        <p class="text-2xl font-bold text-gray-900">{{ stats.total_clicks }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 8. Total Upvotes -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 transition duration-300 hover:shadow-md">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-xl bg-red-50 mr-4">
+                        <i class="fas fa-arrow-up text-red-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-500">Total Upvotes</p>
+                        <p class="text-2xl font-bold text-gray-900">{{ stats.total_upvotes }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <!-- Growth Chart -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-lg font-semibold text-gray-900">Platform Growth</h3>
+                    <div class="inline-flex p-1 bg-gray-50 rounded-lg">
+                        <button onclick="updateChart('daily')" class="px-4 py-2 text-sm font-medium rounded-md transition-all duration-200">Daily</button>
+                        <button onclick="updateChart('weekly')" class="px-4 py-2 text-sm font-medium rounded-md transition-all duration-200">Weekly</button>
+                        <button onclick="updateChart('monthly')" class="px-4 py-2 text-sm font-medium rounded-md transition-all duration-200">Monthly</button>
+                    </div>
+                </div>
+                <div class="h-[300px]">
+                    <canvas id="growthChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Metrics Chart -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-lg font-semibold text-gray-900">Platform Metrics</h3>
+                    <div class="inline-flex p-1 bg-gray-50 rounded-lg">
+                        <button onclick="updateTimeframe('daily')" class="px-4 py-2 text-sm font-medium rounded-md transition-all duration-200">Daily</button>
+                        <button onclick="updateTimeframe('weekly')" class="px-4 py-2 text-sm font-medium rounded-md transition-all duration-200">Weekly</button>
+                        <button onclick="updateTimeframe('monthly')" class="px-4 py-2 text-sm font-medium rounded-md transition-all duration-200">Monthly</button>
+                    </div>
+                </div>
+                <div class="h-[300px]">
+                    <canvas id="metricsChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Activity & Top Agents -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Recent Activity -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-6">Recent Activity</h3>
+                
+                <!-- Initial 7 items -->
+                <div class="space-y-4" id="recent-activity">
+                    {% for activity in recent_activity[:7] %}
+                        {% if activity.type == 'upvote' %}
+                        <div class="flex items-center p-4 rounded-lg bg-gray-50 transition duration-300 hover:bg-gray-100">
+                            <div class="w-12 h-12 rounded-xl mr-4 flex items-center justify-center bg-blue-100">
+                                <i class="fas fa-arrow-up text-blue-500 text-xl"></i>
+                            </div>
+                            <div class="flex-grow">
+                                <p class="text-sm font-semibold text-gray-900">
+                                    New Upvote for <a href="{{ url_for('agent.detail', slug=activity.item.agent.slug) }}" 
+                                                    class="text-blue-600 hover:text-blue-800 transition-colors">
+                                        {{ activity.item.agent.name }}
+                                    </a>
+                                </p>
+                                <div class="flex items-center text-xs text-gray-500 mt-1">
+                                    <span class="flex items-center">
+                                        <i class="fas fa-user text-gray-400 mr-1"></i>
+                                        {{ activity.item.user.username }}
+                                    </span>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-1">{{ activity.item.created_at|timeago }}</p>
+                            </div>
+                        </div>
+                        {% elif activity.type == 'agent' %}
+                        <div class="flex items-center p-4 rounded-lg bg-gray-50 transition duration-300 hover:bg-gray-100">
+                            <a href="{{ url_for('agent.detail', slug=activity.item.slug) }}" 
+                               class="w-12 h-12 rounded-xl mr-4 overflow-hidden hover:opacity-75 transition-opacity">
+                                <img src="{{ activity.item.logo_url or url_for('static', filename='img/default-agent-logo.png') }}" 
+                                     class="w-full h-full object-cover" 
+                                     alt="{{ activity.item.name }}">
+                            </a>
+                            <div class="flex-grow">
+                                <p class="text-sm font-semibold text-gray-900">
+                                    New Agent: <a href="{{ url_for('agent.detail', slug=activity.item.slug) }}" 
+                                                 class="text-blue-600 hover:text-blue-800 transition-colors">
+                                        {{ activity.item.name }}
+                                    </a>
+                                </p>
+                                <div class="flex items-center text-xs text-gray-500 mt-1">
+                                    <span class="flex items-center">
+                                        <i class="fas fa-user text-gray-400 mr-1"></i>
+                                        {% if activity.item.owner %}
+                                            {{ activity.item.owner.username }}
+                                        {% else %}
+                                            <span class="text-gray-400">No owner</span>
+                                        {% endif %}
+                                    </span>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-1">Added {{ activity.item.created_at|timeago }}</p>
+                            </div>
+                        </div>
+                        {% elif activity.type == 'review' %}
+                        <div class="flex items-center p-4 rounded-lg bg-gray-50 transition duration-300 hover:bg-gray-100">
+                            <div class="w-12 h-12 rounded-xl mr-4 flex items-center justify-center bg-yellow-100">
+                                <i class="fas fa-star text-yellow-500 text-xl"></i>
+                            </div>
+                            <div class="flex-grow">
+                                <p class="text-sm font-semibold text-gray-900">
+                                    New Review for <a href="{{ url_for('agent.detail', slug=activity.item.agent.slug) }}" 
+                                                    class="text-blue-600 hover:text-blue-800 transition-colors">
+                                        {{ activity.item.agent.name }}
+                                    </a>
+                                </p>
+                                <div class="flex items-center text-xs text-gray-500 mt-1">
+                                    <span class="flex items-center">
+                                        <i class="fas fa-user text-gray-400 mr-1"></i>
+                                        {{ activity.item.user.username }}
+                                        <span class="text-gray-400 mx-2">•</span>
+                                        <i class="fas fa-star text-yellow-400 mr-1"></i>
+                                        {{ activity.item.rating }}/5
+                                    </span>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-1">Posted {{ activity.item.created_at|timeago }}</p>
+                            </div>
+                        </div>
+                        {% elif activity.type == 'favorite' %}
+                        <div class="flex items-center p-4 rounded-lg bg-gray-50 transition duration-300 hover:bg-gray-100">
+                            <div class="w-12 h-12 rounded-xl mr-4 flex items-center justify-center bg-pink-100">
+                                <i class="fas fa-heart text-pink-500 text-xl"></i>
+                            </div>
+                            <div class="flex-grow">
+                                <p class="text-sm font-semibold text-gray-900">
+                                    New Favorite for <a href="{{ url_for('agent.detail', slug=activity.item.agent.slug) }}" 
+                                                    class="text-blue-600 hover:text-blue-800 transition-colors">
+                                        {{ activity.item.agent.name }}
+                                    </a>
+                                </p>
+                                <div class="flex items-center text-xs text-gray-500 mt-1">
+                                    <span class="flex items-center">
+                                        <i class="fas fa-user text-gray-400 mr-1"></i>
+                                        {{ activity.item.user.username }}
+                                    </span>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-1">{{ activity.item.created_at|timeago }}</p>
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+
+                <!-- Hidden items (shown when "View More" is clicked) -->
+                <div class="space-y-4 hidden" id="more-activity">
+                    {% for activity in recent_activity[7:50] %}
+                        {% if activity.type == 'upvote' %}
+                        <div class="flex items-center p-4 rounded-lg bg-gray-50 transition duration-300 hover:bg-gray-100">
+                            <div class="w-12 h-12 rounded-xl mr-4 flex items-center justify-center bg-blue-100">
+                                <i class="fas fa-arrow-up text-blue-500 text-xl"></i>
+                            </div>
+                            <div class="flex-grow">
+                                <p class="text-sm font-semibold text-gray-900">
+                                    New Upvote for <a href="{{ url_for('agent.detail', slug=activity.item.agent.slug) }}" 
+                                                    class="text-blue-600 hover:text-blue-800 transition-colors">
+                                        {{ activity.item.agent.name }}
+                                    </a>
+                                </p>
+                                <div class="flex items-center text-xs text-gray-500 mt-1">
+                                    <span class="flex items-center">
+                                        <i class="fas fa-user text-gray-400 mr-1"></i>
+                                        {{ activity.item.user.username }}
+                                    </span>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-1">{{ activity.item.created_at|timeago }}</p>
+                            </div>
+                        </div>
+                        {% elif activity.type == 'agent' %}
+                        <div class="flex items-center p-4 rounded-lg bg-gray-50 transition duration-300 hover:bg-gray-100">
+                            <a href="{{ url_for('agent.detail', slug=activity.item.slug) }}" 
+                               class="w-12 h-12 rounded-xl mr-4 overflow-hidden hover:opacity-75 transition-opacity">
+                                <img src="{{ activity.item.logo_url or url_for('static', filename='img/default-agent-logo.png') }}" 
+                                     class="w-full h-full object-cover" 
+                                     alt="{{ activity.item.name }}">
+                            </a>
+                            <div class="flex-grow">
+                                <p class="text-sm font-semibold text-gray-900">
+                                    New Agent: <a href="{{ url_for('agent.detail', slug=activity.item.slug) }}" 
+                                                 class="text-blue-600 hover:text-blue-800 transition-colors">
+                                        {{ activity.item.name }}
+                                    </a>
+                                </p>
+                                <div class="flex items-center text-xs text-gray-500 mt-1">
+                                    <span class="flex items-center">
+                                        <i class="fas fa-user text-gray-400 mr-1"></i>
+                                        {% if activity.item.owner %}
+                                            {{ activity.item.owner.username }}
+                                        {% else %}
+                                            <span class="text-gray-400">No owner</span>
+                                        {% endif %}
+                                    </span>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-1">Added {{ activity.item.created_at|timeago }}</p>
+                            </div>
+                        </div>
+                        {% elif activity.type == 'review' %}
+                        <div class="flex items-center p-4 rounded-lg bg-gray-50 transition duration-300 hover:bg-gray-100">
+                            <div class="w-12 h-12 rounded-xl mr-4 flex items-center justify-center bg-yellow-100">
+                                <i class="fas fa-star text-yellow-500 text-xl"></i>
+                            </div>
+                            <div class="flex-grow">
+                                <p class="text-sm font-semibold text-gray-900">
+                                    New Review for <a href="{{ url_for('agent.detail', slug=activity.item.agent.slug) }}" 
+                                                    class="text-blue-600 hover:text-blue-800 transition-colors">
+                                        {{ activity.item.agent.name }}
+                                    </a>
+                                </p>
+                                <div class="flex items-center text-xs text-gray-500 mt-1">
+                                    <span class="flex items-center">
+                                        <i class="fas fa-user text-gray-400 mr-1"></i>
+                                        {{ activity.item.user.username }}
+                                        <span class="text-gray-400 mx-2">•</span>
+                                        <i class="fas fa-star text-yellow-400 mr-1"></i>
+                                        {{ activity.item.rating }}/5
+                                    </span>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-1">Posted {{ activity.item.created_at|timeago }}</p>
+                            </div>
+                        </div>
+                        {% elif activity.type == 'favorite' %}
+                        <div class="flex items-center p-4 rounded-lg bg-gray-50 transition duration-300 hover:bg-gray-100">
+                            <div class="w-12 h-12 rounded-xl mr-4 flex items-center justify-center bg-pink-100">
+                                <i class="fas fa-heart text-pink-500 text-xl"></i>
+                            </div>
+                            <div class="flex-grow">
+                                <p class="text-sm font-semibold text-gray-900">
+                                    New Favorite for <a href="{{ url_for('agent.detail', slug=activity.item.agent.slug) }}" 
+                                                    class="text-blue-600 hover:text-blue-800 transition-colors">
+                                        {{ activity.item.agent.name }}
+                                    </a>
+                                </p>
+                                <div class="flex items-center text-xs text-gray-500 mt-1">
+                                    <span class="flex items-center">
+                                        <i class="fas fa-user text-gray-400 mr-1"></i>
+                                        {{ activity.item.user.username }}
+                                    </span>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-1">{{ activity.item.created_at|timeago }}</p>
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+
+                <!-- View More button -->
+                {% if recent_activity|length > 7 %}
+                <div class="mt-6 text-center">
+                    <button id="view-more-btn" 
+                            class="px-4 py-2 text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors"
+                            onclick="toggleMoreActivity()">
+                        View More
+                    </button>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- New Users Table -->
+<div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
+    <h3 class="text-lg font-semibold text-gray-900 mb-6">New Users</h3>
+    <div class="overflow-x-auto">
+        <table class="w-full">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Joined</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+                {% for user in recent_users[:10] %}
+                <tr class="hover:bg-gray-50">
+                    <td class="px-4 py-3">
+                        <div class="flex items-center">
+                            <a href="{{ url_for('auth.public_profile', username=user.username) }}">
+                                <img src="{{ user.avatar_url or url_for('static', filename='img/default-avatar.png') }}" 
+                                     class="w-8 h-8 rounded-full object-cover hover:opacity-75 transition-opacity" 
+                                     alt="{{ user.username }}">
+                            </a>
+                            <a href="{{ url_for('auth.public_profile', username=user.username) }}" 
+                               class="ml-3 text-sm font-medium text-gray-900 hover:text-blue-600 transition-colors">
+                                {{ user.username }}
+                            </a>
+                        </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <span class="text-sm text-gray-500">{{ user.email }}</span>
+                    </td>
+                    <td class="px-4 py-3">
+                        {% if user.is_verified %}
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                <i class="fas fa-check-circle mr-1"></i>
+                            </span>
+                        {% else %}
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                <i class="fas fa-clock mr-1"></i>
+                            </span>
+                        {% endif %}
+                    </td>
+                    <td class="px-4 py-3">
+                        <span class="text-sm text-gray-500">{{ user.created_at|timeago }}</span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+            <!-- Top Agents -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-6">Top Performing Agents</h3>
+                <div class="space-y-4">
+                    {% for agent in top_agents %}
+                    <div class="flex items-center justify-between p-4 rounded-lg bg-gray-50 transition duration-300 hover:bg-gray-100">
+                        <div class="flex items-center">
+                            <a href="{{ url_for('agent.detail', slug=agent.slug) }}" 
+                               class="w-12 h-12 rounded-xl mr-4 overflow-hidden hover:opacity-75 transition-opacity">
+                                <img src="{{ agent.logo_url or url_for('static', filename='img/default-agent-logo.png') }}" 
+                                     class="w-full h-full object-cover" 
+                                     alt="{{ agent.name }}">
+                            </a>
+                            <div>
+                                <p class="text-sm font-semibold text-gray-900">
+                                    <a href="{{ url_for('agent.detail', slug=agent.slug) }}" 
+                                       class="hover:text-blue-600 transition-colors">
+                                        {{ agent.name }}
+                                    </a>
+                                </p>
+                                <p class="text-xs text-gray-500 mt-1">{{ agent.total_reviews }} reviews</p>
+                            </div>
+                        </div>
+                        <div class="text-sm font-medium text-gray-900">
+                            {{ "{:,}".format(agent.view_count|default(0)) }} views
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Keep your existing scripts section unchanged -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Chart.js configuration and styling
+    Chart.defaults.font.family = '-apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif';
+    Chart.defaults.color = '#6B7280';
+    Chart.defaults.scale.grid.color = '#F3F4F6';
+    
+    // Growth Chart
+    const dailyStats = {{ daily_stats|tojson }};
+    const weeklyStats = {{ weekly_stats|tojson }};
+    const monthlyStats = {{ monthly_stats|tojson }};
+    
+    // Metrics data
+    const dailyMetrics = {{ daily_metrics|tojson }};
+    const weeklyMetrics = {{ weekly_metrics|tojson }};
+    const monthlyMetrics = {{ monthly_metrics|tojson }};
+    
+    let growthChart;
+    let metricsChart;
+    
+    function updateChart(period) {
+        const data = period === 'daily' ? dailyStats : 
+                     period === 'weekly' ? weeklyStats : monthlyStats;
+        
+        const ctx = document.getElementById('growthChart').getContext('2d');
+        
+        if (growthChart) {
+            growthChart.destroy();
+        }
+        
+        growthChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: data.map(d => d.date || d.week || d.month),
+                datasets: [{
+                    label: 'New Agents',
+                    data: data.map(d => d.new_agents),
+                    borderColor: '#3B82F6',
+                    backgroundColor: '#93C5FD',
+                    tension: 0.4,
+                    fill: true
+                }, {
+                    label: 'New Reviews',
+                    data: data.map(d => d.new_reviews),
+                    borderColor: '#F59E0B',
+                    backgroundColor: '#FCD34D',
+                    tension: 0.4,
+                    fill: true
+                }, {
+                    label: 'New Users',
+                    data: data.map(d => d.new_users),
+                    borderColor: '#10B981',
+                    backgroundColor: '#6EE7B7',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    intersect: false,
+                    mode: 'index'
+                },
+                plugins: {
+                    legend: {
+                        position: 'top'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Update button styles
+        document.querySelectorAll('[onclick^="updateChart"]').forEach(btn => {
+            btn.classList.remove('bg-blue-100', 'text-blue-600');
+            btn.classList.add('text-gray-600');
+        });
+        document.querySelector(`[onclick="updateChart('${period}')"]`).classList.add('bg-blue-100', 'text-blue-600');
+    }
+    
+    function updateTimeframe(period) {
+        const data = period === 'daily' ? dailyMetrics : 
+                     period === 'weekly' ? weeklyMetrics : monthlyMetrics;
+        
+        const ctx = document.getElementById('metricsChart').getContext('2d');
+        
+        if (metricsChart) {
+            metricsChart.destroy();
+        }
+        
+        metricsChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: data.map(d => d.date || d.week || d.month),
+                datasets: [
+                    {
+                        label: 'Impressions',
+                        data: data.map(d => d.impressions),
+                        borderColor: '#8B5CF6',
+                        backgroundColor: '#C4B5FD',
+                        tension: 0.4,
+                        fill: true
+                    },
+                    {
+                        label: 'Views',
+                        data: data.map(d => d.views),
+                        borderColor: '#EC4899',
+                        backgroundColor: '#F9A8D4',
+                        tension: 0.4,
+                        fill: true
+                    },
+                    {
+                        label: 'Clicks',
+                        data: data.map(d => d.clicks),
+                        borderColor: '#F97316',
+                        backgroundColor: '#FDBA74',
+                        tension: 0.4,
+                        fill: true
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    intersect: false,
+                    mode: 'index'
+                },
+                plugins: {
+                    legend: {
+                        position: 'top'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Update button styles
+        document.querySelectorAll('[onclick^="updateTimeframe"]').forEach(btn => {
+            btn.classList.remove('bg-blue-100', 'text-blue-600');
+            btn.classList.add('text-gray-600');
+        });
+        document.querySelector(`[onclick="updateTimeframe('${period}')"]`).classList.add('bg-blue-100', 'text-blue-600');
+    }
+    
+    // Initialize charts on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        updateChart('daily');
+        updateTimeframe('daily');
+    });
+
+    function toggleMoreActivity() {
+        const moreActivity = document.getElementById('more-activity');
+        const viewMoreBtn = document.getElementById('view-more-btn');
+        
+        if (moreActivity.classList.contains('hidden')) {
+            moreActivity.classList.remove('hidden');
+            viewMoreBtn.textContent = 'Show Less';
+        } else {
+            moreActivity.classList.add('hidden');
+            viewMoreBtn.textContent = 'View More';
+            // Scroll back to top of activity section
+            document.getElementById('recent-activity').scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+</script>
+{% endblock %}
+
+
+
+ 
+   

@@ -1,0 +1,269 @@
+{% extends "base.html" %}
+
+{% block title %}{{ post.title }} - AI Agent Blog{% endblock %}
+
+{% block meta_description %}{{ post.excerpt }}{% endblock %}
+
+{% block head %}
+{{ super() }}
+<style>
+    .prose a {
+        color: #2563eb !important; /* blue-600 */
+        text-decoration: underline !important;
+    }
+    .prose a:hover {
+        color: #1d4ed8 !important; /* blue-700 */
+    }
+</style>
+{% endblock %}
+
+{% block meta %}
+{{ super() }}
+{% if post.image_url %}
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:type" content="image/jpeg">
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<article class="max-w-4xl mx-auto px-4 py-8">
+    <!-- Post Header -->
+    <header class="mb-8">
+        <h1 class="mt-4 text-4xl font-bold text-gray-900">
+            {{ post.title }}
+        </h1>
+
+        <div class="mt-6 flex items-center justify-between">
+            <!-- Author and Date -->
+            <div class="flex items-center">
+                <a href="{{ url_for('auth.public_profile', username=post.author.username) }}" class="flex items-center hover:opacity-90 transition-opacity">
+                    <div class="flex-shrink-0">
+                        {% if post.author.avatar_url %}
+                        <img class="h-12 w-12 rounded-full" src="{{ post.author.avatar_url }}" alt="{{ post.author.username }}">
+                        {% else %}
+                        <div class="h-12 w-12 rounded-full bg-gray-200 flex items-center justify-center">
+                            <span class="text-gray-500 text-sm">{{ post.author.username[:1].upper() }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-gray-900">
+                            {{ post.author.username }}
+                        </p>
+                        <div class="text-sm text-gray-500">
+                            <time datetime="{{ post.published_at.isoformat() if post.published_at else post.created_at.isoformat() }}">
+                                {{ post.published_at.strftime('%B %d, %Y') if post.published_at else post.created_at.strftime('%B %d, %Y') }}
+                            </time>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Category -->
+            <div class="flex items-center">
+                {% if post.category %}
+                <a href="{{ url_for('main.blog_category', slug=post.category.slug) }}" 
+                   class="px-3 py-1 rounded-full text-sm font-medium"
+                   style="background-color: {{ post.category.color or '#e5e7eb' }}; color: {{ post.category.color and '#ffffff' or '#374151' }}">
+                    {{ post.category.name }}
+                </a>
+                {% else %}
+                <span class="px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-700">
+                    Uncategorized
+                </span>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+
+    <!-- Featured Image -->
+    {% if post.image_url %}
+    <div class="w-full mb-8">
+        <img src="{{ post.image_url }}" 
+             alt="{{ post.title }}" 
+             class="w-full h-64 sm:h-96 object-cover rounded-2xl shadow-xl">
+    </div>
+    {% endif %}
+
+    <!-- Post Content -->
+    <div class="prose prose-lg max-w-none prose-a:text-blue-600 prose-a:underline hover:prose-a:text-blue-800">
+        {{ post.content|safe }}
+    </div>
+
+    {% if current_user.is_admin %}
+    <div class="mt-8 flex justify-end">
+        <a href="{{ url_for('admin.edit_blog_post', id=post.id) }}" 
+           class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-md shadow-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+            <i class="fas fa-edit mr-2"></i>
+            Edit Post
+        </a>
+    </div>
+    {% endif %}
+
+    <!-- Related Posts -->
+    {% if related_posts and related_posts|length > 0 %}
+    <div class="mt-16">
+        <!-- Decorative Divider -->
+        <div class="relative py-8">
+            <div class="absolute inset-0 flex items-center" aria-hidden="true">
+                <div class="w-full border-t border-gray-200"></div>
+            </div>
+            <div class="relative flex justify-center">
+                <span class="px-4 bg-white text-sm text-gray-500">Related Articles</span>
+            </div>
+        </div>
+
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-extrabold text-gray-900">
+                More from {{ post.category.name if post.category else 'Our Blog' }}
+            </h2>
+            <p class="mt-3 max-w-2xl mx-auto text-xl text-gray-500">
+                Read more articles about {{ post.category.name|lower if post.category else 'AI and technology' }}
+            </p>
+        </div>
+
+        <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            {% for related in related_posts %}
+            <article class="bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300">
+                <a href="{{ url_for('main.blog_post', slug=related.slug) }}" class="block">
+                    {% if related.image_url %}
+                    <div class="aspect-w-16 aspect-h-9">
+                        <img src="{{ related.image_url }}" 
+                             alt="{{ related.title }}" 
+                             class="w-full h-48 object-cover">
+                    </div>
+                    {% endif %}
+                    
+                    <div class="p-6">
+                        {% if related.category %}
+                        <div class="text-sm text-blue-600 mb-2">{{ related.category.name }}</div>
+                        {% endif %}
+                        
+                        <h3 class="text-xl font-bold text-gray-900 mb-2 hover:text-blue-600 transition-colors">
+                            {{ related.title }}
+                        </h3>
+                        
+                        {% if related.excerpt %}
+                        <p class="text-gray-600 mb-4 line-clamp-2">{{ related.excerpt }}</p>
+                        {% endif %}
+                        
+                        <div class="flex items-center text-sm text-gray-500">
+                            <time datetime="{{ related.published_at.isoformat() }}">
+                                {{ related.published_at.strftime('%B %d, %Y') }}
+                            </time>
+                        </div>
+                    </div>
+                </a>
+            </article>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Decorative Divider -->
+    <div class="relative py-8">
+        <div class="absolute inset-0 flex items-center" aria-hidden="true">
+            <div class="w-full border-t border-gray-200"></div>
+        </div>
+        <div class="relative flex justify-center">
+            <span class="px-4 bg-white text-sm text-gray-500">Discover AI Agents</span>
+        </div>
+    </div>
+
+    <!-- Featured Agents Section -->
+    <div class="bg-gradient-to-b from-white to-gray-50">
+        <div class="max-w-10xl mx-auto py-8 px-4 sm:py-12 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <h2 class="text-3xl font-extrabold text-gray-900">Featured Agents</h2>
+                <p class="mt-3 max-w-2xl mx-auto text-xl text-gray-500">
+                    Discover our hand-picked selection of exceptional AI agents
+                </p>
+            </div>
+
+            <div class="mt-8 relative">
+                <!-- Decorative Elements -->
+                <div class="absolute inset-0 flex items-center" aria-hidden="true">
+                    <div class="w-full border-t border-gray-200"></div>
+                </div>
+                <div class="absolute inset-0">
+                    <div class="h-full bg-gradient-to-r from-transparent via-white to-transparent"></div>
+                </div>
+
+                <!-- Featured Agents Grid -->
+                <div class="relative">
+                    <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+                        {% for agent in featured_agents %}
+                        <a href="{{ url_for('agent.detail', slug=agent.slug) }}" class="block group">
+                            <div class="relative bg-white rounded-2xl shadow-xl transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
+                                <!-- Featured Badge -->
+                                <div class="absolute -top-3 -right-3 z-10">
+                                    <div class="bg-purple-500 rounded-full p-2 shadow-lg">
+                                        <i class="fas fa-star text-white"></i>
+                                    </div>
+                                </div>
+
+                                <!-- Card Content -->
+                                <div class="p-6">
+                                    <!-- Logo and Title -->
+                                    <div class="flex items-center space-x-4">
+                                        <div class="flex-shrink-0">
+                                            <img class="h-16 w-16 rounded-xl object-cover bg-white p-2 shadow-md" 
+                                                 src="{{ agent.logo_url or url_for('static', filename='img/default-agent.png') }}" 
+                                                 alt="{{ agent.name }}">
+                                        </div>
+                                        <div>
+                                            <h3 class="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">{{ agent.name }}</h3>
+                                            <p class="text-sm text-gray-500">{{ agent.provider }}</p>
+                                        </div>
+                                    </div>
+
+                                    <!-- Description -->
+                                    <p class="mt-3 text-gray-600 line-clamp-2">{{ agent.short_description }}</p>
+
+                                    <!-- Categories -->
+                                    <div class="mt-4 flex flex-wrap gap-2">
+                                        {% for category in agent.categories[:3] %}
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                                              style="color: {{ category.color }}; background-color: {{ category.color }}10; border: 1px solid {{ category.color }}20">
+                                            {{ category.name }}
+                                        </span>
+                                        {% endfor %}
+                                    </div>
+
+                                    <!-- Stats -->
+                                    <div class="mt-4 flex items-center justify-between text-sm text-gray-500">
+                                        <div class="flex items-center">
+                                            <div class="flex items-center">
+                                                {% for i in range(5) %}
+                                                <i class="fas fa-star {% if agent.average_rating and i < agent.average_rating|int %}text-yellow-400{% else %}text-gray-200{% endif %} text-xs"></i>
+                                                {% endfor %}
+                                            </div>
+                                            <p class="ml-2 text-sm text-gray-500">({{ agent.average_rating|round(1) }})</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</article>
+{% endblock %}
+
+{% block og_type %}article{% endblock %}
+
+{% block og_image %}
+    {%- if post.image_url -%}
+        {%- if 'http' in post.image_url -%}
+            {{ post.image_url }}
+        {%- else -%}
+            {{ request.host_url.rstrip('/') }}{{ post.image_url }}
+        {%- endif -%}
+    {%- else -%}
+        {{ url_for('static', filename='img/agent locker logo.png', _external=True) }}
+    {%- endif -%}
+{% endblock %}

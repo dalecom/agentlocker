@@ -1,0 +1,589 @@
+{% extends "base.html" %}
+
+{% block title %}Advertise Your AI Agent - Feature Your Listing{% endblock %}
+
+{% block meta_description %}Feature your AI agent listing to reach more potential users. Premium placement, enhanced visibility, and priority support for only $139.{% endblock %}
+
+{% block content %}
+<!-- Header Section -->
+<div class="bg-gradient-to-br from-blue-600 to-indigo-800 rounded-xl shadow-lg mb-8">
+    <div class="relative overflow-hidden">
+        <!-- Updated Background Pattern -->
+        <div class="absolute inset-0 bg-[url('/static/img/grid.svg')] opacity-10"></div>
+        
+        <!-- Enhanced Content -->
+        <div class="relative px-8 pt-16 pb-12 text-center">
+            <h1 class="text-4xl sm:text-5xl font-bold text-white mb-6 tracking-tight">
+                Supercharge Your AI Agent's Visibility
+            </h1>
+            <p class="text-xl text-blue-100 max-w-3xl mx-auto leading-relaxed">
+                Join our featured listings program and get premium placement, enhanced visibility, 
+                and powerful SEO benefits to drive more users to your AI agent
+            </p>
+            
+            <!-- New: Quick Stats Banner -->
+            <div class="flex flex-wrap justify-center gap-8 mt-12">
+                {% for stat in [
+                    {'number': '1000+', 'text': 'Agent Pages Display'},
+                    {'number': '#1', 'text': 'Category Position'},
+                    {'number': 'SEO', 'text': 'DoFollow Links'}
+                ] %}
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-white mb-1">{{ stat.number }}</div>
+                    <div class="text-blue-200 text-sm">{{ stat.text }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Crypto Discount Banner -->
+<div class="relative mb-6">
+    <div class="absolute -right-2 -top-2 transform rotate-2 z-10">
+        <div class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-4 py-1.5 rounded-lg shadow-lg">
+            <div class="flex items-center space-x-2">
+                <i class="fab fa-bitcoin text-yellow-400"></i>
+                <img src="{{ url_for('static', filename='img/usdc icon.png') }}" alt="USDC" class="w-4 h-4">
+                <span class="text-sm font-medium">10% off with Bitcoin or USDC</span>
+            </div>
+        </div>
+        <!-- Decorative Triangle -->
+        <div class="absolute top-full right-0 w-2 h-2 bg-purple-800 transform rotate-45"></div>
+    </div>
+</div>
+
+<!-- Main Content -->
+<div class="max-w-5xl mx-auto space-y-16">
+
+    
+    <!-- Available Featured Spots -->
+    <div class="bg-gradient-to-b from-gray-50 to-white rounded-2xl mb-16">
+        <div class="max-w-10xl mx-auto py-8 px-4 sm:py-12 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <h2 class="text-3xl font-extrabold text-gray-900">Available Featured Spots for {{ (now + timedelta(days=32)).strftime('%B') }}</h2>
+                <p class="mt-3 max-w-2xl mx-auto text-xl text-gray-500">
+                    Reserve your premium position for next month
+                </p>
+            </div>
+
+            <div class="mt-8 relative">
+                <!-- Decorative Elements -->
+                <div class="absolute inset-0 flex items-center" aria-hidden="true">
+                    <div class="w-full border-t border-gray-200"></div>
+                </div>
+                <div class="absolute inset-0">
+                    <div class="h-full bg-gradient-to-r from-transparent via-white to-transparent"></div>
+                </div>
+
+                <!-- Available Spots Grid -->
+                <div class="relative">
+                    <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+                        {% for spot in [
+                            {'category': 'Your Agent', 'status': 'available'},
+                            {'category': 'Your Agent', 'status': 'reserved'},
+                            {'category': 'Your Agent', 'status': 'available'}
+                        ] %}
+                        <div class="relative bg-white rounded-2xl shadow-xl transition-all duration-300 hover:shadow-2xl 
+                                  {% if spot.status == 'available' %}border-2 border-dashed border-blue-200{% else %}border-2 border-gray-100{% endif %} p-6">
+                            <!-- Status Badge -->
+                            <div class="absolute -top-3 -right-3 z-10">
+                                {% if spot.status == 'available' %}
+                                <div class="bg-green-500 rounded-full p-2 shadow-lg">
+                                    <i class="fas fa-check text-white"></i>
+                                </div>
+                                {% else %}
+                                <div class="bg-purple-500 rounded-full p-2 shadow-lg">
+                                    <i class="fas fa-lock text-white"></i>
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Category Content -->
+                            <div class="text-center {% if spot.status != 'available' %}opacity-75{% endif %}">
+                                <div class="w-16 h-16 mx-auto mb-4 rounded-xl bg-blue-50 flex items-center justify-center">
+                                    <i class="fas fa-star text-blue-500 text-2xl"></i>
+                                </div>
+                                <h3 class="text-xl font-bold text-gray-900 mb-2">{{ spot.category }}</h3>
+                                <p class="text-gray-600 mb-4">
+                                    {% if spot.status == 'available' %}
+                                    Featured Position Available
+                                    {% else %}
+                                    Position Reserved
+                                    {% endif %}
+                                </p>
+                                
+                                <!-- Benefits -->
+                                <div class="space-y-2 mb-6 text-left">
+                                    <div class="flex items-center text-sm text-gray-600">
+                                        <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                                        #1 Position in Category
+                                    </div>
+                                    <div class="flex items-center text-sm text-gray-600">
+                                        <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                                        Featured on every agent page
+                                    </div>
+
+                                    <div class="flex items-center text-sm text-gray-600">
+                                        <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                                        Visible on every agent search
+                                    </div>
+
+                                    <div class="flex items-center text-sm text-gray-600">
+                                        <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                                        Premium Visibility
+                                    </div>
+                                    <div class="flex items-center text-sm text-gray-600">
+                                        <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                                        Permanent DoFollow Backlink
+                                    </div>
+                                </div>
+
+                                <!-- Reserve Button -->
+                                {% if spot.status == 'available' %}
+                                <a href="{{ url_for('main.contact') }}" 
+                                   class="inline-flex items-center px-6 py-3 text-sm font-semibold rounded-lg text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transition-all">
+                                    Reserve This Spot
+                                </a>
+                                {% else %}
+                                <button disabled
+                                        class="inline-flex items-center px-6 py-3 text-sm font-semibold rounded-lg text-gray-400 bg-gray-100 cursor-not-allowed">
+                                    Already Reserved
+                                </button>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Site Sponsorship Availability -->
+    <div class="bg-gradient-to-b from-indigo-50 to-white rounded-2xl mb-16">
+        <div class="max-w-10xl mx-auto py-8 px-4 sm:py-12 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <h2 class="text-3xl font-extrabold text-gray-900">Become a Sponsor</h2>
+                <p class="mt-3 max-w-2xl mx-auto text-xl text-gray-500">
+                    Exclusive site-wide visibility opportunity
+                </p>
+            </div>
+
+            <div class="mt-8 relative">
+                <!-- Decorative Elements -->
+                <div class="absolute inset-0 flex items-center" aria-hidden="true">
+                    <div class="w-full border-t border-gray-200"></div>
+                </div>
+                <div class="absolute inset-0">
+                    <div class="h-full bg-gradient-to-r from-transparent via-white to-transparent"></div>
+                </div>
+
+                <!-- Sponsorship Status Card -->
+                <div class="relative max-w-2xl mx-auto">
+                    <div class="relative bg-white rounded-2xl shadow-xl transition-all duration-300 hover:shadow-2xl border-2 border-dashed border-indigo-200 p-8">
+                        <!-- Available Badge -->
+                        <div class="absolute -top-3 -right-3 z-10">
+                            <div class="bg-green-500 rounded-full p-2 shadow-lg">
+                                <i class="fas fa-check text-white"></i>
+                            </div>
+                        </div>
+
+                        <!-- Content -->
+                        <div class="text-center">
+                            <div class="w-20 h-20 mx-auto mb-6 rounded-xl bg-indigo-50 flex items-center justify-center">
+                                <i class="fas fa-crown text-indigo-500 text-3xl"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-900 mb-3">Site Sponsorship</h3>
+                            <p class="text-gray-600 mb-6 text-lg">Available for {{ (now + timedelta(days=32)).strftime('%B') }}</p>
+                            
+                            <!-- Benefits -->
+                            <div class="grid md:grid-cols-2 gap-4 mb-8 text-left max-w-xl mx-auto">
+                                <div class="flex items-center text-sm text-gray-600">
+                                    <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                                    Site-Wide Banner
+                                </div>
+                                <div class="flex items-center text-sm text-gray-600">
+                                    <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                                    Homepage Header
+                                </div>
+                                <div class="flex items-center text-sm text-gray-600">
+                                    <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                                    Exclusive Rights
+                                </div>
+                                <div class="flex items-center text-sm text-gray-600">
+                                    <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                                    Premium Support
+                                </div>
+                            </div>
+
+                            <!-- CTA Button -->
+                            <a href="{{ url_for('main.contact') }}" 
+                               class="inline-flex items-center px-8 py-4 text-lg font-semibold rounded-xl text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 transition-all shadow-lg hover:shadow-xl">
+                                <i class="fas fa-crown mr-2"></i>
+                                Claim Site Sponsorship
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pricing Tiers -->
+    <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-blue-100">
+        <div class="p-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-900 mb-3">Choose Your Visibility Package</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">Select the perfect package to maximize your AI agent's exposure</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Featured Listing Package -->
+                <div class="relative bg-white rounded-xl p-8 border-2 border-blue-100">
+                    <div class="absolute -top-4 -right-4">
+                        <div class="bg-blue-600 text-white text-sm font-semibold px-3 py-1 rounded-full shadow-lg">
+                            Most Popular
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">Featured Listing</h3>
+                        <p class="text-gray-600">Premium category placement & visibility</p>
+                    </div>
+
+                    <div class="mb-6">
+                        <span class="text-4xl font-bold text-gray-900">$139</span>
+                        <span class="text-gray-600">/month</span>
+                        <div class="text-sm text-purple-600 font-medium mt-1">
+                            <i class="fab fa-bitcoin"></i> 10% off with crypto
+                        </div>
+                    </div>
+
+                    <div class="space-y-3 mb-8">
+                        {% for benefit in [
+                            {'icon': 'fas fa-trophy', 'text': '#1 Position in your category'},
+                            {'icon': 'fas fa-link', 'text': 'Permanent DoFollow backlink'},
+                            {'icon': 'fas fa-eye', 'text': 'Featured on 1000+ pages'},
+                            {'icon': 'fas fa-chart-line', 'text': '5x more visibility'}
+                        ] %}
+                        <div class="flex items-center text-gray-600">
+                            <i class="{{ benefit.icon }} text-blue-500 w-5 mr-3"></i>
+                            <span>{{ benefit.text }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <a href="{{ url_for('main.contact') }}" 
+                       class="block w-full text-center px-6 py-3 text-sm font-semibold rounded-lg text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transition-all">
+                        Get Featured
+                    </a>
+                </div>
+
+                <!-- Site Sponsorship Package -->
+                <div class="relative bg-gradient-to-br from-indigo-50 to-white rounded-xl p-8 border-2 border-indigo-200">
+                    <div class="absolute -top-4 -right-4">
+                        <div class="bg-indigo-600 text-white text-sm font-semibold px-3 py-1 rounded-full shadow-lg">
+                            Maximum Impact
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">Site Sponsorship</h3>
+                        <p class="text-gray-600">Premium site-wide visibility & branding</p>
+                    </div>
+
+                    <div class="mb-6">
+                        <span class="text-4xl font-bold text-gray-900">$275</span>
+                        <span class="text-gray-600">/month</span>
+                        <div class="text-sm text-purple-600 font-medium mt-1">
+                            <i class="fab fa-bitcoin"></i> 10% off with crypto
+                        </div>
+                    </div>
+
+                    <div class="space-y-3 mb-8">
+                        {% for benefit in [
+                            {'icon': 'fas fa-globe', 'text': 'Banner on every page'},
+                            {'icon': 'fas fa-home', 'text': 'Homepage header placement'},
+                            {'icon': 'fas fa-star', 'text': 'All Featured Listing benefits'},
+                            {'icon': 'fas fa-rocket', 'text': '10x brand visibility'},
+                            {'icon': 'fas fa-medal', 'text': 'Exclusive sponsorship rights'}
+                        ] %}
+                        <div class="flex items-center text-gray-600">
+                            <i class="{{ benefit.icon }} text-indigo-500 w-5 mr-3"></i>
+                            <span>{{ benefit.text }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <a href="{{ url_for('main.contact') }}" 
+                       class="block w-full text-center px-6 py-3 text-sm font-semibold rounded-lg text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 transition-all">
+                        Become Site Sponsor
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Featured Agents -->
+    <div class="bg-gradient-to-b from-white to-gray-50 rounded-2xl">
+        <div class="max-w-10xl mx-auto py-8 px-4 sm:py-12 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <h2 class="text-3xl font-extrabold text-gray-900">This Months Featured Agents</h2>
+                <p class="mt-3 max-w-2xl mx-auto text-xl text-gray-500">
+                    Discover our hand-picked selection of exceptional AI agents
+                </p>
+            </div>
+
+            <div class="mt-8 relative">
+                <!-- Decorative Elements -->
+                <div class="absolute inset-0 flex items-center" aria-hidden="true">
+                    <div class="w-full border-t border-gray-200"></div>
+                </div>
+                <div class="absolute inset-0">
+                    <div class="h-full bg-gradient-to-r from-transparent via-white to-transparent"></div>
+                </div>
+
+                <!-- Featured Agents Grid -->
+                <div class="relative">
+                    <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+                        {% for agent in featured_examples %}
+                        <a href="{{ url_for('agent.detail', slug=agent.slug) }}" class="block group">
+                            <div class="relative bg-white rounded-2xl shadow-xl transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
+                                <!-- Purple Featured Badge -->
+                                <div class="absolute -top-3 -right-3 z-10">
+                                    <div class="bg-purple-500 rounded-full p-2 shadow-lg">
+                                        <i class="fas fa-star text-white"></i>
+                                    </div>
+                                </div>
+
+                                <!-- Card Content -->
+                                <div class="p-6">
+                                    <!-- Logo and Title -->
+                                    <div class="flex items-center space-x-4">
+                                        <div class="flex-shrink-0">
+                                            <img class="h-16 w-16 rounded-xl object-cover bg-white p-2 shadow-md" 
+                                                 src="{{ agent.logo_url or url_for('static', filename='img/default-agent.png') }}" 
+                                                 alt="{{ agent.name }}">
+                                        </div>
+                                        <div>
+                                            <h3 class="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">{{ agent.name }}</h3>
+                                            <p class="text-sm text-gray-500">{{ agent.provider }}</p>
+                                        </div>
+                                    </div>
+
+                                    <!-- Description -->
+                                    <p class="mt-3 text-gray-600 line-clamp-2">{{ agent.short_description }}</p>
+
+                                    <!-- Categories -->
+                                    <div class="mt-4 flex flex-wrap gap-2">
+                                        {% for category in agent.categories[:3] %}
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                                              style="color: {{ category.color }}; background-color: {{ category.color }}10; border: 1px solid {{ category.color }}20">
+                                            {{ category.name }}
+                                        </span>
+                                        {% endfor %}
+                                    </div>
+
+                                    <!-- Stats -->
+                                    <div class="mt-4 flex items-center justify-between text-sm text-gray-500">
+                                        <div class="flex items-center">
+                                            <div class="flex items-center">
+                                                {% for i in range(5) %}
+                                                <i class="fas fa-star {% if agent.average_rating and i < agent.average_rating|int %}text-yellow-400{% else %}text-gray-200{% endif %} text-xs"></i>
+                                                {% endfor %}
+                                            </div>
+                                            <p class="ml-2 text-sm text-gray-500">({{ agent.average_rating|round(1) }})</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Showcase -->
+    <div class="bg-white rounded-2xl shadow-lg p-8">
+        <div class="flex justify-between items-center mb-8">
+            <h3 class="text-2xl font-bold text-gray-900">Performance Comparison</h3>
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                <span class="w-2 h-2 mr-2 rounded-full bg-green-500 animate-pulse"></span>
+                Live Data
+            </span>
+        </div>
+        
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+            <!-- Impressions Card -->
+            <div class="bg-gradient-to-br from-blue-50 to-white rounded-xl p-6 border border-blue-100">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="text-sm font-medium text-gray-500">Monthly Impressions</div>
+                    <div class="text-emerald-500 text-sm font-semibold">
+                        <i class="fas fa-arrow-up mr-1"></i>{{ comparison_stats.impressions.difference }}%
+                    </div>
+                </div>
+                <div class="flex items-baseline mb-2">
+                    <div class="text-3xl font-bold text-gray-900">{{ comparison_stats.impressions.featured|int }}</div>
+                    <div class="ml-2 text-sm text-gray-500">avg/month</div>
+                </div>
+                <div class="flex items-center justify-between">
+                    <div class="text-sm text-gray-500">Standard: {{ "%.1f"|format(comparison_stats.impressions.non_featured) }}</div>
+                    <i class="fas fa-eye text-blue-400"></i>
+                </div>
+            </div>
+
+            <!-- Views Card -->
+            <div class="bg-gradient-to-br from-indigo-50 to-white rounded-xl p-6 border border-indigo-100">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="text-sm font-medium text-gray-500">Page Views</div>
+                    <div class="text-emerald-500 text-sm font-semibold">
+                        <i class="fas fa-arrow-up mr-1"></i>{{ comparison_stats.views.difference }}%
+                    </div>
+                </div>
+                <div class="flex items-baseline mb-2">
+                    <div class="text-3xl font-bold text-gray-900">{{ comparison_stats.views.featured|int }}</div>
+                    <div class="ml-2 text-sm text-gray-500">avg/month</div>
+                </div>
+                <div class="flex items-center justify-between">
+                    <div class="text-sm text-gray-500">Standard: {{ "%.1f"|format(comparison_stats.views.non_featured) }}</div>
+                    <i class="fas fa-chart-bar text-indigo-400"></i>
+                </div>
+            </div>
+
+            <!-- Clicks Card -->
+            <div class="bg-gradient-to-br from-purple-50 to-white rounded-xl p-6 border border-purple-100">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="text-sm font-medium text-gray-500">Engagement Clicks</div>
+                    <div class="text-emerald-500 text-sm font-semibold">
+                        <i class="fas fa-arrow-up mr-1"></i>{{ comparison_stats.clicks.difference }}%
+                    </div>
+                </div>
+                <div class="flex items-baseline mb-2">
+                    <div class="text-3xl font-bold text-gray-900">{{ comparison_stats.clicks.featured|int }}</div>
+                    <div class="ml-2 text-sm text-gray-500">avg/month</div>
+                </div>
+                <div class="flex items-center justify-between">
+                    <div class="text-sm text-gray-500">Standard: {{ "%.1f"|format(comparison_stats.clicks.non_featured) }}</div>
+                    <i class="fas fa-mouse-pointer text-purple-400"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Interactive Chart -->
+        <div class="relative h-80 mb-8">
+            <canvas id="performanceChart" class="w-full h-full"></canvas>
+        </div>
+
+        <!-- Key Benefits -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
+            {% for benefit in [
+                {'icon': 'trophy', 'color': 'blue', 'text': '#1 Category Position', 'subtext': 'Premium Placement'},
+                {'icon': 'chart-line', 'color': 'indigo', 'text': 'Enhanced SEO', 'subtext': 'DoFollow Links'},
+                {'icon': 'bullseye', 'color': 'purple', 'text': 'Targeted Traffic', 'subtext': 'Quality Leads'},
+                {'icon': 'bolt', 'color': 'pink', 'text': 'Instant Boost', 'subtext': 'Immediate Results'}
+            ] %}
+            <div class="flex items-start space-x-3">
+                <div class="flex-shrink-0 w-10 h-10 rounded-lg bg-{{ benefit.color }}-50 flex items-center justify-center">
+                    <i class="fas fa-{{ benefit.icon }} text-{{ benefit.color }}-500"></i>
+                </div>
+                <div>
+                    <div class="font-semibold text-gray-900">{{ benefit.text }}</div>
+                    <div class="text-sm text-gray-500">{{ benefit.subtext }}</div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Move FAQ to bottom -->
+    <div class="bg-white rounded-2xl shadow-lg p-8 mt-8">
+        <h3 class="text-2xl font-bold text-gray-900 mb-6">Frequently Asked Questions</h3>
+        <div class="grid gap-6 md:grid-cols-2">
+            {% for faq in [
+                {'q': 'How long does featuring last?', 'a': 'Your listing will be featured for the entirity of the next month. Check above for available slots.'},
+                {'q': 'Can I cancel anytime?', 'a': 'Yes, you can cancel your featured listing at any time and each monthly renewal is manually booked. No refunds will be issued for partial months.'},
+                {'q': 'How do I get started?', 'a': 'Simply click the submit button and get in touch, our team will set up your features listing.'},
+                {'q': 'What payment methods do you accept?', 'a': 'We accept credit cards and paypal, but prefer Bitcoin and USDC so are offering 10% off with crypto payments!'}
+            ] %}
+            <div class="bg-gray-50 rounded-xl p-6">
+                <h4 class="font-semibold text-gray-900 mb-2">{{ faq.q }}</h4>
+                <p class="text-gray-600">{{ faq.a }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Add Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Initialize Chart -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const ctx = document.getElementById('performanceChart').getContext('2d');
+        
+        const featured = {
+            views: {{ comparison_stats.views.featured }},
+            clicks: {{ comparison_stats.clicks.featured }}
+        };
+        
+        const standard = {
+            views: {{ comparison_stats.views.non_featured }},
+            clicks: {{ comparison_stats.clicks.non_featured }}
+        };
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Page Views', 'Clicks'],
+                datasets: [
+                    {
+                        label: 'Featured Listing',
+                        data: [featured.views, featured.clicks],
+                        backgroundColor: 'rgba(79, 70, 229, 0.8)',
+                        borderColor: 'rgba(79, 70, 229, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Standard Listing',
+                        data: [standard.views, standard.clicks],
+                        backgroundColor: 'rgba(209, 213, 219, 0.8)',
+                        borderColor: 'rgba(209, 213, 219, 1)',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Featured vs Standard Performance Metrics'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            drawBorder: false
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+    });
+    </script>
+</div>
+{% endblock %}

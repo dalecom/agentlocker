@@ -1,0 +1,277 @@
+{% extends "base.html" %}
+
+{% block title %}AgentLocker - The World's Largest AI Agent Directory{% endblock %}
+
+{% block meta_description %}Discover, compare, and integrate with the world's most comprehensive AI agent directory. Find the perfect AI solutions for your needs, updated daily with new AI tools and agents.{% endblock %}
+
+{% block meta_keywords %}AI agents, artificial intelligence directory, AI tools, machine learning agents, AI marketplace{% endblock %}
+
+{% block og_type %}website{% endblock %}
+
+{% block content %}
+
+{% include 'elements/assemble.html' %}
+
+<!-- Agent Type Selector -->
+<div class="bg-white border-b border-gray-200">
+    <div class="max-w-10xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-center py-4">
+            <div class="inline-flex rounded-lg p-1 bg-gray-100">
+                <button type="button" 
+                        class="agent-type-btn px-4 py-2 rounded-md text-sm font-medium {% if agent_type == 'tool' %}bg-white shadow-sm text-gray-900{% else %}text-gray-500 hover:text-gray-700{% endif %}"
+                        data-type="tool">
+                    <i class="fas fa-tools mr-2"></i>
+                    AI Tools
+                </button>
+                <button type="button"
+                        class="agent-type-btn px-4 py-2 rounded-md text-sm font-medium {% if agent_type == 'agentic' %}bg-white shadow-sm text-gray-900{% else %}text-gray-500 hover:text-gray-700{% endif %}"
+                        data-type="agentic">
+                    <i class="fas fa-robot mr-2"></i>
+                    Agentic AI
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% include 'elements/trending.html' %}
+{% include 'elements/_stats.html' %}
+
+
+
+    
+    <!-- Mobile View All Link -->
+    <div class="px-6 py-4 bg-gray-50 border-t border-gray-100 sm:hidden">
+        <a href="{{ url_for('agent.list_all', sort='upvotes') }}" 
+           class="text-sm text-blue-600 hover:text-blue-800 font-medium">
+            View all trending agents →
+        </a>
+    </div>
+</div>
+
+<!-- Featured Agents -->
+<div class="bg-gradient-to-b from-white to-gray-50">
+    <div class="max-w-10xl mx-auto py-8 px-4 sm:py-12 sm:px-6 lg:px-8">
+        <div class="text-center">
+            <h2 class="text-3xl font-extrabold text-gray-900">Featured Agents</h2>
+            <p class="mt-3 max-w-2xl mx-auto text-xl text-gray-500">
+                Discover our hand-picked selection of exceptional AI agents
+            </p>
+        </div>
+
+        <div class="mt-8 relative">
+            <!-- Decorative Elements -->
+            <div class="absolute inset-0 flex items-center" aria-hidden="true">
+                <div class="w-full border-t border-gray-200"></div>
+            </div>
+            <div class="absolute inset-0">
+                <div class="h-full bg-gradient-to-r from-transparent via-white to-transparent"></div>
+            </div>
+
+            <!-- Featured Agents Grid -->
+            <div class="relative">
+                <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+                    {% for agent in featured_agents %}
+                    <a href="{{ url_for('agent.detail', slug=agent.slug) }}" class="block group">
+                        <div class="relative bg-white rounded-2xl shadow-xl transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
+                            <!-- Purple Featured Badge -->
+                            <div class="absolute -top-3 -right-3 z-10">
+                                <div class="bg-purple-500 rounded-full p-2 shadow-lg">
+                                    <i class="fas fa-star text-white"></i>
+                                </div>
+                            </div>
+
+                            <!-- Card Content -->
+                            <div class="p-6">
+                                <!-- Logo and Title -->
+                                <div class="flex items-center space-x-4">
+                                    <div class="flex-shrink-0">
+                                        <img class="h-16 w-16 rounded-xl object-cover bg-white p-2 shadow-md" 
+                                             src="{{ agent.logo_url or url_for('static', filename='img/default-agent.png') }}" 
+                                             alt="{{ agent.name }}">
+                                    </div>
+                                    <div>
+                                        <h3 class="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">{{ agent.name }}</h3>
+                                        <p class="text-sm text-gray-500">{{ agent.provider }}</p>
+                                    </div>
+                                </div>
+
+                                <!-- Description -->
+                                <p class="mt-3 text-gray-600 line-clamp-2">{{ agent.short_description }}</p>
+
+                                <!-- Categories -->
+                                <div class="mt-4 flex flex-wrap gap-2">
+                                    {% for category in agent.categories[:3] %}
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                                          style="color: {{ category.color }}; background-color: {{ category.color }}10; border: 1px solid {{ category.color }}20">
+                                        {{ category.name }}
+                                    </span>
+                                    {% endfor %}
+                                </div>
+
+                                <!-- Stats -->
+                                <div class="mt-4 flex items-center justify-between text-sm text-gray-500">
+                                    <div class="flex items-center">
+                                        <div class="flex items-center">
+                                            {% for i in range(5) %}
+                                            <i class="fas fa-star {% if agent.average_rating and i < agent.average_rating|int %}text-yellow-400{% else %}text-gray-200{% endif %} text-xs"></i>
+                                            {% endfor %}
+                                        </div>
+                                        <p class="ml-2 text-sm text-gray-500">({{ agent.average_rating|round(1) }})</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% include 'elements/ranking_tables.html' %}
+
+{% include 'elements/categories.html' %}
+
+<!-- Latest Reviews -->
+<div class="bg-white">
+    <div class="max-w-10xl mx-auto py-8 px-4 sm:py-12 sm:px-6 lg:px-8">
+        <div class="text-center">
+            <h2 class="text-3xl font-extrabold text-gray-900">Latest Reviews</h2>
+            <p class="mt-3 max-w-2xl mx-auto text-xl text-gray-500">
+                See what users are saying about our listed AI agents
+            </p>
+        </div>
+
+        <div class="mt-8 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            {% for review in latest_reviews %}
+            <div id="review-{{ review.id }}" class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex items-start">
+                    <div class="flex-shrink-0">
+                        <img src="{{ review.agent.logo_url or url_for('static', filename='img/default-agent.png') }}"
+                             alt="{{ review.agent.name }}"
+                             class="h-10 w-10 rounded-xl object-cover bg-white p-1 shadow-sm">
+                    </div>
+                    <div class="ml-4 flex-1">
+                        <div class="text-sm font-medium text-blue-600 hover:text-blue-800 mb-2">
+                            <a href="{{ url_for('agent.detail', slug=review.agent.slug) }}">
+                                {{ review.agent.name }}
+                            </a>
+                        </div>
+            
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h4 class="font-medium">{{ review.user.username }}</h4>
+                                <div class="flex items-center mt-1">
+                                    <div class="star-rating mr-2">
+                                        {% for i in range(5) %}
+                                            {% if i < review.rating %}
+                                                <i class="fas fa-star text-yellow-400"></i>
+                                            {% else %}
+                                                <i class="far fa-star text-gray-300"></i>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                    <span class="text-gray-500 text-sm">
+                                        {{ review.created_at|timeago }}
+                                    </span>
+                                </div>
+                            </div>
+                            {% if review.is_verified_purchase %}
+                                <span class="badge badge-green">
+                                    <i class="fas fa-check-circle mr-1"></i>
+                                    Verified
+                                </span>
+                            {% endif %}
+                        </div>
+            
+                        {% if review.title %}
+                            <h5 class="font-medium mt-2">{{ review.title }}</h5>
+                        {% endif %}
+            
+                        <p class="text-gray-600 mt-2">{{ review.content }}</p>
+            
+                        {% if review.pros or review.cons %}
+                            <div class="mt-4 grid grid-cols-2 gap-4">
+                                {% if review.pros %}
+                                    <div>
+                                        <h6 class="text-sm font-medium text-green-600 mb-1">Pros</h6>
+                                        <p class="text-sm text-gray-600">{{ review.pros }}</p>
+                                    </div>
+                                {% endif %}
+                                {% if review.cons %}
+                                    <div>
+                                        <h6 class="text-sm font-medium text-red-600 mb-1">Cons</h6>
+                                        <p class="text-sm text-gray-600">{{ review.cons }}</p>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+            
+                        {% if review.use_case %}
+                            <div class="mt-4">
+                                <h6 class="text-sm font-medium text-gray-900 mb-1">Use Case</h6>
+                                <p class="text-sm text-gray-600">{{ review.use_case }}</p>
+                            </div>
+                        {% endif %}
+            
+                        <div class="mt-4 flex items-center justify-between">
+                            
+            
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- CTA Section -->
+<div class="bg-blue-700">
+    <div class="max-w-2xl mx-auto text-center py-16 px-4 sm:py-20 sm:px-6 lg:px-8">
+        <h2 class="text-3xl font-extrabold text-white sm:text-4xl">
+            <span class="block">Ready to find your perfect AI agent?</span>
+        </h2>
+        <p class="mt-4 text-lg leading-6 text-blue-100">
+            Assemble your team of AI agents by adding them to your locker. 
+        </p>
+        <div class="mt-8 flex justify-center">
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('agent.list_all') }}" 
+                   class="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-blue-700 bg-white hover:bg-blue-50">
+                    Browse All Agents
+                </a>
+            {% else %}
+                <a href="{{ url_for('auth.register') }}" 
+                   class="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-blue-700 bg-white hover:bg-blue-50">
+                    Get Started Free
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const typeButtons = document.querySelectorAll('.agent-type-btn');
+    
+    typeButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const type = this.dataset.type;
+            const currentUrl = new URL(window.location);
+            currentUrl.searchParams.set('type', type);
+            window.location = currentUrl;
+        });
+    });
+});
+</script>
+{% endblock %}

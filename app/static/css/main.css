@@ -1,0 +1,8 @@
+.integration-banner {
+    background-color: var(--integration-color, #f3f4f6);
+    opacity: 0.2;
+}
+
+.integration-icon {
+    color: var(--integration-color, #6b7280);
+} 

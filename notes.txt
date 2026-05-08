@@ -1,0 +1,7 @@
+Notes:
+
+- 
+
+Register should go to a page that simply says weve sent a verification page to your email. Please confirm your email address and LINK login. 
+
+need to say that only 10 integrations allowed like the others. Maybe make it 12?

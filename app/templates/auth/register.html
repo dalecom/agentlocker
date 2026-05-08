@@ -1,0 +1,373 @@
+{% extends "base.html" %}
+
+{% block title %}Register - AI Agent Directory{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div class="sm:mx-auto sm:w-full sm:max-w-md">
+        <!-- Logo with Animation -->
+        <div class="flex justify-center">
+            <div class="relative w-20 h-20 flex-shrink-0">
+                <img src="{{ url_for('static', filename='img/agent locker icon transparent.png') }}"
+                     alt="Agent Locker Logo" 
+                     class="w-full h-full object-contain animate-float">
+                <div class="absolute -inset-0.5 bg-blue-500/10 rounded-2xl blur-xl -z-10"></div>
+            </div>
+        </div>
+        
+        <h2 class="mt-8 text-center text-3xl font-extrabold text-gray-900">
+            Create your account
+        </h2>
+        <p class="mt-4 text-center text-sm text-gray-600">
+            Or
+            <a href="{{ url_for('auth.login') }}" class="font-medium text-blue-600 hover:text-blue-500">
+                sign in to your existing account
+            </a>
+        </p>
+    </div>
+
+    <div class="mt-12 sm:mx-auto sm:w-full sm:max-w-md">
+        <div class="bg-white py-10 px-4 shadow sm:rounded-lg sm:px-10">
+            <!-- Registration Form -->
+            <form class="space-y-6" method="POST" action="{{ url_for('auth.register') }}" id="register-form">
+                {{ form.hidden_tag() }}
+
+                <!-- Username Field -->
+                <div>
+                    <label for="username" class="block text-sm font-medium text-gray-700">
+                        Username
+                    </label>
+                    <div class="mt-1 relative">
+                        <input type="text" 
+                               name="username" 
+                               id="username" 
+                               required
+                               class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                               autocomplete="username">
+                        <div class="hidden username-error text-sm text-red-600 mt-1"></div>
+                    </div>
+                </div>
+
+                <!-- Email Field -->
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700">
+                        Email address
+                    </label>
+                    <div class="mt-1 relative">
+                        <input type="email" 
+                               name="email" 
+                               id="email" 
+                               required
+                               class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                               autocomplete="email">
+                        <div class="hidden email-error text-sm text-red-600 mt-1"></div>
+                    </div>
+                </div>
+
+                <!-- Full Name Field -->
+                <div>
+                    <label for="full_name" class="block text-sm font-medium text-gray-700">
+                        Full name
+                    </label>
+                    <div class="mt-1">
+                        <input type="text" 
+                               name="full_name" 
+                               id="full_name"
+                               class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                               autocomplete="name">
+                    </div>
+                </div>
+
+                <!-- Password Field -->
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700">
+                        Password
+                    </label>
+                    <div class="mt-1 relative">
+                        <input type="password" 
+                               name="password" 
+                               id="password" 
+                               required
+                               minlength="8"
+                               class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                               autocomplete="new-password">
+                        <button type="button" 
+                                onclick="togglePasswordVisibility('password')"
+                                class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <!-- Password Requirements -->
+                    <div class="mt-2 space-y-1">
+                        <div class="text-xs text-gray-600">Password must contain:</div>
+                        <div class="text-xs flex items-center password-requirement" data-requirement="length">
+                            <i class="far fa-circle mr-1"></i>
+                            At least 8 characters
+                        </div>
+                        <div class="text-xs flex items-center password-requirement" data-requirement="uppercase">
+                            <i class="far fa-circle mr-1"></i>
+                            One uppercase letter
+                        </div>
+                        <div class="text-xs flex items-center password-requirement" data-requirement="number">
+                            <i class="far fa-circle mr-1"></i>
+                            One number
+                        </div>
+                        <div class="text-xs flex items-center password-requirement" data-requirement="special">
+                            <i class="far fa-circle mr-1"></i>
+                            One special character
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Confirm Password Field -->
+                <div>
+                    <label for="password_confirm" class="block text-sm font-medium text-gray-700">
+                        Confirm password
+                    </label>
+                    <div class="mt-1 relative">
+                        <input type="password" 
+                               name="password_confirm" 
+                               id="password_confirm" 
+                               required
+                               class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                               autocomplete="new-password">
+                        <button type="button" 
+                                onclick="togglePasswordVisibility('password_confirm')"
+                                class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <div class="hidden password-match-error text-sm text-red-600 mt-1"></div>
+                    </div>
+                </div>
+
+                <!-- Terms and Conditions -->
+                <div class="flex items-start">
+                    <div class="flex items-center h-5">
+                        <input type="checkbox" 
+                               name="terms" 
+                               id="terms"
+                               required
+                               class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                    </div>
+                    <div class="ml-3 text-sm">
+                        <label for="terms" class="font-medium text-gray-700">
+                            I agree to the
+                            <a href="{{ url_for('main.terms') }}" class="text-blue-600 hover:text-blue-500">
+                                Terms of Service
+                            </a>
+                            and
+                            <a href="{{ url_for('main.privacy') }}" class="text-blue-600 hover:text-blue-500">
+                                Privacy Policy
+                            </a>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div>
+                    <button type="submit"
+                            class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                            id="register-button">
+                        Create account
+                    </button>
+                </div>
+            </form>
+
+            
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Password visibility toggle
+function togglePasswordVisibility(fieldId) {
+    const field = document.getElementById(fieldId);
+    const button = field.nextElementSibling;
+    const icon = button.querySelector('i');
+    
+    if (field.type === 'password') {
+        field.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+    } else {
+        field.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+    }
+}
+
+// Password validation
+const password = document.getElementById('password');
+const requirements = {
+    length: str => str.length >= 8,
+    uppercase: str => /[A-Z]/.test(str),
+    number: str => /[0-9]/.test(str),
+    special: str => /[^A-Za-z0-9]/.test(str)
+};
+
+password.addEventListener('input', () => {
+    const value = password.value;
+    
+    for (const [requirement, validate] of Object.entries(requirements)) {
+        const element = document.querySelector(`[data-requirement="${requirement}"]`);
+        const icon = element.querySelector('i');
+        
+        if (validate(value)) {
+            element.classList.add('text-green-600');
+            icon.classList.replace('fa-circle', 'fa-check-circle');
+        } else {
+            element.classList.remove('text-green-600');
+            icon.classList.replace('fa-check-circle', 'fa-circle');
+        }
+    }
+});
+
+// Real-time validation
+const form = document.getElementById('register-form');
+const username = document.getElementById('username');
+const email = document.getElementById('email');
+const passwordConfirm = document.getElementById('password_confirm');
+const submitButton = document.getElementById('register-button');
+
+// Username availability check
+let usernameTimeout;
+username.addEventListener('input', () => {
+    clearTimeout(usernameTimeout);
+    const error = document.querySelector('.username-error');
+    
+    // Clear error if username is empty
+    if (username.value.length === 0) {
+        error.classList.add('hidden');
+        return;
+    }
+    
+    if (username.value.length < 3) {
+        error.textContent = 'Username must be at least 3 characters';
+        error.classList.remove('hidden');
+        return;
+    }
+    
+    // Show loading state
+    error.textContent = 'Checking username...';
+    error.classList.remove('hidden');
+    
+    usernameTimeout = setTimeout(async () => {
+        try {
+            const response = await fetch(`/auth/check-username?username=${username.value}`);
+            const data = await response.json();
+            
+            // Only show error if the username is taken
+            if (!data.available) {
+                error.textContent = 'Username is already taken';
+                error.classList.remove('hidden');
+            } else {
+                error.classList.add('hidden');
+            }
+        } catch (err) {
+            console.error('Error checking username:', err);
+            error.classList.add('hidden');
+        }
+    }, 500);
+});
+
+// Email validation
+let emailTimeout;
+email.addEventListener('input', () => {
+    clearTimeout(emailTimeout);
+    const error = document.querySelector('.email-error');
+    
+    // Clear error if email is empty
+    if (email.value.length === 0) {
+        error.classList.add('hidden');
+        return;
+    }
+    
+    if (!email.value.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+        error.textContent = 'Please enter a valid email address';
+        error.classList.remove('hidden');
+        return;
+    }
+    
+    // Show loading state
+    error.textContent = 'Checking email...';
+    error.classList.remove('hidden');
+    
+    emailTimeout = setTimeout(async () => {
+        try {
+            const response = await fetch(`/auth/check-email?email=${email.value}`);
+            const data = await response.json();
+            
+            // Only show error if the email is taken
+            if (!data.available) {
+                error.textContent = 'Email is already registered';
+                error.classList.remove('hidden');
+            } else {
+                error.classList.add('hidden');
+            }
+        } catch (err) {
+            console.error('Error checking email:', err);
+            error.classList.add('hidden');
+        }
+    }, 500);
+});
+
+// Password confirmation
+passwordConfirm.addEventListener('input', () => {
+    const error = document.querySelector('.password-match-error');
+    
+    if (password.value !== passwordConfirm.value) {
+        error.textContent = 'Passwords do not match';
+        error.classList.remove('hidden');
+    } else {
+        error.classList.add('hidden');
+    }
+});
+
+// Form submission
+form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    // Validate all requirements are met
+    const allRequirementsMet = Object.values(requirements).every(validate => 
+        validate(password.value)
+    );
+    
+    if (!allRequirementsMet) {
+        showToast('Please meet all password requirements', 'error');
+        return;
+    }
+    
+    if (password.value !== passwordConfirm.value) {
+        showToast('Passwords do not match', 'error');
+        return;
+    }
+    
+    // Submit form
+    submitButton.disabled = true;
+    submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Creating account...';
+    
+    try {
+        const formData = new FormData(form);
+        const response = await fetch(form.action, {
+            method: 'POST',
+            body: formData
+        });
+        
+        if (response.ok) {
+            window.location.href = "{{ url_for('auth.login') }}";
+        } else {
+            showToast('Error creating account. Please try again.', 'error');
+            submitButton.disabled = false;
+            submitButton.innerHTML = 'Create account';
+        }
+    } catch (err) {
+        console.error('Error creating account:', err);
+        showToast('Error creating account. Please try again.', 'error');
+        submitButton.disabled = false;
+        submitButton.innerHTML = 'Create account';
+    }
+});
+</script>
+{% endblock %}

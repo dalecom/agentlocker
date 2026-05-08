@@ -1,0 +1,64 @@
+<!-- Rankings Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-8">
+    <!-- Top Rated Agents -->
+    <div class="bg-white rounded-xl shadow-sm p-4 sm:p-6">
+        <h3 class="text-base sm:text-lg font-medium text-gray-900 mb-3 sm:mb-4">Top Rated Agents</h3>
+        <div class="space-y-3 sm:space-y-4">
+            {% for agent, avg_rating, review_count in top_rated %}
+            <div class="flex items-center justify-between p-3 sm:p-4 bg-gray-50 rounded-lg">
+                <div class="flex items-center">
+                    <img src="{{ agent.logo_url or url_for('static', filename='img/default-agent.png') }}"
+                         alt="{{ agent.name }}" 
+                         class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg object-cover">
+                    <div class="ml-3 sm:ml-4">
+                        <a href="{{ url_for('agent.detail', slug=agent.slug) }}" 
+                           class="text-base sm:text-lg font-medium text-gray-900 hover:text-blue-600 line-clamp-1">
+                            {{ agent.name }}
+                        </a>
+                        <div class="flex items-center mt-1">
+                            <div class="flex items-center">
+                                {% for i in range(5) %}
+                                <i class="fas fa-star text-xs sm:text-sm {% if i < avg_rating|int %}text-yellow-400{% else %}text-gray-300{% endif %}"></i>
+                                {% endfor %}
+                            </div>
+                            <span class="ml-2 text-xs sm:text-sm text-gray-600">({{ review_count }})</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center text-xl sm:text-2xl font-bold ml-2">
+                    <span class="text-blue-600">{{ "%.1f"|format(avg_rating) }}</span>
+                    <i class="fas fa-star text-yellow-400 ml-1 text-lg sm:text-xl"></i>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Most Reviewed Agents -->
+    <div class="bg-white rounded-xl shadow-sm p-4 sm:p-6">
+        <h3 class="text-base sm:text-lg font-medium text-gray-900 mb-3 sm:mb-4">Most Reviewed Agents</h3>
+        <div class="space-y-3 sm:space-y-4">
+            {% for agent, review_count in most_reviewed %}
+            <div class="flex items-center justify-between p-3 sm:p-4 bg-gray-50 rounded-lg">
+                <div class="flex items-center flex-1 min-w-0">
+                    <img src="{{ agent.logo_url or url_for('static', filename='img/default-agent.png') }}"
+                         alt="{{ agent.name }}" 
+                         class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg object-cover flex-shrink-0">
+                    <div class="ml-3 sm:ml-4 min-w-0">
+                        <a href="{{ url_for('agent.detail', slug=agent.slug) }}"
+                           class="text-base sm:text-lg font-medium text-gray-900 hover:text-blue-600 block line-clamp-1">
+                            {{ agent.name }}
+                        </a>
+                        <p class="text-xs sm:text-sm text-gray-600 mt-1 line-clamp-1">
+                            {{ agent.short_description[:100] }}...
+                        </p>
+                    </div>
+                </div>
+                <div class="text-xl sm:text-2xl font-bold text-purple-600 ml-3">
+                    {{ review_count }}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>

@@ -1,0 +1,97 @@
+<div id="review-{{ review.id }}" class="bg-white rounded-lg shadow-md p-6">
+    <div class="flex items-start">
+        <div class="flex-shrink-0">
+            <a href="{{ url_for('auth.public_profile', username=review.user.username) }}" 
+               class="block hover:opacity-90 transition-opacity">
+                <img src="{{ review.user.avatar_url or url_for('static', filename='img/default-avatar.png') }}"
+                     alt="{{ review.user.username }}"
+                     class="h-10 w-10 rounded-full object-cover">
+            </a>
+        </div>
+        <div class="ml-4 flex-1">
+            <div class="text-sm font-medium text-blue-600 hover:text-blue-800 mb-2">
+                <a href="{{ url_for('agent.detail', slug=review.agent.slug) }}">
+                    {{ review.agent.name }}
+                </a>
+            </div>
+
+            <div class="flex items-center justify-between">
+                <div>
+                    <a href="{{ url_for('auth.public_profile', username=review.user.username) }}" 
+                       class="font-medium text-gray-900 hover:text-blue-600 transition-colors">
+                        {{ review.user.username }}
+                    </a>
+                    <div class="flex items-center mt-1">
+                        <div class="star-rating mr-2">
+                            {% for i in range(5) %}
+                                {% if i < review.rating %}
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                {% else %}
+                                    <i class="far fa-star text-gray-300"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <span class="text-gray-500 text-sm">
+                            {{ review.created_at|timeago }}
+                        </span>
+                    </div>
+                </div>
+                {% if review.is_verified_purchase %}
+                    <span class="badge badge-green">
+                        <i class="fas fa-check-circle mr-1"></i>
+                        Verified
+                    </span>
+                {% endif %}
+            </div>
+
+            {% if review.title %}
+                <h5 class="font-medium mt-2">{{ review.title }}</h5>
+            {% endif %}
+
+            <p class="text-gray-600 mt-2">{{ review.content }}</p>
+
+            <div class="mt-4 flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    {% if current_user.is_authenticated %}
+                    <button onclick="reviews.vote({{ review.id }}, 'helpful')"
+                            class="helpful-btn text-sm text-gray-500 hover:text-gray-700 {% if review.get_user_vote(current_user.id) == True %}text-blue-600{% endif %}">
+                        <i class="{% if review.get_user_vote(current_user.id) == True %}fas{% else %}far{% endif %} fa-thumbs-up mr-1"></i>
+                        Helpful <span class="count">({{ review.helpful_votes }})</span>
+                    </button>
+                    {% else %}
+                    <button class="text-sm text-gray-400 cursor-not-allowed" disabled>
+                        <i class="far fa-thumbs-up mr-1"></i>
+                        Helpful <span class="count">({{ review.helpful_votes }})</span> 
+                    </button>
+                    {% endif %}
+
+                    {% if current_user.is_authenticated %}
+                    <button onclick="reviews.vote({{ review.id }}, 'unhelpful')"
+                            class="unhelpful-btn text-sm text-gray-500 hover:text-gray-700 {% if review.get_user_vote(current_user.id) == False %}text-blue-600{% endif %}">
+                        <i class="{% if review.get_user_vote(current_user.id) == False %}fas{% else %}far{% endif %} fa-thumbs-down mr-1"></i>
+                        Not Helpful <span class="count">({{ review.unhelpful_votes }})</span>
+                    </button>
+                    {% else %}
+                    <button class="text-sm text-gray-400 cursor-not-allowed" disabled>
+                        <i class="far fa-thumbs-down mr-1"></i>
+                        Not Helpful <span class="count">({{ review.unhelpful_votes }})</span> 
+                    </button>
+                    {% endif %}
+                </div>
+
+                {% if current_user.is_authenticated and current_user.id == review.user_id %}
+                    <div class="flex items-center space-x-2">
+                        <button onclick="editReview({{ review.id }})"
+                                class="text-sm text-blue-600 hover:text-blue-800">
+                            Edit
+                        </button>
+                        <button onclick="deleteReview({{ review.id }})"
+                                class="text-sm text-red-600 hover:text-red-800">
+                            Delete
+                        </button>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>

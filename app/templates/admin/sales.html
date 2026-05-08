@@ -1,0 +1,415 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container-fluid mx-auto py-6 px-4 sm:px-6 lg:px-8 max-w-[98%]">
+    <!-- Header -->
+    <div class="mb-8">
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">Sales Dashboard</h1>
+                <p class="mt-1 text-sm text-gray-500">Track and manage agent sales opportunities</p>
+            </div>
+        </div>
+        
+        <!-- Admin Quick Links -->
+        <div class="mt-4 flex flex-wrap gap-2">
+            <a href="{{ url_for('admin.blog_posts') }}" 
+               class="inline-flex items-center px-3 py-1.5 bg-pink-100 text-pink-700 text-sm rounded-lg hover:bg-pink-200 transition">
+                <i class="fas fa-blog mr-1.5"></i>
+                Blog
+            </a>
+            <a href="{{ url_for('user.manage_users') }}" 
+               class="inline-flex items-center px-3 py-1.5 bg-blue-100 text-blue-700 text-sm rounded-lg hover:bg-blue-200 transition">
+                <i class="fas fa-users-cog mr-1.5"></i>
+                Users
+            </a>
+            <a href="{{ url_for('agent.verify_listings') }}" 
+               class="inline-flex items-center px-3 py-1.5 bg-yellow-100 text-yellow-700 text-sm rounded-lg hover:bg-yellow-200 transition">
+                <i class="fas fa-check-circle mr-1.5"></i>
+                Listings
+            </a>
+            <a href="{{ url_for('main.admin_overview') }}" 
+               class="inline-flex items-center px-3 py-1.5 bg-green-100 text-green-700 text-sm rounded-lg hover:bg-green-200 transition">
+                <i class="fas fa-chart-line mr-1.5"></i>
+                Overview
+            </a>
+        </div>
+    </div>
+
+    <!-- Pipeline Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-6 gap-4 mb-8">
+        <div class="bg-white rounded-lg shadow p-6 text-center">
+            <div class="text-3xl font-bold text-gray-900">{{ stats.total_agents }}</div>
+            <div class="text-sm font-medium text-gray-500 mt-2">Total Agents</div>
+        </div>
+        <div class="bg-white rounded-lg shadow p-6 text-center">
+            <div class="text-3xl font-bold text-blue-600">{{ stats.total_uncontacted }}</div>
+            <div class="text-sm font-medium text-gray-500 mt-2">To Contact</div>
+        </div>
+        <div class="bg-white rounded-lg shadow p-6 text-center">
+            <div class="text-3xl font-bold text-yellow-600">{{ stats.total_contacted }}</div>
+            <div class="text-sm font-medium text-gray-500 mt-2">In Discussion</div>
+        </div>
+        <div class="bg-white rounded-lg shadow p-6 text-center">
+            <div class="text-3xl font-bold text-green-600">{{ stats.total_pitched }}</div>
+            <div class="text-sm font-medium text-gray-500 mt-2">Pitched</div>
+        </div>
+        <div class="bg-white rounded-lg shadow p-6 text-center">
+            <div class="text-3xl font-bold text-indigo-600">{{ stats.total_emails_sent }}</div>
+            <div class="text-sm font-medium text-gray-500 mt-2">Emails Sent</div>
+        </div>
+        <div class="bg-white rounded-lg shadow p-6 text-center">
+            <div class="text-3xl font-bold text-purple-600">{{ stats.total_converted }}</div>
+            <div class="text-sm font-medium text-gray-500 mt-2">Featured</div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="bg-white rounded-lg shadow">
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[15%]">
+                            <a href="{{ url_for('admin.sales', sort='name', dir='asc' if current_sort != 'name' or current_dir == 'desc' else 'desc') }}" 
+                               class="group inline-flex items-center">
+                                Agent
+                                <span class="ml-2 invisible group-hover:visible {{ '' if current_sort != 'name' else 'visible' }}">
+                                    <i class="fas fa-sort{{ '-up' if current_sort == 'name' and current_dir == 'asc' else '-down' if current_sort == 'name' and current_dir == 'desc' else '' }}"></i>
+                                </span>
+                            </a>
+                        </th>
+                        <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[20%]">
+                            <a href="{{ url_for('admin.sales', sort='email', dir='asc' if current_sort != 'email' or current_dir == 'desc' else 'desc') }}"
+                               class="group inline-flex items-center">
+                                Email
+                                <span class="ml-2 invisible group-hover:visible {{ '' if current_sort != 'email' else 'visible' }}">
+                                    <i class="fas fa-sort{{ '-up' if current_sort == 'email' and current_dir == 'asc' else '-down' if current_sort == 'email' and current_dir == 'desc' else '' }}"></i>
+                                </span>
+                            </a>
+                        </th>
+                        <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[10%]">
+                            <a href="{{ url_for('admin.sales', sort='added_on_x', dir='asc' if current_sort != 'added_on_x' or current_dir == 'desc' else 'desc') }}"
+                               class="group inline-flex items-center">
+                                Added on X
+                                <span class="ml-2 invisible group-hover:visible {{ '' if current_sort != 'added_on_x' else 'visible' }}">
+                                    <i class="fas fa-sort{{ '-up' if current_sort == 'added_on_x' and current_dir == 'asc' else '-down' if current_sort == 'added_on_x' and current_dir == 'desc' else '' }}"></i>
+                                </span>
+                            </a>
+                        </th>
+                        <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[10%]">
+                            <a href="{{ url_for('admin.sales', sort='twitter_handle', dir='asc' if current_sort != 'twitter_handle' or current_dir == 'desc' else 'desc') }}"
+                               class="group inline-flex items-center">
+                                Twitter Profile
+                                <span class="ml-2 invisible group-hover:visible {{ '' if current_sort != 'twitter_handle' else 'visible' }}">
+                                    <i class="fas fa-sort{{ '-up' if current_sort == 'twitter_handle' and current_dir == 'asc' else '-down' if current_sort == 'twitter_handle' and current_dir == 'desc' else '' }}"></i>
+                                </span>
+                            </a>
+                        </th>
+                        <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[10%]">
+                            <a href="{{ url_for('admin.sales', sort='contacted', dir='asc' if current_sort != 'contacted' or current_dir == 'desc' else 'desc') }}"
+                               class="group inline-flex items-center">
+                                Contacted
+                                <span class="ml-2 invisible group-hover:visible {{ '' if current_sort != 'contacted' else 'visible' }}">
+                                    <i class="fas fa-sort{{ '-up' if current_sort == 'contacted' and current_dir == 'asc' else '-down' if current_sort == 'contacted' and current_dir == 'desc' else '' }}"></i>
+                                </span>
+                            </a>
+                        </th>
+                        <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[10%]">
+                            <a href="{{ url_for('admin.sales', sort='pitched_ads', dir='asc' if current_sort != 'pitched_ads' or current_dir == 'desc' else 'desc') }}"
+                               class="group inline-flex items-center">
+                                Pitched Ads
+                                <span class="ml-2 invisible group-hover:visible {{ '' if current_sort != 'pitched_ads' else 'visible' }}">
+                                    <i class="fas fa-sort{{ '-up' if current_sort == 'pitched_ads' and current_dir == 'asc' else '-down' if current_sort == 'pitched_ads' and current_dir == 'desc' else '' }}"></i>
+                                </span>
+                            </a>
+                        </th>
+                        <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[10%]">
+                            <a href="{{ url_for('admin.sales', sort='is_featured', dir='asc' if current_sort != 'is_featured' or current_dir == 'desc' else 'desc') }}"
+                               class="group inline-flex items-center">
+                                Featured
+                                <span class="ml-2 invisible group-hover:visible {{ '' if current_sort != 'is_featured' else 'visible' }}">
+                                    <i class="fas fa-sort{{ '-up' if current_sort == 'is_featured' and current_dir == 'asc' else '-down' if current_sort == 'is_featured' and current_dir == 'desc' else '' }}"></i>
+                                </span>
+                            </a>
+                        </th>
+                        <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[10%]">
+                            <a href="{{ url_for('admin.sales', sort='sales_email_sent', dir='asc' if current_sort != 'sales_email_sent' or current_dir == 'desc' else 'desc') }}"
+                               class="group inline-flex items-center">
+                                Email Status
+                                <span class="ml-2 invisible group-hover:visible {{ '' if current_sort != 'sales_email_sent' else 'visible' }}">
+                                    <i class="fas fa-sort{{ '-up' if current_sort == 'sales_email_sent' and current_dir == 'asc' else '-down' if current_sort == 'sales_email_sent' and current_dir == 'desc' else '' }}"></i>
+                                </span>
+                            </a>
+                        </th>
+                        <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[5%]">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for agent in agents %}
+                    <tr>
+                        <td class="px-3 py-2 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 h-10 w-10">
+                                    <img class="h-10 w-10 rounded-lg object-cover" 
+                                         src="{{ agent.logo_url or url_for('static', filename='img/default-agent-logo.png') }}" 
+                                         alt="{{ agent.name }}">
+                                </div>
+                                <div class="ml-4">
+                                    <h3 class="agent-name">
+                                        <a href="{{ url_for('main.agent_detail', slug=agent.slug) }}" 
+                                           class="text-gray-900 hover:text-blue-600">
+                                            {{ agent.name }}
+                                        </a>
+                                        {% if agent.owner and agent.owner.email and agent.email == agent.owner.email %}
+                                            <span class="verification-tick" title="Email automatically verified">✓</span>
+                                        {% endif %}
+                                    </h3>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-3 py-2 whitespace-nowrap">
+                            <input type="email" 
+                                   value="{{ agent.email or '' }}"
+                                   onchange="updateEmail({{ agent.id }}, this.value)"
+                                   class="text-sm text-gray-900 border border-gray-300 rounded-md px-2 py-1 w-full focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none">
+                        </td>
+                        <td class="px-3 py-2 whitespace-nowrap">
+                            {% if agent.twitter_url %}
+                                <select onchange="updateXStatus({{ agent.id }}, this.value)"
+                                        class="text-sm text-gray-900 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500">
+                                    <option value="">Select...</option>
+                                    <option value="Yes" {% if agent.added_on_x == 'Yes' %}selected{% endif %}>Yes</option>
+                                    <option value="No" {% if agent.added_on_x == 'No' %}selected{% endif %}>No</option>
+                                </select>
+                            {% else %}
+                                <span class="text-sm text-gray-500">N/A</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-3 py-2 whitespace-nowrap">
+                            {% if agent.twitter_url %}
+                            <a href="{{ agent.twitter_url }}" target="_blank" class="text-blue-500 hover:text-blue-700">
+                                <i class="fab fa-twitter"></i>
+                                {% if agent.twitter_handle %}
+                                <span class="ml-1 text-sm">@{{ agent.twitter_handle }}</span>
+                                {% endif %}
+                                
+                            </a>
+                            {% endif %}
+                        </td>
+                        <td class="px-3 py-2 whitespace-nowrap">
+                            <button onclick="toggleStatus({{ agent.id }}, 'contacted')"
+                                    class="px-2 py-1 rounded-full text-xs font-medium {{ 'bg-green-100 text-green-800' if agent.contacted else 'bg-gray-100 text-gray-800' }}">
+                                {{ 'Yes' if agent.contacted else 'No' }}
+                            </button>
+                        </td>
+                        <td class="px-3 py-2 whitespace-nowrap">
+                            <button onclick="toggleStatus({{ agent.id }}, 'pitched_ads')"
+                                    class="px-2 py-1 rounded-full text-xs font-medium {{ 'bg-green-100 text-green-800' if agent.pitched_ads else 'bg-gray-100 text-gray-800' }}">
+                                {{ 'Yes' if agent.pitched_ads else 'No' }}
+                            </button>
+                        </td>
+                        <td class="px-3 py-2 whitespace-nowrap">
+                            <button onclick="toggleStatus({{ agent.id }}, 'is_featured')"
+                                    class="px-2 py-1 rounded-full text-xs font-medium {{ 'bg-purple-100 text-purple-800' if agent.is_featured else 'bg-gray-100 text-gray-800' }}">
+                                {{ 'Yes' if agent.is_featured else 'No' }}
+                            </button>
+                        </td>
+                        <td class="px-3 py-2 whitespace-nowrap">
+                            {% if agent.sales_email_sent %}
+                                <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">
+                                    Sent {{ agent.sales_email_sent_date.strftime('%Y-%m-%d') }}
+                                </span>
+                            {% else %}
+                                <span class="px-2 py-1 text-xs rounded-full bg-red-100 text-red-800">
+                                    Not Sent
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td class="px-3 py-2 whitespace-nowrap text-sm text-gray-500">
+                            <button onclick="openEmailClient({{ agent.id }})"
+                                    class="text-blue-600 hover:text-blue-800 {{ 'opacity-50 cursor-not-allowed' if not agent.email }}">
+                                <i class="fas fa-envelope"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Add this right after the table, before the closing div -->
+    <div class="flex items-center justify-between px-6 py-4 bg-white border-t border-gray-200">
+        <!-- Page Size Selector -->
+        <div class="flex items-center">
+            <label class="text-sm text-gray-600 mr-2">Show:</label>
+            <select id="page-size" class="rounded-md border-gray-300 text-sm" onchange="changePageSize(this.value)">
+                <option value="10" {% if per_page == 10 %}selected{% endif %}>10</option>
+                <option value="20" {% if per_page == 20 %}selected{% endif %}>20</option>
+                <option value="50" {% if per_page == 50 %}selected{% endif %}>50</option>
+                <option value="100" {% if per_page == 100 %}selected{% endif %}>100</option>
+                <option value="500" {% if per_page == 500 %}selected{% endif %}>500</option>
+            </select>
+            <span class="text-sm text-gray-600 ml-2">entries</span>
+        </div>
+
+        <!-- Pagination -->
+        <div class="flex items-center space-x-2">
+            <p class="text-sm text-gray-700">
+                Showing <span class="font-medium">{{ (pagination.page - 1) * pagination.per_page + 1 }}</span>
+                to <span class="font-medium">{{ (pagination.page - 1) * pagination.per_page + agents|length }}</span>
+                of <span class="font-medium">{{ pagination.total }}</span> agents
+            </p>
+            
+            <nav class="flex items-center space-x-2">
+                <a href="{{ url_for('admin.sales', page=pagination.prev_num, per_page=per_page, sort=current_sort, dir=current_dir) if pagination.has_prev else '#' }}"
+                   class="px-3 py-1 rounded-md text-sm {% if not pagination.has_prev %}opacity-50 cursor-not-allowed{% endif %} bg-gray-100 hover:bg-gray-200">
+                    Previous
+                </a>
+                
+                <a href="{{ url_for('admin.sales', page=pagination.next_num, per_page=per_page, sort=current_sort, dir=current_dir) if pagination.has_next else '#' }}"
+                   class="px-3 py-1 rounded-md text-sm {% if not pagination.has_next %}opacity-50 cursor-not-allowed{% endif %} bg-gray-100 hover:bg-gray-200">
+                    Next
+                </a>
+            </nav>
+        </div>
+    </div>
+</div>
+
+<script>
+async function updateEmail(agentId, email) {
+    try {
+        const response = await fetch(`/admin/sales/update-email/${agentId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify({ email })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            utils.showToast(data.message, 'success');
+            // Refresh the page to show updated verification status
+            window.location.reload();
+        } else {
+            utils.showToast(data.message || 'Error updating email', 'error');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        utils.showToast('Error updating email', 'error');
+    }
+}
+
+async function updateXStatus(agentId, status) {
+    try {
+        const response = await fetch(`/admin/sales/update-x-status/${agentId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify({ status })
+        });
+        
+        if (response.ok) {
+            utils.showToast('X status updated successfully', 'success');
+        } else {
+            utils.showToast('Error updating X status', 'error');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        utils.showToast('Error updating X status', 'error');
+    }
+}
+
+async function toggleStatus(agentId, field) {
+    try {
+        const response = await fetch(`/admin/sales/toggle-status/${agentId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify({ field })
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            // Get the specific button that was clicked
+            const button = document.querySelector(`button[onclick="toggleStatus(${agentId}, '${field}')"]`);
+            if (button) {
+                button.textContent = data.status ? 'Yes' : 'No';
+                button.className = `px-2 py-1 rounded-full text-xs font-medium ${data.status ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`;
+                utils.showToast(`${field.charAt(0).toUpperCase() + field.slice(1)} status updated`, 'success');
+            }
+        } else {
+            const errorData = await response.json();
+            utils.showToast(errorData.message || 'Error updating status', 'error');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        utils.showToast('Error updating status', 'error');
+    }
+}
+
+function openEmailClient(agentId) {
+    if (!agentId) return;
+    
+    fetch(`/admin/sales/send-feature-email/${agentId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Show success message
+            alert('Sales email sent successfully!');
+            // Refresh the page to update contacted status
+            location.reload();
+        } else {
+            alert('Failed to send email: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Failed to send email. Please try again.');
+    });
+}
+
+function changePageSize(size) {
+    // Get current URL and parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    
+    // Update or add the per_page parameter
+    urlParams.set('per_page', size);
+    // Reset to first page when changing page size
+    urlParams.set('page', '1');
+    
+    // Keep the current sort parameters if they exist
+    const currentSort = urlParams.get('sort');
+    const currentDir = urlParams.get('dir');
+    if (currentSort) urlParams.set('sort', currentSort);
+    if (currentDir) urlParams.set('dir', currentDir);
+    
+    // Redirect to the new URL
+    window.location.href = `${window.location.pathname}?${urlParams.toString()}`;
+}
+</script>
+
+<style>
+.verification-tick {
+    color: #28a745;
+    font-weight: bold;
+    margin-left: 4px;
+    font-size: 0.9em;
+}
+</style>
+{% endblock %} 

@@ -1,0 +1,102 @@
+# ─── Python ───────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyd
+*.pyo
+*.so
+
+# ─── Distribution / packaging ─────────────────────────────────────────────────
+dist/
+build/
+*.egg
+*.egg-info/
+.eggs/
+MANIFEST
+
+# ─── Virtual environments ──────────────────────────────────────────────────────
+.venv/
+venv/
+env/
+ENV/
+.virtualenvs/
+.virtualenv/
+
+# ─── Environment variables & secrets ──────────────────────────────────────────
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.cert
+
+# ─── Flask / SQLAlchemy ────────────────────────────────────────────────────────
+instance/
+*.db
+*.sqlite
+*.sqlite3
+
+# ─── Logs ─────────────────────────────────────────────────────────────────────
+*.log
+logs/
+flask.log
+
+# ─── Database backups & dumps ─────────────────────────────────────────────────
+backups/
+*.sql
+*.bak
+
+# ─── Downloads / temp files ───────────────────────────────────────────────────
+downloads/
+tmp/
+temp/
+*.tmp
+
+# ─── Empty / placeholder directories ─────────────────────────────────────────
+yourproject/
+
+# ─── NLTK data ────────────────────────────────────────────────────────────────
+nltk_data/
+
+# ─── Testing & coverage ───────────────────────────────────────────────────────
+.coverage
+.coverage.*
+htmlcov/
+.pytest_cache/
+.tox/
+nosetests.xml
+coverage.xml
+*.cover
+
+# ─── Type checking ────────────────────────────────────────────────────────────
+.mypy_cache/
+.dmypy.json
+.pytype/
+
+# ─── Jupyter ──────────────────────────────────────────────────────────────────
+.ipynb_checkpoints/
+*.ipynb
+
+# ─── Caches ───────────────────────────────────────────────────────────────────
+.cache/
+*.cache
+
+# ─── OS artifacts ─────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+ehthumbs.db
+
+# ─── Editor & IDE ─────────────────────────────────────────────────────────────
+.idea/
+*.swp
+*.swo
+*~
+
+# ─── Dotfiles (home-dir config leaking into repo root) ────────────────────────
+.*
+!.gitignore
+!.gitmodules
+!.env.example
+app/static/uploads.zip
+app/static/uploads

@@ -1,0 +1,150 @@
+<div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+    <!-- Header -->
+    <div class="text-center mb-8">
+        <h1 class="text-3xl font-extrabold text-gray-900 sm:text-4xl">
+            Latest Reviews
+        </h1>
+        <p class="mt-3 max-w-2xl mx-auto text-lg text-gray-600">
+            See what users are saying about AI agents in our directory
+        </p>
+    </div>
+
+    <!-- Reviews Grid -->
+    <div class="space-y-6">
+        {% for review in reviews.items %}
+        <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 p-4 sm:p-6">
+            <div class="flex flex-col sm:flex-row sm:items-start sm:space-x-6">
+                <!-- Agent Info - Left Column -->
+                <div class="flex-shrink-0 w-full sm:w-32 mb-4 sm:mb-0">
+                    <a href="{{ url_for('agent.detail', slug=review.agent.slug) }}" 
+                       class="block group">
+                        <div class="relative flex items-center sm:block">
+                            <img src="{{ review.agent.logo_url or url_for('static', filename='img/default-agent.png') }}"
+                                 alt="{{ review.agent.name }}"
+                                 class="w-16 h-16 sm:w-24 sm:h-24 rounded-xl object-cover ring-2 ring-gray-100 group-hover:ring-blue-100 transition-all">
+                            <div class="ml-3 sm:ml-0 sm:mt-2">
+                                <span class="text-sm font-medium text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2">
+                                    {{ review.agent.name }}
+                                </span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Review Content - Right Column -->
+                <div class="flex-1 min-w-0">
+                    <!-- Review Header -->
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 space-y-3 sm:space-y-0">
+                        <!-- Reviewer Info -->
+                        <div class="flex items-center space-x-3">
+                            <img src="{{ review.user.avatar_url or url_for('static', filename='img/default-avatar.png') }}"
+                                 alt="{{ review.user.username }}"
+                                 class="w-10 h-10 rounded-full ring-2 ring-gray-100 object-cover">
+                            <div>
+                                <div class="text-sm font-medium text-gray-900">
+                                    {{ review.user.username }}
+                                </div>
+                                {% if review.user.verified %}
+                                <div class="text-xs text-green-600 flex items-center">
+                                    <i class="fas fa-check-circle mr-1"></i> Verified Reviewer
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Rating & Time -->
+                        <div class="flex items-center justify-between sm:justify-end sm:space-x-4">
+                            <div class="flex space-x-1">
+                                {% for i in range(5) %}
+                                    {% if i < review.rating %}
+                                        <i class="fas fa-star text-yellow-400"></i>
+                                    {% else %}
+                                        <i class="far fa-star text-gray-200"></i>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                            <span class="text-sm text-gray-500 ml-4">
+                                {{ review.created_at | timeago }}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    {% if review.title %}
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">
+                        {{ review.title }}
+                    </h3>
+                    {% endif %}
+
+                    <!-- Review Content -->
+                    <div class="text-gray-600 prose prose-sm max-w-none">
+                        {{ review.content }}
+                    </div>
+
+                
+
+                    <!-- Review Actions -->
+                    <div class="mt-4 flex items-center justify-end space-x-4 text-sm">
+                        <button class="text-gray-500 hover:text-gray-700 flex items-center space-x-2">
+                            <i class="far fa-thumbs-up"></i>
+                            <span>Helpful ({{ review.helpful_votes }})</span>
+                        </button>
+                       
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if reviews.pages > 1 %}
+    <div class="mt-8">
+        <nav class="flex items-center justify-between border-t border-gray-200 px-4 sm:px-0">
+            <!-- Previous Button -->
+            <div class="-mt-px flex w-0 flex-1">
+                {% if reviews.has_prev %}
+                <a href="{{ url_for('main.reviews', page=reviews.prev_num) }}"
+                   class="inline-flex items-center border-t-2 border-transparent py-2 sm:pt-4 pr-1 text-sm font-medium text-gray-500 hover:text-blue-600 hover:border-blue-300 transition-colors">
+                    <i class="fas fa-arrow-left mr-3"></i>
+                    <span class="hidden sm:inline">Previous</span>
+                </a>
+                {% endif %}
+            </div>
+            
+            <!-- Page Numbers -->
+            <div class="hidden md:-mt-px md:flex">
+                {% for page_num in reviews.iter_pages(left_edge=2, left_current=2, right_current=2, right_edge=2) %}
+                    {% if page_num %}
+                        {% if reviews.page == page_num %}
+                        <a href="{{ url_for('main.reviews', page=page_num) }}"
+                           class="inline-flex items-center border-t-2 border-blue-500 px-4 pt-4 text-sm font-medium text-blue-600">
+                            {{ page_num }}
+                        </a>
+                        {% else %}
+                        <a href="{{ url_for('main.reviews', page=page_num) }}"
+                           class="inline-flex items-center border-t-2 border-transparent px-4 pt-4 text-sm font-medium text-gray-500 hover:text-blue-600 hover:border-blue-300 transition-colors">
+                            {{ page_num }}
+                        </a>
+                        {% endif %}
+                    {% else %}
+                        <span class="inline-flex items-center border-t-2 border-transparent px-4 pt-4 text-sm font-medium text-gray-500">
+                            ...
+                        </span>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            
+            <!-- Next Button -->
+            <div class="-mt-px flex w-0 flex-1 justify-end">
+                {% if reviews.has_next %}
+                <a href="{{ url_for('main.reviews', page=reviews.next_num) }}"
+                   class="inline-flex items-center border-t-2 border-transparent py-2 sm:pt-4 pl-1 text-sm font-medium text-gray-500 hover:text-blue-600 hover:border-blue-300 transition-colors">
+                    <span class="hidden sm:inline">Next</span>
+                    <i class="fas fa-arrow-right ml-3"></i>
+                </a>
+                {% endif %}
+            </div>
+        </nav>
+    </div>
+    {% endif %}
+</div>
